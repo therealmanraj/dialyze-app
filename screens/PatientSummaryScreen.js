@@ -1,51 +1,24 @@
-// screens/PatientSummaryScreen.js
 import React from "react";
 import {
   SafeAreaView,
-  View,
-  Text,
   ScrollView,
   TouchableOpacity,
-  Image,
+  Text,
+  View,
   StyleSheet,
 } from "react-native";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
-import { Dimensions } from "react-native";
-import { LineChart } from "react-native-chart-kit";
-import { useWindowDimensions } from "react-native";
+
+import ProfileHeader from "./components/PatientSummaryScreen/ProfileHeader";
+import ClinicalInfoSection from "./components/PatientSummaryScreen/ClinicalInfoSection";
+import RiskSection from "./components/PatientSummaryScreen/RiskSection";
+import LabTrendsSection from "./components/PatientSummaryScreen/LabTrendsSection";
 
 export default function PatientSummaryScreen({ route, navigation }) {
   const { patient } = route.params;
 
-  // you can replace these with real data later
-  const clinicalInfo = [
-    { label: "Weight", value: "75 kg" },
-    { label: "Height", value: "175 cm" },
-    { label: "BMI", value: "24.5" },
-    { label: "BSA", value: "1.8 m²" },
-    { label: "Age", value: "65" },
-    { label: "Gender", value: "Male" },
-  ];
-
-  const akiRisk = [
-    { label: "Risk Score", value: "15%" },
-    { label: "Risk Level", value: "Low" },
-  ];
-
-  const dialysisNeed = [{ label: "Probability", value: "5%" }];
-
-  const labMetric = "Creatinine";
-  const currentValue = "1.2 mg/dL";
-  const changePercent = "+10%";
-
-  const labLabels = ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"];
-  const labData = [80, 95, 60, 75, 100, 85, 90]; // replace with your real values
-
-  const screenWidth = useWindowDimensions().width;
-
   return (
     <SafeAreaView style={styles.root}>
-      {/* Header with back */}
       <View style={styles.header}>
         <TouchableOpacity onPress={() => navigation.goBack()}>
           <MaterialCommunityIcons name="arrow-left" size={24} color="#fff" />
@@ -54,109 +27,43 @@ export default function PatientSummaryScreen({ route, navigation }) {
         <View style={{ width: 24 }} />
       </View>
 
-      <ScrollView contentContainerStyle={styles.container}>
-        {/* Profile */}
-        <View style={styles.profileRow}>
-          <Image source={{ uri: patient.avatar }} style={styles.largeAvatar} />
-          <View style={styles.profileText}>
-            <Text style={styles.profileName}>{patient.name}</Text>
-            <Text style={styles.profileMeta}>ID: 123456789</Text>
-            <Text style={styles.profileMeta}>{patient.details}</Text>
-          </View>
-        </View>
+      <ScrollView contentContainerStyle={{ paddingBottom: 40 }}>
+        <ProfileHeader
+          avatar={patient.avatar}
+          name={patient.name}
+          id="123456789"
+          details={patient.details}
+        />
 
-        {/* Clinical Info */}
-        <Section
-          title="Clinical Information"
-          buttonLabel="Update"
-          onPress={() => {}}
-        >
-          <View style={styles.grid}>
-            {clinicalInfo.map((c) => (
-              <View key={c.label} style={styles.cell}>
-                <Text style={styles.cellLabel}>{c.label}</Text>
-                <Text style={styles.cellValue}>{c.value}</Text>
-              </View>
-            ))}
-          </View>
-        </Section>
+        <ClinicalInfoSection
+          data={[
+            { label: "Weight", value: "75 kg" },
+            { label: "Height", value: "175 cm" },
+            { label: "BMI", value: "24.5" },
+            { label: "BSA", value: "1.8 m²" },
+            { label: "Age", value: "65" },
+            { label: "Gender", value: "Male" },
+          ]}
+          onUpdate={() => {
+            /* … */
+          }}
+        />
 
-        {/* AKI Risk */}
-        <Section title="AKI Risk">
-          <View style={styles.cardsRow}>
-            {akiRisk.map((r, idx) => (
-              <View
-                key={r.label}
-                style={[
-                  styles.card,
-                  // add 8px only to the right of every card except the last one
-                  idx < akiRisk.length - 1 && { marginRight: 8 },
-                ]}
-              >
-                <Text style={styles.cardLabel}>{r.label}</Text>
-                <Text style={styles.cardValue}>{r.value}</Text>
-              </View>
-            ))}
-          </View>
-        </Section>
+        <RiskSection
+          akiRisk={[
+            { label: "Risk Score", value: "15%" },
+            { label: "Risk Level", value: "Low" },
+          ]}
+          dialysisNeed={[{ label: "Probability", value: "5%" }]}
+        />
 
-        {/* Dialysis Need */}
-        <Section title="Dialysis Need">
-          <View style={styles.cardsRow}>
-            {dialysisNeed.map((d) => (
-              <View key={d.label} style={styles.card}>
-                <Text style={styles.cardLabel}>{d.label}</Text>
-                <Text style={styles.cardValue}>{d.value}</Text>
-              </View>
-            ))}
-          </View>
-        </Section>
-
-        {/* Lab Trends Placeholder */}
-        <Section title="Recent Lab Trends">
-          {/* —— add metric & change above chart —— */}
-          <View style={styles.labHeader}>
-            <Text style={styles.labMetricLabel}>{labMetric}</Text>
-            <Text style={styles.labMetricValue}>{currentValue}</Text>
-            <Text style={styles.labMetricChange}>
-              Last 7 Days{" "}
-              <Text style={styles.labMetricChangePct}>{changePercent}</Text>
-            </Text>
-          </View>
-          <LineChart
-            data={{
-              labels: labLabels,
-              datasets: [{ data: labData }],
-            }}
-            width={screenWidth}
-            height={200}
-            withHorizontalLines={false}
-            withVerticalLines={false}
-            withVerticalLabels={true}
-            withHorizontalLabels={false}
-            withDots={false}
-            withShadow={true}
-            chartConfig={{
-              backgroundGradientFrom: "#151a1e",
-              backgroundGradientTo: "#151a1e",
-              backgroundGradientFromOpacity: 0,
-              backgroundGradientToOpacity: 0,
-              color: (opacity = 1) => `rgba(206, 223, 237, ${opacity})`,
-              strokeWidth: 2,
-              fillShadowGradient: "#2b3740",
-              fillShadowGradientOpacity: 1,
-              propsForDots: {
-                r: "4",
-                fill: "#cedfed",
-              },
-            }}
-            bezier
-            style={{
-              marginVertical: 8,
-              borderRadius: 12,
-            }}
-          />
-        </Section>
+        <LabTrendsSection
+          metric="Creatinine"
+          value="1.2 mg/dL"
+          changePct="+10%"
+          labels={["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"]}
+          data={[80, 95, 60, 75, 100, 85, 90]}
+        />
       </ScrollView>
 
       {/* Predict button */}
@@ -166,22 +73,6 @@ export default function PatientSummaryScreen({ route, navigation }) {
         </TouchableOpacity>
       </View>
     </SafeAreaView>
-  );
-}
-
-function Section({ title, buttonLabel, onPress, children }) {
-  return (
-    <View style={{ marginTop: 24 }}>
-      <View style={styles.sectionHeader}>
-        <Text style={styles.sectionTitle}>{title}</Text>
-        {buttonLabel && (
-          <TouchableOpacity onPress={onPress} style={styles.updateBtn}>
-            <Text style={styles.updateTxt}>{buttonLabel}</Text>
-          </TouchableOpacity>
-        )}
-      </View>
-      {children}
-    </View>
   );
 }
 
@@ -200,102 +91,6 @@ const styles = StyleSheet.create({
     fontWeight: "700",
     textAlign: "center",
   },
-  container: { paddingBottom: 40 },
-  profileRow: {
-    flexDirection: "row",
-    padding: 16,
-    alignItems: "center",
-  },
-  largeAvatar: {
-    width: 96,
-    height: 96,
-    borderRadius: 48,
-    backgroundColor: "#333",
-  },
-  profileText: { marginLeft: 16 },
-  profileName: { color: "#fff", fontSize: 22, fontWeight: "700" },
-  profileMeta: { color: "#9eafbd", fontSize: 14, marginTop: 4 },
-
-  sectionHeader: {
-    flexDirection: "row",
-    justifyContent: "space-between",
-    alignItems: "center",
-    paddingHorizontal: 16,
-    marginBottom: 8,
-  },
-  sectionTitle: { color: "#fff", fontSize: 22, fontWeight: "700" },
-  updateBtn: {
-    backgroundColor: "#2b3740",
-    paddingHorizontal: 12,
-    paddingVertical: 6,
-    borderRadius: 20,
-  },
-  updateTxt: { color: "#fff", fontWeight: "600" },
-
-  grid: {
-    flexDirection: "row",
-    flexWrap: "wrap",
-    marginHorizontal: 16,
-  },
-  cell: {
-    width: "50%",
-    padding: 12,
-    borderTopWidth: 1,
-    borderColor: "#3e4e5b",
-  },
-  cellLabel: { color: "#9eafbd", fontSize: 14 },
-  cellValue: { color: "#fff", fontSize: 14, marginTop: 4 },
-
-  cardsRow: {
-    flexDirection: "row",
-    marginHorizontal: 16, // same inset as everything else
-  },
-  card: {
-    flex: 1,
-    minWidth: 158,
-    backgroundColor: "#2b3740",
-    borderRadius: 12,
-    padding: 16,
-    marginVertical: 8, // keep vertical spacing
-    marginHorizontal: 0,
-  },
-  cardLabel: { color: "#fff", fontSize: 16 },
-  cardValue: {
-    color: "#fff",
-    fontSize: 24,
-    fontWeight: "700",
-    marginTop: 8,
-  },
-
-  labHeader: {
-    marginHorizontal: 16,
-    marginBottom: 8,
-  },
-  labMetricLabel: {
-    color: "#fff",
-    fontSize: 16,
-    fontWeight: "500",
-  },
-  labMetricValue: {
-    color: "#fff",
-    fontSize: 32,
-    fontWeight: "700",
-    marginTop: 4,
-  },
-  labMetricChange: {
-    color: "#9eafbd",
-    fontSize: 14,
-    marginTop: 2,
-  },
-  labMetricChangePct: {
-    color: "#0bda5b",
-    fontWeight: "600",
-  },
-
-  footer: {
-    padding: 16,
-    backgroundColor: "#151a1e",
-  },
   predictButton: {
     backgroundColor: "#cedfed",
     paddingVertical: 14,
@@ -306,5 +101,9 @@ const styles = StyleSheet.create({
     color: "#151a1e",
     fontSize: 16,
     fontWeight: "700",
+  },
+  footer: {
+    padding: 16,
+    backgroundColor: "#151a1e",
   },
 });
