@@ -12,6 +12,7 @@ import {
 import { MaterialCommunityIcons } from "@expo/vector-icons";
 import { Dimensions } from "react-native";
 import { LineChart } from "react-native-chart-kit";
+import { useWindowDimensions } from "react-native";
 
 export default function PatientSummaryScreen({ route, navigation }) {
   const { patient } = route.params;
@@ -39,6 +40,8 @@ export default function PatientSummaryScreen({ route, navigation }) {
 
   const labLabels = ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"];
   const labData = [80, 95, 60, 75, 100, 85, 90]; // replace with your real values
+
+  const screenWidth = useWindowDimensions().width;
 
   return (
     <SafeAreaView style={styles.root}>
@@ -81,8 +84,15 @@ export default function PatientSummaryScreen({ route, navigation }) {
         {/* AKI Risk */}
         <Section title="AKI Risk">
           <View style={styles.cardsRow}>
-            {akiRisk.map((r) => (
-              <View key={r.label} style={styles.card}>
+            {akiRisk.map((r, idx) => (
+              <View
+                key={r.label}
+                style={[
+                  styles.card,
+                  // add 8px only to the right of every card except the last one
+                  idx < akiRisk.length - 1 && { marginRight: 8 },
+                ]}
+              >
                 <Text style={styles.cardLabel}>{r.label}</Text>
                 <Text style={styles.cardValue}>{r.value}</Text>
               </View>
@@ -118,18 +128,33 @@ export default function PatientSummaryScreen({ route, navigation }) {
               labels: labLabels,
               datasets: [{ data: labData }],
             }}
-            width={Dimensions.get("window").width - 32} // full width minus padding
-            height={180}
-            yAxisSuffix=" mg/dL"
+            width={screenWidth}
+            height={200}
+            withHorizontalLines={false}
+            withVerticalLines={false}
+            withVerticalLabels={true}
+            withHorizontalLabels={false}
+            withDots={false}
+            withShadow={true}
             chartConfig={{
               backgroundGradientFrom: "#151a1e",
               backgroundGradientTo: "#151a1e",
-              color: (opacity = 1) => `rgba(158, 175, 189, ${opacity})`,
-              labelColor: (opacity = 1) => `rgba(158, 175, 189, ${opacity})`,
-              propsForDots: { r: "3", strokeWidth: "1", stroke: "#cedfed" },
+              backgroundGradientFromOpacity: 0,
+              backgroundGradientToOpacity: 0,
+              color: (opacity = 1) => `rgba(206, 223, 237, ${opacity})`,
+              strokeWidth: 2,
+              fillShadowGradient: "#2b3740",
+              fillShadowGradientOpacity: 1,
+              propsForDots: {
+                r: "4",
+                fill: "#cedfed",
+              },
             }}
-            style={{ marginVertical: 8, borderRadius: 12 }}
             bezier
+            style={{
+              marginVertical: 8,
+              borderRadius: 12,
+            }}
           />
         </Section>
       </ScrollView>
@@ -223,8 +248,7 @@ const styles = StyleSheet.create({
 
   cardsRow: {
     flexDirection: "row",
-    flexWrap: "wrap",
-    paddingHorizontal: 16,
+    marginHorizontal: 16, // same inset as everything else
   },
   card: {
     flex: 1,
@@ -232,7 +256,8 @@ const styles = StyleSheet.create({
     backgroundColor: "#2b3740",
     borderRadius: 12,
     padding: 16,
-    margin: 8,
+    marginVertical: 8, // keep vertical spacing
+    marginHorizontal: 0,
   },
   cardLabel: { color: "#fff", fontSize: 16 },
   cardValue: {
