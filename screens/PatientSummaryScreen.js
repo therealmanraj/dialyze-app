@@ -10,6 +10,8 @@ import {
   StyleSheet,
 } from "react-native";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
+import { Dimensions } from "react-native";
+import { LineChart } from "react-native-chart-kit";
 
 export default function PatientSummaryScreen({ route, navigation }) {
   const { patient } = route.params;
@@ -30,6 +32,13 @@ export default function PatientSummaryScreen({ route, navigation }) {
   ];
 
   const dialysisNeed = [{ label: "Probability", value: "5%" }];
+
+  const labMetric = "Creatinine";
+  const currentValue = "1.2 mg/dL";
+  const changePercent = "+10%";
+
+  const labLabels = ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"];
+  const labData = [80, 95, 60, 75, 100, 85, 90]; // replace with your real values
 
   return (
     <SafeAreaView style={styles.root}>
@@ -95,9 +104,33 @@ export default function PatientSummaryScreen({ route, navigation }) {
 
         {/* Lab Trends Placeholder */}
         <Section title="Recent Lab Trends">
-          <View style={styles.trendChartPlaceholder}>
-            <Text style={{ color: "#9eafbd" }}>[Chart goes here]</Text>
+          {/* —— add metric & change above chart —— */}
+          <View style={styles.labHeader}>
+            <Text style={styles.labMetricLabel}>{labMetric}</Text>
+            <Text style={styles.labMetricValue}>{currentValue}</Text>
+            <Text style={styles.labMetricChange}>
+              Last 7 Days{" "}
+              <Text style={styles.labMetricChangePct}>{changePercent}</Text>
+            </Text>
           </View>
+          <LineChart
+            data={{
+              labels: labLabels,
+              datasets: [{ data: labData }],
+            }}
+            width={Dimensions.get("window").width - 32} // full width minus padding
+            height={180}
+            yAxisSuffix=" mg/dL"
+            chartConfig={{
+              backgroundGradientFrom: "#151a1e",
+              backgroundGradientTo: "#151a1e",
+              color: (opacity = 1) => `rgba(158, 175, 189, ${opacity})`,
+              labelColor: (opacity = 1) => `rgba(158, 175, 189, ${opacity})`,
+              propsForDots: { r: "3", strokeWidth: "1", stroke: "#cedfed" },
+            }}
+            style={{ marginVertical: 8, borderRadius: 12 }}
+            bezier
+          />
         </Section>
       </ScrollView>
 
@@ -209,14 +242,29 @@ const styles = StyleSheet.create({
     marginTop: 8,
   },
 
-  trendChartPlaceholder: {
-    height: 180,
-    margin: 16,
-    borderWidth: 1,
-    borderColor: "#3e4e5b",
-    borderRadius: 12,
-    alignItems: "center",
-    justifyContent: "center",
+  labHeader: {
+    marginHorizontal: 16,
+    marginBottom: 8,
+  },
+  labMetricLabel: {
+    color: "#fff",
+    fontSize: 16,
+    fontWeight: "500",
+  },
+  labMetricValue: {
+    color: "#fff",
+    fontSize: 32,
+    fontWeight: "700",
+    marginTop: 4,
+  },
+  labMetricChange: {
+    color: "#9eafbd",
+    fontSize: 14,
+    marginTop: 2,
+  },
+  labMetricChangePct: {
+    color: "#0bda5b",
+    fontWeight: "600",
   },
 
   footer: {
