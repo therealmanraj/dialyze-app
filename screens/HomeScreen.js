@@ -36,7 +36,7 @@ const DEMO_PATIENTS = [
   // …and so on
 ];
 
-export default function HomeScreen() {
+export default function HomeScreen({ navigation }) {
   const [search, setSearch] = useState("");
 
   const filtered = DEMO_PATIENTS.filter((p) =>
@@ -85,7 +85,11 @@ export default function HomeScreen() {
         keyExtractor={(item) => item.id}
         contentContainerStyle={{ paddingBottom: 80 }}
         renderItem={({ item }) => (
-          <View style={styles.patientRow}>
+          //   <View style={styles.patientRow}>
+          <TouchableOpacity
+            style={styles.patientRow}
+            onPress={() => navigation.navigate("Summary", { patient: item })}
+          >
             <View style={styles.patientInfo}>
               <Image source={{ uri: item.avatar }} style={styles.avatar} />
               <View style={{ marginLeft: 12 }}>
@@ -101,7 +105,8 @@ export default function HomeScreen() {
                 style={[styles.pillDot, { backgroundColor: item.riskColor }]}
               />
             </View>
-          </View>
+            {/* </View> */}
+          </TouchableOpacity>
         )}
       />
 
@@ -231,11 +236,15 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     alignItems: "center",
     backgroundColor: "#2b3740",
+    width: 150,
+    height: 25,
     borderRadius: 12,
     paddingVertical: 4,
     paddingHorizontal: 10,
   },
   pillText: {
+    flex: 1, // fill the remaining space
+    textAlign: "center",
     color: "#fff",
     fontSize: 14,
     fontWeight: "500",
@@ -245,6 +254,7 @@ const styles = StyleSheet.create({
     width: 10,
     height: 10,
     borderRadius: 5,
+    marginRight: 8,
   },
   //   onlineDot: {
   //     width: 12,
