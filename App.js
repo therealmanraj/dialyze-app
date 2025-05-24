@@ -4,7 +4,10 @@ import { NavigationContainer } from "@react-navigation/native";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 
 import HomeScreen from "./screens/HomeScreen";
+
 import PatientSummaryScreen from "./screens/PatientSummaryScreen";
+import UpdateClinicalInfoScreen from "./screens/PatientSummaryScreen/UpdateClinicalInfoScreen";
+import PredictionReviewScreen from "./screens/PatientSummaryScreen/PredictionReviewScreen";
 
 const Stack = createNativeStackNavigator();
 
@@ -17,6 +20,15 @@ export default function App() {
       >
         <Stack.Screen name="Home" component={HomeScreen} />
         <Stack.Screen name="Summary" component={PatientSummaryScreen} />
+        <Stack.Screen
+          name="UpdateClinicalInfo"
+          component={UpdateClinicalInfoScreen}
+        />
+        <Stack.Screen
+          name="PredictionReview"
+          component={PredictionReviewScreen}
+          options={{ headerShown: false }}
+        />
       </Stack.Navigator>
     </NavigationContainer>
   );

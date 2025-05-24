@@ -44,9 +44,7 @@ export default function PatientSummaryScreen({ route, navigation }) {
             { label: "Age", value: "65" },
             { label: "Gender", value: "Male" },
           ]}
-          onUpdate={() => {
-            /* … */
-          }}
+          onUpdate={() => navigation.navigate("UpdateClinicalInfo")}
         />
 
         <RiskSection
@@ -68,7 +66,39 @@ export default function PatientSummaryScreen({ route, navigation }) {
 
       {/* Predict button */}
       <View style={styles.footer}>
-        <TouchableOpacity style={styles.predictButton}>
+        <TouchableOpacity
+          style={styles.predictButton}
+          onPress={() =>
+            navigation.navigate("PredictionReview", {
+              patient: {
+                avatar: patient.avatar,
+                name: patient.name,
+                id: patient.id,
+                details: patient.details,
+              },
+              prediction: {
+                akiRisk: "High (85%)",
+                dialysisNeed: "Likely (60%)",
+              },
+              clinicalInfo: [
+                { label: "Admission Date", value: "2024-07-26" },
+                { label: "Primary Diagnosis", value: "Sepsis" },
+                { label: "Comorbidities", value: "Hypertension, Diabetes" },
+                { label: "Medications", value: "Insulin, Metformin" },
+                { label: "Allergies", value: "Penicillin" },
+                { label: "Code Status", value: "Full Code" },
+              ],
+              labValues: [
+                { label: "Creatinine", value: "2.5 mg/dL" },
+                { label: "BUN", value: "40 mg/dL" },
+                { label: "Potassium", value: "5.2 mEq/L" },
+                { label: "Sodium", value: "138 mEq/L" },
+                { label: "Bicarbonate", value: "22 mEq/L" },
+                { label: "Urine Output", value: "500 mL/day" },
+              ],
+            })
+          }
+        >
           <Text style={styles.predictText}>Predict</Text>
         </TouchableOpacity>
       </View>
