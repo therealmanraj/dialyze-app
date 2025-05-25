@@ -20,10 +20,9 @@ export default function QuickPredictionScreen({ navigation }) {
   const [urineOutput, setUrineOutput] = useState("");
 
   function handlePredict() {
-    // TODO: call your inference or navigate to PredictionReview
-    navigation.navigate("PredictionReview", {
-      // pass whatever you need here
-      quickInputs: { creatinine, bun, potassium, urineOutput },
+    navigation.navigate("PredictionOutcome", {
+      akiRisk: "Moderate",
+      dialysisNeed: "Low",
     });
   }
 
