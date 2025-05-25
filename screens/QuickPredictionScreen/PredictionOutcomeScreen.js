@@ -9,16 +9,21 @@ import {
   StyleSheet,
 } from "react-native";
 import BottomTabBar from "../components/BottomTabBar";
+import { MaterialCommunityIcons } from "@expo/vector-icons";
 
 export default function PredictionOutcomeScreen({ navigation, route }) {
-  // you passed these in handlePredict
   const { akiRisk, dialysisNeed } = route.params;
 
   return (
     <SafeAreaView style={styles.root}>
       {/* Header */}
       <View style={styles.header}>
+        <TouchableOpacity onPress={() => navigation.goBack()}>
+          <MaterialCommunityIcons name="arrow-left" size={24} color="#fff" />
+        </TouchableOpacity>
         <Text style={styles.headerTitle}>Dialyze</Text>
+        {/* spacer to center the title */}
+        <View style={{ width: 24 }} />
       </View>
 
       <ScrollView contentContainerStyle={styles.content}>
@@ -57,20 +62,23 @@ export default function PredictionOutcomeScreen({ navigation, route }) {
 }
 
 const styles = StyleSheet.create({
-  root: {
-    flex: 1,
-    backgroundColor: "#151a1e",
-  },
+  root: { flex: 1, backgroundColor: "#151a1e" },
+
   header: {
+    flexDirection: "row",
+    justifyContent: "space-between", // <--- distribute back/title/spacer
+    alignItems: "center",
     padding: 16,
     backgroundColor: "#151a1e",
-    alignItems: "center",
   },
   headerTitle: {
+    flex: 1, // <--- take up all remaining space
     color: "#fff",
     fontSize: 18,
     fontWeight: "700",
+    textAlign: "center", // <--- center within that space
   },
+
   content: {
     paddingHorizontal: 16,
     paddingTop: 8,
