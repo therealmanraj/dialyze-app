@@ -12,6 +12,8 @@ import {
 } from "react-native";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
 
+import BottomTabBar from "./components/BottomTabBar";
+
 const DEMO_PATIENTS = [
   {
     id: "1",
@@ -109,31 +111,7 @@ export default function HomeScreen({ navigation }) {
           </TouchableOpacity>
         )}
       />
-
-      {/* Bottom tabs */}
-      <View style={styles.tabBar}>
-        {[
-          { name: "Home", icon: "home", active: true },
-          { name: "Predictions", icon: "account-multiple-outline" },
-          { name: "Settings", icon: "cog-outline" },
-        ].map((tab) => (
-          <TouchableOpacity key={tab.name} style={styles.tabItem}>
-            <MaterialCommunityIcons
-              name={tab.icon}
-              size={24}
-              color={tab.active ? "#fff" : "#9eafbd"}
-            />
-            <Text
-              style={[
-                styles.tabText,
-                { color: tab.active ? "#fff" : "#9eafbd" },
-              ]}
-            >
-              {tab.name}
-            </Text>
-          </TouchableOpacity>
-        ))}
-      </View>
+      <BottomTabBar activeTab="Home" navigation={navigation} />
     </SafeAreaView>
   );
 }
@@ -255,31 +233,5 @@ const styles = StyleSheet.create({
     height: 10,
     borderRadius: 5,
     marginRight: 8,
-  },
-  //   onlineDot: {
-  //     width: 12,
-  //     height: 12,
-  //     borderRadius: 6,
-  //     backgroundColor: "#0bda5b",
-  //     marginRight: 16,
-  //   },
-  tabBar: {
-    position: "absolute",
-    bottom: 0,
-    width: "100%",
-    flexDirection: "row",
-    backgroundColor: "#1f272e",
-    borderTopColor: "#2b3740",
-    borderTopWidth: 1,
-    paddingVertical: 8,
-    paddingBottom: 20,
-  },
-  tabItem: {
-    flex: 1,
-    alignItems: "center",
-  },
-  tabText: {
-    fontSize: 12,
-    marginTop: 2,
   },
 });

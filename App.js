@@ -9,6 +9,8 @@ import PatientSummaryScreen from "./screens/PatientSummaryScreen";
 import UpdateClinicalInfoScreen from "./screens/PatientSummaryScreen/UpdateClinicalInfoScreen";
 import PredictionReviewScreen from "./screens/PatientSummaryScreen/PredictionReviewScreen";
 
+import QuickPredictionScreen from "./screens/QuickPredictionScreen";
+
 const Stack = createNativeStackNavigator();
 
 export default function App() {
@@ -27,6 +29,11 @@ export default function App() {
         <Stack.Screen
           name="PredictionReview"
           component={PredictionReviewScreen}
+          options={{ headerShown: false }}
+        />
+        <Stack.Screen
+          name="QuickPrediction"
+          component={QuickPredictionScreen}
           options={{ headerShown: false }}
         />
       </Stack.Navigator>
