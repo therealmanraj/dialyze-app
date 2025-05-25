@@ -20,7 +20,11 @@ export default function App() {
         initialRouteName="Home"
         screenOptions={{ headerShown: false }}
       >
-        <Stack.Screen name="Home" component={HomeScreen} />
+        <Stack.Screen
+          name="Home"
+          component={HomeScreen}
+          options={{ gestureEnabled: false }}
+        />
         <Stack.Screen name="Summary" component={PatientSummaryScreen} />
         <Stack.Screen
           name="UpdateClinicalInfo"
@@ -34,7 +38,7 @@ export default function App() {
         <Stack.Screen
           name="QuickPrediction"
           component={QuickPredictionScreen}
-          options={{ headerShown: false }}
+          options={{ headerShown: false, gestureEnabled: false }}
         />
       </Stack.Navigator>
     </NavigationContainer>
