@@ -69,7 +69,7 @@ export default function PredictionReviewScreen({ route, navigation }) {
         <TouchableOpacity
           style={styles.updateButton}
           onPress={() => {
-            /* push to your “Update Prediction” form */
+            navigation.navigate("UpdatePrediction");
           }}
         >
           <Text style={styles.updateButtonText}>Update Prediction</Text>

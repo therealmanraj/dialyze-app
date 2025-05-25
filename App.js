@@ -8,6 +8,7 @@ import HomeScreen from "./screens/HomeScreen";
 import PatientSummaryScreen from "./screens/PatientSummaryScreen";
 import UpdateClinicalInfoScreen from "./screens/PatientSummaryScreen/UpdateClinicalInfoScreen";
 import PredictionReviewScreen from "./screens/PatientSummaryScreen/PredictionReviewScreen";
+import UpdatePredictionScreen from "./screens/PatientSummaryScreen/UpdatePredictionScreen";
 
 import QuickPredictionScreen from "./screens/QuickPredictionScreen";
 import PredictionOutcomeScreen from "./screens/QuickPredictionScreen/PredictionOutcomeScreen";
@@ -47,6 +48,12 @@ export default function App() {
         <Stack.Screen
           name="PredictionOutcome"
           component={PredictionOutcomeScreen}
+          options={{ headerShown: false }}
+        />
+
+        <Stack.Screen
+          name="UpdatePrediction"
+          component={UpdatePredictionScreen}
           options={{ headerShown: false }}
         />
         <Stack.Screen
