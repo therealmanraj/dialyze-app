@@ -11,6 +11,9 @@ import PredictionReviewScreen from "./screens/PatientSummaryScreen/PredictionRev
 
 import QuickPredictionScreen from "./screens/QuickPredictionScreen";
 import PredictionOutcomeScreen from "./screens/QuickPredictionScreen/PredictionOutcomeScreen";
+import AddPatientScreen from "./screens/QuickPredictionScreen/AddPatientScreen";
+
+import SettingsScreen from "./screens/SettingsScreen";
 
 const Stack = createNativeStackNavigator();
 
@@ -46,6 +49,13 @@ export default function App() {
           component={PredictionOutcomeScreen}
           options={{ headerShown: false }}
         />
+        <Stack.Screen
+          name="AddPatient"
+          component={AddPatientScreen}
+          options={{ headerShown: false }}
+        />
+
+        <Stack.Screen name="Settings" component={SettingsScreen} />
       </Stack.Navigator>
     </NavigationContainer>
   );

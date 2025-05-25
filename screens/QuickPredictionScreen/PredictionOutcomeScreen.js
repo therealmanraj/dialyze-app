@@ -43,7 +43,7 @@ export default function PredictionOutcomeScreen({ navigation, route }) {
         <TouchableOpacity
           style={styles.addButton}
           onPress={() => {
-            /* TODO: save this prediction as a new patient, then navigate */
+            navigation.navigate("AddPatient");
           }}
         >
           <Text style={styles.addButtonText}>Add as New Patient</Text>
