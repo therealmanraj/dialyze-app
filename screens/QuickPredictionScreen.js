@@ -2,12 +2,14 @@
 import React, { useState } from "react";
 import {
   SafeAreaView,
+  KeyboardAvoidingView,
   ScrollView,
   View,
   Text,
   TextInput,
   TouchableOpacity,
   StyleSheet,
+  Platform,
 } from "react-native";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
 
@@ -26,69 +28,86 @@ export default function QuickPredictionScreen({ navigation }) {
 
   return (
     <SafeAreaView style={styles.root}>
-      {/* Header */}
+      {/* fixed header */}
       <View style={styles.header}>
         <Text style={styles.headerTitle}>Dialyze</Text>
       </View>
+
+      {/* fixed page title & subtitle */}
       <Text style={styles.pageTitle}>Quick Prediction</Text>
       <Text style={styles.pageSub}>
         Enter lab values to get an immediate prediction of Acute Kidney Injury
         risk and dialysis need.
       </Text>
-      <ScrollView contentContainerStyle={styles.content}>
-        {[
-          {
-            placeholder: "Creatinine (mg/dL)",
-            value: creatinine,
-            onChange: setCreatinine,
-          },
-          { placeholder: "BUN (mg/dL)", value: bun, onChange: setBun },
-          {
-            placeholder: "Potassium (mEq/L)",
-            value: potassium,
-            onChange: setPotassium,
-          },
-          {
-            placeholder: "Urine Output (mL/day)",
-            value: urineOutput,
-            onChange: setUrineOutput,
-          },
-        ].map(({ placeholder, value, onChange }) => (
-          <TextInput
-            key={placeholder}
-            style={styles.input}
-            placeholder={placeholder}
-            placeholderTextColor="#91b0ca"
-            value={value}
-            onChangeText={onChange}
-          />
-        ))}
 
-        <TouchableOpacity style={styles.predictButton} onPress={handlePredict}>
-          <Text style={styles.predictButtonText}>Predict</Text>
-        </TouchableOpacity>
-      </ScrollView>
+      {/* only inputs + button live in KeyboardAvoidingView */}
+      <KeyboardAvoidingView
+        style={{ flex: 1 }}
+        behavior={Platform.OS === "ios" ? "padding" : "height"}
+        keyboardVerticalOffset={0}
+      >
+        <ScrollView
+          contentContainerStyle={styles.content}
+          keyboardShouldPersistTaps="handled"
+        >
+          {[
+            {
+              placeholder: "Creatinine (mg/dL)",
+              value: creatinine,
+              onChange: setCreatinine,
+            },
+            { placeholder: "BUN (mg/dL)", value: bun, onChange: setBun },
+            {
+              placeholder: "Potassium (mEq/L)",
+              value: potassium,
+              onChange: setPotassium,
+            },
+            {
+              placeholder: "Urine Output (mL/day)",
+              value: urineOutput,
+              onChange: setUrineOutput,
+            },
+          ].map(({ placeholder, value, onChange }) => (
+            <TextInput
+              key={placeholder}
+              style={styles.input}
+              placeholder={placeholder}
+              placeholderTextColor="#91b0ca"
+              keyboardType="numeric"
+              value={value}
+              onChangeText={onChange}
+            />
+          ))}
+        </ScrollView>
+
+        <View style={styles.footer}>
+          <TouchableOpacity
+            style={styles.predictButton}
+            onPress={handlePredict}
+          >
+            <Text style={styles.predictButtonText}>Predict</Text>
+          </TouchableOpacity>
+        </View>
+      </KeyboardAvoidingView>
     </SafeAreaView>
   );
 }
 
 const styles = StyleSheet.create({
   root: { flex: 1, backgroundColor: "#151a1e" },
+
   header: {
-    backgroundColor: "#151a1e",
     paddingVertical: 12,
     paddingHorizontal: 16,
+    backgroundColor: "#151a1e",
+    alignItems: "center",
   },
   headerTitle: {
     color: "#fff",
     fontSize: 18,
     fontWeight: "700",
-    textAlign: "center",
   },
-  content: {
-    paddingHorizontal: 16,
-    paddingTop: 8,
-  },
+
   pageTitle: {
     color: "#fff",
     fontSize: 28,
@@ -100,7 +119,11 @@ const styles = StyleSheet.create({
     color: "#fff",
     fontSize: 16,
     textAlign: "center",
-    marginVertical: 8,
+    marginVertical: 12,
+    paddingHorizontal: 16,
+  },
+
+  content: {
     paddingHorizontal: 16,
   },
   input: {
@@ -112,13 +135,18 @@ const styles = StyleSheet.create({
     fontSize: 16,
     marginVertical: 8,
   },
+
+  footer: {
+    paddingHorizontal: 16,
+    paddingVertical: 8,
+    backgroundColor: "#151a1e",
+  },
   predictButton: {
     backgroundColor: "#0f7fdb",
     height: 48,
     borderRadius: 24,
     alignItems: "center",
     justifyContent: "center",
-    marginTop: 16,
   },
   predictButtonText: {
     color: "#fff",
