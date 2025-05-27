@@ -11,8 +11,9 @@ import {
   StyleSheet,
 } from "react-native";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
+import { Swipeable, RectButton } from "react-native-gesture-handler";
 
-const DEMO_PATIENTS = [
+const INITIAL_PATIENTS = [
   {
     id: "1",
     name: "Ethan Carter",
@@ -57,14 +58,47 @@ const DEMO_PATIENTS = [
 
 export default function HomeScreen({ navigation }) {
   const [search, setSearch] = useState("");
+  const [patients, setPatients] = useState(INITIAL_PATIENTS);
 
-  const filtered = DEMO_PATIENTS.filter((p) =>
+  const filtered = patients.filter((p) =>
     p.name.toLowerCase().includes(search.toLowerCase())
+  );
+
+  const handleDelete = (id) =>
+    setPatients((prev) => prev.filter((p) => p.id !== id));
+
+  const renderRightActions = (id) => (
+    <RectButton style={styles.deleteButton} onPress={() => handleDelete(id)}>
+      <MaterialCommunityIcons name="trash-can" size={24} color="#fff" />
+      <Text style={styles.deleteText}>Delete</Text>
+    </RectButton>
+  );
+
+  const renderItem = ({ item }) => (
+    <Swipeable renderRightActions={() => renderRightActions(item.id)}>
+      <TouchableOpacity
+        style={styles.patientRow}
+        onPress={() => navigation.navigate("Summary", { patient: item })}
+      >
+        <View style={styles.patientInfo}>
+          <Image source={{ uri: item.avatar }} style={styles.avatar} />
+          <View style={{ marginLeft: 12 }}>
+            <Text style={styles.patientName}>{item.name}</Text>
+            <Text style={styles.patientDetails}>{item.details}</Text>
+          </View>
+        </View>
+        <View style={styles.pill}>
+          <Text style={styles.pillText}>
+            {item.riskLabel} – {item.riskPct}
+          </Text>
+          <View style={[styles.pillDot, { backgroundColor: item.riskColor }]} />
+        </View>
+      </TouchableOpacity>
+    </Swipeable>
   );
 
   return (
     <SafeAreaView style={styles.root}>
-      {/* Top bar + title */}
       <View style={styles.header}>
         <Text style={styles.headerTitle}>Dialyze</Text>
       </View>
@@ -73,7 +107,6 @@ export default function HomeScreen({ navigation }) {
         Explore the app’s functionality with our demo patient list.
       </Text>
 
-      {/* Search */}
       <View style={styles.searchWrapper}>
         <MaterialCommunityIcons
           name="magnify"
@@ -90,7 +123,6 @@ export default function HomeScreen({ navigation }) {
         />
       </View>
 
-      {/* Patients header + add button */}
       <View style={styles.patientsHeader}>
         <Text style={styles.patientsTitle}>Patients</Text>
         <TouchableOpacity
@@ -101,45 +133,18 @@ export default function HomeScreen({ navigation }) {
         </TouchableOpacity>
       </View>
 
-      {/* List */}
       <FlatList
         data={filtered}
         keyExtractor={(item) => item.id}
         contentContainerStyle={{ paddingBottom: 80 }}
-        renderItem={({ item }) => (
-          //   <View style={styles.patientRow}>
-          <TouchableOpacity
-            style={styles.patientRow}
-            onPress={() => navigation.navigate("Summary", { patient: item })}
-          >
-            <View style={styles.patientInfo}>
-              <Image source={{ uri: item.avatar }} style={styles.avatar} />
-              <View style={{ marginLeft: 12 }}>
-                <Text style={styles.patientName}>{item.name}</Text>
-                <Text style={styles.patientDetails}>{item.details}</Text>
-              </View>
-            </View>
-            <View style={styles.pill}>
-              <Text style={styles.pillText}>
-                {item.riskLabel} – {item.riskPct}
-              </Text>
-              <View
-                style={[styles.pillDot, { backgroundColor: item.riskColor }]}
-              />
-            </View>
-            {/* </View> */}
-          </TouchableOpacity>
-        )}
+        renderItem={renderItem}
       />
     </SafeAreaView>
   );
 }
 
 const styles = StyleSheet.create({
-  root: {
-    flex: 1,
-    backgroundColor: "#151a1e",
-  },
+  root: { flex: 1, backgroundColor: "#151a1e" },
   header: {
     backgroundColor: "#151a1e",
     paddingVertical: 12,
@@ -176,11 +181,7 @@ const styles = StyleSheet.create({
     marginVertical: 8,
   },
   searchIcon: { marginRight: 8 },
-  searchInput: {
-    flex: 1,
-    color: "#fff",
-    fontSize: 16,
-  },
+  searchInput: { flex: 1, color: "#fff", fontSize: 16 },
   patientsHeader: {
     flexDirection: "row",
     alignItems: "center",
@@ -188,22 +189,15 @@ const styles = StyleSheet.create({
     marginHorizontal: 16,
     marginTop: 16,
   },
-  patientsTitle: {
-    color: "#fff",
-    fontSize: 22,
-    fontWeight: "700",
-  },
+  patientsTitle: { color: "#fff", fontSize: 22, fontWeight: "700" },
   addButton: {
     backgroundColor: "#cedfed",
     paddingHorizontal: 16,
     paddingVertical: 8,
     borderRadius: 20,
   },
-  addButtonText: {
-    color: "#151a1e",
-    fontWeight: "700",
-    fontSize: 14,
-  },
+  addButtonText: { color: "#151a1e", fontWeight: "700", fontSize: 14 },
+
   patientRow: {
     flexDirection: "row",
     alignItems: "center",
@@ -214,21 +208,9 @@ const styles = StyleSheet.create({
     paddingVertical: 12,
   },
   patientInfo: { flexDirection: "row", alignItems: "center" },
-  avatar: {
-    width: 56,
-    height: 56,
-    borderRadius: 28,
-    backgroundColor: "#333",
-  },
-  patientName: {
-    color: "#fff",
-    fontSize: 16,
-    fontWeight: "500",
-  },
-  patientDetails: {
-    color: "#9eafbd",
-    fontSize: 14,
-  },
+  avatar: { width: 56, height: 56, borderRadius: 28, backgroundColor: "#333" },
+  patientName: { color: "#fff", fontSize: 16, fontWeight: "500" },
+  patientDetails: { color: "#9eafbd", fontSize: 14 },
   pill: {
     flexDirection: "row",
     alignItems: "center",
@@ -240,17 +222,22 @@ const styles = StyleSheet.create({
     paddingHorizontal: 10,
   },
   pillText: {
-    flex: 1, // fill the remaining space
+    flex: 1,
     textAlign: "center",
     color: "#fff",
     fontSize: 14,
     fontWeight: "500",
     marginRight: 6,
   },
-  pillDot: {
-    width: 10,
-    height: 10,
-    borderRadius: 5,
-    marginRight: 8,
+  pillDot: { width: 10, height: 10, borderRadius: 5, marginRight: 8 },
+
+  deleteButton: {
+    backgroundColor: "red",
+    justifyContent: "center",
+    alignItems: "center",
+    width: 80,
+    marginVertical: 4,
+    borderRadius: 12,
   },
+  deleteText: { color: "#fff", fontSize: 12, marginTop: 4 },
 });

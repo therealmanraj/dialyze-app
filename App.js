@@ -1,5 +1,6 @@
 // App.js
 import React from "react";
+import { GestureHandlerRootView } from "react-native-gesture-handler";
 import { NavigationContainer } from "@react-navigation/native";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
@@ -20,7 +21,6 @@ import AddPatientScreen from "./screens/QuickPredictionScreen/AddPatientScreen";
 const Stack = createNativeStackNavigator();
 const Tab = createBottomTabNavigator();
 
-// 1) Main tab navigator
 function MainTabs() {
   return (
     <Tab.Navigator
@@ -49,86 +49,50 @@ function MainTabs() {
   );
 }
 
-// 2) Root stack that wraps the tabs plus all deeper screens
 export default function App() {
   return (
-    <NavigationContainer>
-      <Stack.Navigator
-        screenOptions={{ headerShown: false, animation: "none" }}
-      >
-        {/* your 3 top-level tabs */}
-        <Stack.Screen
-          name="MainTabs"
-          component={MainTabs}
-          options={{
-            animation: "slide_from_bottom",
-            // other options
-            // options={{
-            //   animation: 'slide_from_right',   // slide in from the right
-            //   animation: 'slide_from_left',    // slide in from the left
-            //   animation: 'slide_from_bottom',  // slide up from the bottom
-            //   animation: 'fade',               // cross-fade
-            //   animation: 'fade_from_bottom',   // fade + slight upward motion
-            //   animation: 'flip',               // card flip
-            //   animation: 'default',            // platform default
-            //   animation: 'none',               // no animation
-            // }}
-            gestureEnabled: false,
-          }}
-        />
-
-        {/* patient-detail flows */}
-        <Stack.Screen
-          name="Summary"
-          component={PatientSummaryScreen}
-          options={{
-            animation: "slide_from_right",
-            gestureEnabled: true,
-          }}
-        />
-        <Stack.Screen
-          name="AddNewPatient"
-          component={AddNewPatientScreen}
-          options={{
-            animation: "slide_from_right",
-            gestureEnabled: true,
-          }}
-        />
-        <Stack.Screen
-          name="UpdateClinicalInfo"
-          component={UpdateClinicalInfoScreen}
-          options={{
-            animation: "slide_from_right",
-            gestureEnabled: true,
-          }}
-        />
-        <Stack.Screen
-          name="UpdatePrediction"
-          component={UpdatePredictionScreen}
-          options={{
-            animation: "slide_from_right",
-            gestureEnabled: true,
-          }}
-        />
-
-        {/* quick-prediction flows */}
-        <Stack.Screen
-          name="PredictionOutcome"
-          component={PredictionOutcomeScreen}
-          options={{
-            animation: "slide_from_right",
-            gestureEnabled: true,
-          }}
-        />
-        <Stack.Screen
-          name="AddPatient"
-          component={AddPatientScreen}
-          options={{
-            animation: "slide_from_right",
-            gestureEnabled: true,
-          }}
-        />
-      </Stack.Navigator>
-    </NavigationContainer>
+    <GestureHandlerRootView style={{ flex: 1 }}>
+      <NavigationContainer>
+        <Stack.Navigator
+          screenOptions={{ headerShown: false, animation: "none" }}
+        >
+          <Stack.Screen
+            name="MainTabs"
+            component={MainTabs}
+            options={{ animation: "slide_from_bottom", gestureEnabled: false }}
+          />
+          <Stack.Screen
+            name="Summary"
+            component={PatientSummaryScreen}
+            options={{ animation: "slide_from_right" }}
+          />
+          <Stack.Screen
+            name="AddNewPatient"
+            component={AddNewPatientScreen}
+            options={{ animation: "slide_from_right" }}
+          />
+          <Stack.Screen
+            name="UpdateClinicalInfo"
+            component={UpdateClinicalInfoScreen}
+            options={{ animation: "slide_from_right" }}
+          />
+          <Stack.Screen
+            name="UpdatePrediction"
+            component={UpdatePredictionScreen}
+            options={{ animation: "slide_from_right" }}
+          />
+          <Stack.Screen
+            name="PredictionOutcome"
+            component={PredictionOutcomeScreen}
+            options={{ animation: "slide_from_right" }}
+          />
+          <Stack.Screen
+            name="AddPatient"
+            component={AddPatientScreen}
+            options={{ animation: "slide_from_right" }}
+          />
+        </Stack.Navigator>
+      </NavigationContainer>
+    </GestureHandlerRootView>
   );
 }
