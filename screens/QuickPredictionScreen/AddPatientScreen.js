@@ -13,7 +13,6 @@ import {
 } from "react-native";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
 import * as ImagePicker from "expo-image-picker";
-import BottomTabBar from "../components/BottomTabBar";
 
 export default function AddPatientScreen({ navigation }) {
   const [name, setName] = useState("");
@@ -48,7 +47,7 @@ export default function AddPatientScreen({ navigation }) {
 
   function handleAdd() {
     // TODO: validate & save the new patient
-    navigation.navigate("Home");
+    navigation.navigate("MainTabs", { screen: "Home" });
   }
 
   return (
@@ -128,8 +127,6 @@ export default function AddPatientScreen({ navigation }) {
           <Text style={styles.addButtonText}>Add</Text>
         </TouchableOpacity>
       </ScrollView>
-
-      <BottomTabBar activeTab="Predictions" navigation={navigation} />
     </SafeAreaView>
   );
 }

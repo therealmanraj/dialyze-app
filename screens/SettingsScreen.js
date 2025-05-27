@@ -10,18 +10,19 @@ import {
   StyleSheet,
 } from "react-native";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
-import BottomTabBar from "./components/BottomTabBar";
 
 export default function SettingsScreen({ navigation }) {
   const [notificationsEnabled, setNotificationsEnabled] = useState(false);
 
   return (
     <SafeAreaView style={styles.root}>
-      {/* Header */}
       <View style={styles.header}>
-        <Text style={styles.headerTitle}>Settings</Text>
-        <View style={{ width: 24 }} />
+        <Text style={styles.headerTitle}>Dialyze</Text>
       </View>
+      <Text style={styles.pageTitle}>Settings</Text>
+      <Text style={styles.pageSub}>
+        Change the settings of the app using this screen.
+      </Text>
 
       <ScrollView contentContainerStyle={styles.content}>
         {/* General */}
@@ -81,9 +82,6 @@ export default function SettingsScreen({ navigation }) {
           />
         </TouchableOpacity>
       </ScrollView>
-
-      {/* Bottom tabs */}
-      <BottomTabBar activeTab="Settings" navigation={navigation} />
     </SafeAreaView>
   );
 }
@@ -94,17 +92,29 @@ const styles = StyleSheet.create({
     backgroundColor: "#151a1e",
   },
   header: {
-    flexDirection: "row",
-    alignItems: "center",
-    padding: 16,
     backgroundColor: "#151a1e",
+    paddingVertical: 12,
+    paddingHorizontal: 16,
   },
   headerTitle: {
-    flex: 1,
     color: "#fff",
     fontSize: 18,
     fontWeight: "700",
     textAlign: "center",
+  },
+  pageTitle: {
+    color: "#fff",
+    fontSize: 28,
+    fontWeight: "700",
+    textAlign: "center",
+    marginTop: 16,
+  },
+  pageSub: {
+    color: "#fff",
+    fontSize: 16,
+    textAlign: "center",
+    marginVertical: 8,
+    paddingHorizontal: 16,
   },
   content: {
     paddingHorizontal: 16,

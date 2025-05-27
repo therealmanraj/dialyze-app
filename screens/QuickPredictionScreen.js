@@ -11,8 +11,6 @@ import {
 } from "react-native";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
 
-import BottomTabBar from "./components/BottomTabBar";
-
 export default function QuickPredictionScreen({ navigation }) {
   const [creatinine, setCreatinine] = useState("");
   const [bun, setBun] = useState("");
@@ -32,14 +30,12 @@ export default function QuickPredictionScreen({ navigation }) {
       <View style={styles.header}>
         <Text style={styles.headerTitle}>Dialyze</Text>
       </View>
-
+      <Text style={styles.pageTitle}>Quick Prediction</Text>
+      <Text style={styles.pageSub}>
+        Enter lab values to get an immediate prediction of Acute Kidney Injury
+        risk and dialysis need.
+      </Text>
       <ScrollView contentContainerStyle={styles.content}>
-        <Text style={styles.title}>Quick Prediction</Text>
-        <Text style={styles.subtitle}>
-          Enter lab values to get an immediate prediction of Acute Kidney Injury
-          risk and dialysis need.
-        </Text>
-
         {[
           {
             placeholder: "Creatinine (mg/dL)",
@@ -72,8 +68,6 @@ export default function QuickPredictionScreen({ navigation }) {
           <Text style={styles.predictButtonText}>Predict</Text>
         </TouchableOpacity>
       </ScrollView>
-
-      <BottomTabBar activeTab="Predictions" navigation={navigation} />
     </SafeAreaView>
   );
 }
@@ -81,31 +75,33 @@ export default function QuickPredictionScreen({ navigation }) {
 const styles = StyleSheet.create({
   root: { flex: 1, backgroundColor: "#151a1e" },
   header: {
-    padding: 16,
     backgroundColor: "#151a1e",
-    alignItems: "center",
+    paddingVertical: 12,
+    paddingHorizontal: 16,
   },
   headerTitle: {
     color: "#fff",
     fontSize: 18,
     fontWeight: "700",
+    textAlign: "center",
   },
   content: {
     paddingHorizontal: 16,
     paddingTop: 8,
   },
-  title: {
+  pageTitle: {
     color: "#fff",
     fontSize: 28,
     fontWeight: "700",
     textAlign: "center",
-    marginTop: 8,
+    marginTop: 16,
   },
-  subtitle: {
+  pageSub: {
     color: "#fff",
     fontSize: 16,
     textAlign: "center",
-    marginVertical: 12,
+    marginVertical: 8,
+    paddingHorizontal: 16,
   },
   input: {
     backgroundColor: "#233748",

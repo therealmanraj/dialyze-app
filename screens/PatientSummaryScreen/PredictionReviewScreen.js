@@ -9,7 +9,7 @@ import {
   StyleSheet,
 } from "react-native";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
-import ProfileHeader from "../components/PatientSummaryScreen/ProfileHeader";
+import ProfileHeader from "./components/ProfileHeader";
 
 export default function PredictionReviewScreen({ route, navigation }) {
   // pull in everything you passed when you navigated:
