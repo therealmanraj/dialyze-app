@@ -93,7 +93,10 @@ export default function HomeScreen({ navigation }) {
       {/* Patients header + add button */}
       <View style={styles.patientsHeader}>
         <Text style={styles.patientsTitle}>Patients</Text>
-        <TouchableOpacity style={styles.addButton}>
+        <TouchableOpacity
+          style={styles.addButton}
+          onPress={() => navigation.navigate("AddNewPatient")}
+        >
           <Text style={styles.addButtonText}>Add Patient</Text>
         </TouchableOpacity>
       </View>

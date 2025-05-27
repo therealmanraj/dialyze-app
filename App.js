@@ -6,6 +6,7 @@ import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
 
 import HomeScreen from "./screens/HomeScreen";
+import AddNewPatientScreen from "./screens/AddNewPatientScreen";
 import QuickPredictionScreen from "./screens/QuickPredictionScreen";
 import SettingsScreen from "./screens/SettingsScreen";
 
@@ -81,6 +82,14 @@ export default function App() {
         <Stack.Screen
           name="Summary"
           component={PatientSummaryScreen}
+          options={{
+            animation: "slide_from_right",
+            gestureEnabled: true,
+          }}
+        />
+        <Stack.Screen
+          name="AddNewPatient"
+          component={AddNewPatientScreen}
           options={{
             animation: "slide_from_right",
             gestureEnabled: true,
