@@ -9,10 +9,10 @@ import {
 } from "react-native";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
 
-import ProfileHeader from "./components/PatientSummaryScreen/ProfileHeader";
-import ClinicalInfoSection from "./components/PatientSummaryScreen/ClinicalInfoSection";
-import RiskSection from "./components/PatientSummaryScreen/RiskSection";
-import LabTrendsSection from "./components/PatientSummaryScreen/LabTrendsSection";
+import ProfileHeader from "./PatientSummaryScreen/components/ProfileHeader";
+import ClinicalInfoSection from "./PatientSummaryScreen/components/ClinicalInfoSection";
+import RiskSection from "./PatientSummaryScreen/components/RiskSection";
+import LabTrendsSection from "./PatientSummaryScreen/components/LabTrendsSection";
 
 export default function PatientSummaryScreen({ route, navigation }) {
   const { patient } = route.params;

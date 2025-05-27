@@ -10,7 +10,6 @@ import {
   StyleSheet,
 } from "react-native";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
-import BottomTabBar from "./components/BottomTabBar";
 
 export default function SettingsScreen({ navigation }) {
   const [notificationsEnabled, setNotificationsEnabled] = useState(false);
@@ -81,9 +80,6 @@ export default function SettingsScreen({ navigation }) {
           />
         </TouchableOpacity>
       </ScrollView>
-
-      {/* Bottom tabs */}
-      <BottomTabBar activeTab="Settings" navigation={navigation} />
     </SafeAreaView>
   );
 }

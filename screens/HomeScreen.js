@@ -12,8 +12,6 @@ import {
 } from "react-native";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
 
-import BottomTabBar from "./components/BottomTabBar";
-
 const DEMO_PATIENTS = [
   {
     id: "1",
@@ -130,7 +128,6 @@ export default function HomeScreen({ navigation }) {
           </TouchableOpacity>
         )}
       />
-      <BottomTabBar activeTab="Home" navigation={navigation} />
     </SafeAreaView>
   );
 }

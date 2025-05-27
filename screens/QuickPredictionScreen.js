@@ -11,8 +11,6 @@ import {
 } from "react-native";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
 
-import BottomTabBar from "./components/BottomTabBar";
-
 export default function QuickPredictionScreen({ navigation }) {
   const [creatinine, setCreatinine] = useState("");
   const [bun, setBun] = useState("");
@@ -72,8 +70,6 @@ export default function QuickPredictionScreen({ navigation }) {
           <Text style={styles.predictButtonText}>Predict</Text>
         </TouchableOpacity>
       </ScrollView>
-
-      <BottomTabBar activeTab="Predictions" navigation={navigation} />
     </SafeAreaView>
   );
 }

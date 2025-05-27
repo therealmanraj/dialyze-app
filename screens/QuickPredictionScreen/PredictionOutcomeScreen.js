@@ -8,7 +8,6 @@ import {
   TouchableOpacity,
   StyleSheet,
 } from "react-native";
-import BottomTabBar from "../components/BottomTabBar";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
 
 export default function PredictionOutcomeScreen({ navigation, route }) {
@@ -54,9 +53,6 @@ export default function PredictionOutcomeScreen({ navigation, route }) {
           <Text style={styles.addButtonText}>Add as New Patient</Text>
         </TouchableOpacity>
       </ScrollView>
-
-      {/* Bottom nav */}
-      <BottomTabBar activeTab="Predictions" navigation={navigation} />
     </SafeAreaView>
   );
 }
