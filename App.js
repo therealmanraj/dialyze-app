@@ -57,7 +57,25 @@ export default function App() {
         screenOptions={{ headerShown: false, animation: "none" }}
       >
         {/* your 3 top-level tabs */}
-        <Stack.Screen name="MainTabs" component={MainTabs} />
+        <Stack.Screen
+          name="MainTabs"
+          component={MainTabs}
+          options={{
+            animation: "slide_from_bottom",
+            // other options
+            // options={{
+            //   animation: 'slide_from_right',   // slide in from the right
+            //   animation: 'slide_from_left',    // slide in from the left
+            //   animation: 'slide_from_bottom',  // slide up from the bottom
+            //   animation: 'fade',               // cross-fade
+            //   animation: 'fade_from_bottom',   // fade + slight upward motion
+            //   animation: 'flip',               // card flip
+            //   animation: 'default',            // platform default
+            //   animation: 'none',               // no animation
+            // }}
+            gestureEnabled: true,
+          }}
+        />
 
         {/* patient-detail flows */}
         <Stack.Screen
@@ -102,7 +120,14 @@ export default function App() {
             gestureEnabled: true,
           }}
         />
-        <Stack.Screen name="AddPatient" component={AddPatientScreen} />
+        <Stack.Screen
+          name="AddPatient"
+          component={AddPatientScreen}
+          options={{
+            animation: "slide_from_right",
+            gestureEnabled: true,
+          }}
+        />
       </Stack.Navigator>
     </NavigationContainer>
   );

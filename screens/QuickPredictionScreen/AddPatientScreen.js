@@ -47,7 +47,7 @@ export default function AddPatientScreen({ navigation }) {
 
   function handleAdd() {
     // TODO: validate & save the new patient
-    navigation.navigate("Home");
+    navigation.navigate("MainTabs", { screen: "Home" });
   }
 
   return (
