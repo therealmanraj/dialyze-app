@@ -1,5 +1,5 @@
 // screens/HomeScreen.js
-import React, { useState, useRef } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import {
   SafeAreaView,
   View,
@@ -70,27 +70,22 @@ const INITIAL_PATIENTS = [
 
 function PatientRow({ item, onPress, onDelete }) {
   const opacity = useRef(new Animated.Value(1)).current;
-
   const handleDelete = () => {
-    // 1) Fade out
     Animated.timing(opacity, {
       toValue: 0,
       duration: 300,
       useNativeDriver: true,
     }).start(() => {
-      // 2) Then animate layout and actually remove
       LayoutAnimation.configureNext(LayoutAnimation.Presets.easeInEaseOut);
       onDelete(item.id);
     });
   };
-
   const rightAction = () => (
     <RectButton style={styles.deleteButton} onPress={handleDelete}>
       <MaterialCommunityIcons name="trash-can" size={24} color="#fff" />
       <Text style={styles.deleteText}>Delete</Text>
     </RectButton>
   );
-
   return (
     <Swipeable renderRightActions={rightAction}>
       <Animated.View style={{ opacity }}>
@@ -116,14 +111,22 @@ function PatientRow({ item, onPress, onDelete }) {
   );
 }
 
-export default function HomeScreen({ navigation }) {
+export default function HomeScreen({ navigation, route }) {
   const [search, setSearch] = useState("");
   const [patients, setPatients] = useState(INITIAL_PATIENTS);
+
+  // When coming back from AddNewPatient, merge in the new one:
+  useEffect(() => {
+    const np = route.params?.newPatient;
+    if (np) {
+      setPatients((prev) => [np, ...prev]);
+      navigation.setParams({ newPatient: undefined });
+    }
+  }, [route.params?.newPatient]);
 
   const filtered = patients.filter((p) =>
     p.name.toLowerCase().includes(search.toLowerCase())
   );
-
   const handleDelete = (id) =>
     setPatients((prev) => prev.filter((p) => p.id !== id));
 
@@ -137,6 +140,7 @@ export default function HomeScreen({ navigation }) {
         Explore the app’s functionality with our demo patient list.
       </Text>
 
+      {/* Search bar */}
       <View style={styles.searchWrapper}>
         <MaterialCommunityIcons
           name="magnify"
@@ -153,6 +157,7 @@ export default function HomeScreen({ navigation }) {
         />
       </View>
 
+      {/* Header + Add */}
       <View style={styles.patientsHeader}>
         <Text style={styles.patientsTitle}>Patients</Text>
         <TouchableOpacity
@@ -163,6 +168,7 @@ export default function HomeScreen({ navigation }) {
         </TouchableOpacity>
       </View>
 
+      {/* List */}
       <FlatList
         data={filtered}
         keyExtractor={(item) => item.id}
@@ -181,7 +187,6 @@ export default function HomeScreen({ navigation }) {
 
 const styles = StyleSheet.create({
   root: { flex: 1, backgroundColor: "#151a1e" },
-
   header: {
     backgroundColor: "#151a1e",
     paddingVertical: 12,
@@ -193,7 +198,6 @@ const styles = StyleSheet.create({
     fontWeight: "700",
     textAlign: "center",
   },
-
   pageTitle: {
     color: "#fff",
     fontSize: 28,
@@ -208,7 +212,6 @@ const styles = StyleSheet.create({
     marginVertical: 8,
     paddingHorizontal: 16,
   },
-
   searchWrapper: {
     flexDirection: "row",
     backgroundColor: "#2b3740",
@@ -221,7 +224,6 @@ const styles = StyleSheet.create({
   },
   searchIcon: { marginRight: 8 },
   searchInput: { flex: 1, color: "#fff", fontSize: 16 },
-
   patientsHeader: {
     flexDirection: "row",
     alignItems: "center",
@@ -237,7 +239,6 @@ const styles = StyleSheet.create({
     borderRadius: 20,
   },
   addButtonText: { color: "#151a1e", fontWeight: "700", fontSize: 14 },
-
   patientRow: {
     flexDirection: "row",
     alignItems: "center",
@@ -251,7 +252,6 @@ const styles = StyleSheet.create({
   avatar: { width: 56, height: 56, borderRadius: 28, backgroundColor: "#333" },
   patientName: { color: "#fff", fontSize: 16, fontWeight: "500" },
   patientDetails: { color: "#9eafbd", fontSize: 14 },
-
   pill: {
     flexDirection: "row",
     alignItems: "center",
@@ -268,10 +268,8 @@ const styles = StyleSheet.create({
     color: "#fff",
     fontSize: 14,
     fontWeight: "500",
-    marginRight: 6,
   },
   pillDot: { width: 10, height: 10, borderRadius: 5, marginRight: 8 },
-
   deleteButton: {
     backgroundColor: "red",
     justifyContent: "center",
