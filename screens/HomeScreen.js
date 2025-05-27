@@ -171,15 +171,15 @@ export default function HomeScreen({ navigation, route }) {
       {/* List */}
       <FlatList
         data={filtered}
-        keyExtractor={(item) => item.id}
-        contentContainerStyle={{ paddingBottom: 80 }}
+        keyExtractor={(item) => item.id.toString()}
         renderItem={({ item }) => (
           <PatientRow
             item={item}
             onPress={() => navigation.navigate("Summary", { patient: item })}
-            onDelete={handleDelete}
+            onDelete={() => handleDelete(item.id)}
           />
         )}
+        contentContainerStyle={{ paddingBottom: 80 }}
       />
     </SafeAreaView>
   );

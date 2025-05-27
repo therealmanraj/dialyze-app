@@ -31,18 +31,16 @@ export default function AddNewPatientScreen({ navigation }) {
   const [labValues, setLabValues] = useState({});
 
   function handleSave() {
-    // build a minimal Home-list entry
     const newPatient = {
-      id: Date.now().toString(),
+      id: Date.now().toString(), // ← unique id
       name: clin.name,
       details: `Age: ${clin.age}, ${clin.gender}`,
-      avatar: clin.photoUri, // your uploaded photo
-      riskLabel: "N/A", // or whatever default
+      avatar: clin.photoUri, // if you want to show their photo
+      riskLabel: "N/A", // you can default these
       riskPct: "N/A",
       riskColor: "#ccc",
     };
 
-    // navigate back to Home, passing newPatient as a param
     navigation.navigate("MainTabs", {
       screen: "Home",
       params: { newPatient },

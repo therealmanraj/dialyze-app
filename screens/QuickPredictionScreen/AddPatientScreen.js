@@ -1,4 +1,4 @@
-// screens/AddPatientScreen.js
+// screens/QuickPredictionScreen/AddPatientScreen.js
 import React, { useState } from "react";
 import {
   SafeAreaView,
@@ -13,7 +13,8 @@ import {
 import { MaterialCommunityIcons } from "@expo/vector-icons";
 import ClinicalInfoInputs from "../components/ClinicalInfoInputs";
 
-export default function AddPatientScreen({ navigation }) {
+export default function AddPatientScreen({ navigation, route }) {
+  const { akiRisk, dialysisNeed, labValues } = route.params;
   const [clin, setClin] = useState({
     name: "",
     photoUri: null,
@@ -23,9 +24,37 @@ export default function AddPatientScreen({ navigation }) {
     weight: "",
   });
 
+  // function handleAdd() {
+  //   // navigate back into the tabs, injecting newPatient
+  //   navigation.navigate("MainTabs", {
+  //     screen: "Home",
+  //     params: { newPatient: clin },
+  //   });
+  // }
+
   function handleAdd() {
-    // TODO: persist patient (clin)
-    navigation.navigate("MainTabs", { screen: "Home" });
+    // 1) Build a full patient object, with a string ID so keyExtractor never sees undefined
+    const newPatient = {
+      id: Date.now().toString(),
+      name: clin.name,
+      details: `Age: ${clin.age}, ${clin.gender}`,
+      avatar: clin.photoUri,
+      riskLabel: akiRisk,
+      riskPct: dialysisNeed,
+      riskColor:
+        akiRisk === "High"
+          ? "#e33e3e"
+          : akiRisk === "Medium"
+          ? "#0bda5b"
+          : "#ccc",
+      labValues, // if you want to keep them around
+    };
+
+    // 2) Navigate back into Home, passing the newPatient param
+    navigation.navigate("MainTabs", {
+      screen: "Home",
+      params: { newPatient },
+    });
   }
 
   return (
@@ -45,12 +74,8 @@ export default function AddPatientScreen({ navigation }) {
         behavior={Platform.OS === "ios" ? "padding" : "height"}
         keyboardVerticalOffset={0}
       >
-        <ScrollView
-          contentContainerStyle={styles.content}
-          keyboardShouldPersistTaps="handled"
-        >
+        <ScrollView contentContainerStyle={styles.content}>
           <Text style={styles.title}>Add Patient Details</Text>
-
           <ClinicalInfoInputs
             name={clin.name}
             setName={(v) => setClin({ ...clin, name: v })}

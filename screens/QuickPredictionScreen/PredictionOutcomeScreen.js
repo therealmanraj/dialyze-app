@@ -11,7 +11,7 @@ import {
 import { MaterialCommunityIcons } from "@expo/vector-icons";
 
 export default function PredictionOutcomeScreen({ navigation, route }) {
-  const { akiRisk, dialysisNeed } = route.params;
+  const { akiRisk, dialysisNeed, labValues } = route.params;
 
   return (
     <SafeAreaView style={styles.root}>
@@ -46,9 +46,13 @@ export default function PredictionOutcomeScreen({ navigation, route }) {
 
         <TouchableOpacity
           style={styles.addButton}
-          onPress={() => {
-            navigation.navigate("AddPatient");
-          }}
+          onPress={() =>
+            navigation.navigate("AddPatient", {
+              akiRisk,
+              dialysisNeed,
+              labValues,
+            })
+          }
         >
           <Text style={styles.addButtonText}>Add as New Patient</Text>
         </TouchableOpacity>
