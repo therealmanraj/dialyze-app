@@ -6,23 +6,23 @@ import {
   ScrollView,
   View,
   Text,
-  TextInput,
   TouchableOpacity,
   StyleSheet,
   Platform,
 } from "react-native";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
+import LabValuesInputs from "./components/LabValuesInputs";
 
 export default function QuickPredictionScreen({ navigation }) {
-  const [creatinine, setCreatinine] = useState("");
-  const [bun, setBun] = useState("");
-  const [potassium, setPotassium] = useState("");
-  const [urineOutput, setUrineOutput] = useState("");
+  // unified lab‐values state
+  const [labValues, setLabValues] = useState({});
 
   function handlePredict() {
+    // You can pick out just the four you care about, or pass the whole object
     navigation.navigate("PredictionOutcome", {
       akiRisk: "Moderate",
       dialysisNeed: "Low",
+      labValues,
     });
   }
 
@@ -40,7 +40,7 @@ export default function QuickPredictionScreen({ navigation }) {
         risk and dialysis need.
       </Text>
 
-      {/* only inputs + button live in KeyboardAvoidingView */}
+      {/* inputs + button slide up above keyboard */}
       <KeyboardAvoidingView
         style={{ flex: 1 }}
         behavior={Platform.OS === "ios" ? "padding" : "height"}
@@ -50,34 +50,8 @@ export default function QuickPredictionScreen({ navigation }) {
           contentContainerStyle={styles.content}
           keyboardShouldPersistTaps="handled"
         >
-          {[
-            {
-              placeholder: "Creatinine (mg/dL)",
-              value: creatinine,
-              onChange: setCreatinine,
-            },
-            { placeholder: "BUN (mg/dL)", value: bun, onChange: setBun },
-            {
-              placeholder: "Potassium (mEq/L)",
-              value: potassium,
-              onChange: setPotassium,
-            },
-            {
-              placeholder: "Urine Output (mL/day)",
-              value: urineOutput,
-              onChange: setUrineOutput,
-            },
-          ].map(({ placeholder, value, onChange }) => (
-            <TextInput
-              key={placeholder}
-              style={styles.input}
-              placeholder={placeholder}
-              placeholderTextColor="#91b0ca"
-              keyboardType="numeric"
-              value={value}
-              onChangeText={onChange}
-            />
-          ))}
+          {/* inject shared LabValuesInputs here */}
+          <LabValuesInputs labValues={labValues} setLabValues={setLabValues} />
         </ScrollView>
 
         <View style={styles.footer}>
@@ -125,15 +99,7 @@ const styles = StyleSheet.create({
 
   content: {
     paddingHorizontal: 16,
-  },
-  input: {
-    backgroundColor: "#233748",
-    borderRadius: 12,
-    height: 56,
-    paddingHorizontal: 16,
-    color: "#fff",
-    fontSize: 16,
-    marginVertical: 8,
+    paddingTop: 8,
   },
 
   footer: {
