@@ -28,7 +28,11 @@ export default function App() {
         <Stack.Screen
           name="Home"
           component={HomeScreen}
-          options={{ gestureEnabled: false }}
+          options={{
+            headerShown: false,
+            gestureEnabled: false,
+            animation: "none",
+          }}
         />
         <Stack.Screen name="Summary" component={PatientSummaryScreen} />
         <Stack.Screen
@@ -43,7 +47,11 @@ export default function App() {
         <Stack.Screen
           name="QuickPrediction"
           component={QuickPredictionScreen}
-          options={{ headerShown: false, gestureEnabled: false }}
+          options={{
+            headerShown: false,
+            gestureEnabled: false,
+            animation: "none",
+          }}
         />
         <Stack.Screen
           name="PredictionOutcome"
@@ -65,7 +73,11 @@ export default function App() {
         <Stack.Screen
           name="Settings"
           component={SettingsScreen}
-          options={{ gestureEnabled: false }}
+          options={{
+            headerShown: false,
+            gestureEnabled: false,
+            animation: "none",
+          }}
         />
       </Stack.Navigator>
     </NavigationContainer>
