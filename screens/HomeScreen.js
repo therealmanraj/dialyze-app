@@ -1,5 +1,5 @@
 // screens/HomeScreen.js
-import React, { useState } from "react";
+import React, { useState, useRef } from "react";
 import {
   SafeAreaView,
   View,
@@ -9,9 +9,21 @@ import {
   TouchableOpacity,
   Image,
   StyleSheet,
+  Animated,
+  LayoutAnimation,
+  Platform,
+  UIManager,
 } from "react-native";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
 import { Swipeable, RectButton } from "react-native-gesture-handler";
+
+// Enable LayoutAnimation on Android
+if (
+  Platform.OS === "android" &&
+  UIManager.setLayoutAnimationEnabledExperimental
+) {
+  UIManager.setLayoutAnimationEnabledExperimental(true);
+}
 
 const INITIAL_PATIENTS = [
   {
@@ -56,6 +68,54 @@ const INITIAL_PATIENTS = [
   },
 ];
 
+function PatientRow({ item, onPress, onDelete }) {
+  const opacity = useRef(new Animated.Value(1)).current;
+
+  const handleDelete = () => {
+    // 1) Fade out
+    Animated.timing(opacity, {
+      toValue: 0,
+      duration: 300,
+      useNativeDriver: true,
+    }).start(() => {
+      // 2) Then animate layout and actually remove
+      LayoutAnimation.configureNext(LayoutAnimation.Presets.easeInEaseOut);
+      onDelete(item.id);
+    });
+  };
+
+  const rightAction = () => (
+    <RectButton style={styles.deleteButton} onPress={handleDelete}>
+      <MaterialCommunityIcons name="trash-can" size={24} color="#fff" />
+      <Text style={styles.deleteText}>Delete</Text>
+    </RectButton>
+  );
+
+  return (
+    <Swipeable renderRightActions={rightAction}>
+      <Animated.View style={{ opacity }}>
+        <TouchableOpacity style={styles.patientRow} onPress={onPress}>
+          <View style={styles.patientInfo}>
+            <Image source={{ uri: item.avatar }} style={styles.avatar} />
+            <View style={{ marginLeft: 12 }}>
+              <Text style={styles.patientName}>{item.name}</Text>
+              <Text style={styles.patientDetails}>{item.details}</Text>
+            </View>
+          </View>
+          <View style={styles.pill}>
+            <Text style={styles.pillText}>
+              {item.riskLabel} – {item.riskPct}
+            </Text>
+            <View
+              style={[styles.pillDot, { backgroundColor: item.riskColor }]}
+            />
+          </View>
+        </TouchableOpacity>
+      </Animated.View>
+    </Swipeable>
+  );
+}
+
 export default function HomeScreen({ navigation }) {
   const [search, setSearch] = useState("");
   const [patients, setPatients] = useState(INITIAL_PATIENTS);
@@ -66,36 +126,6 @@ export default function HomeScreen({ navigation }) {
 
   const handleDelete = (id) =>
     setPatients((prev) => prev.filter((p) => p.id !== id));
-
-  const renderRightActions = (id) => (
-    <RectButton style={styles.deleteButton} onPress={() => handleDelete(id)}>
-      <MaterialCommunityIcons name="trash-can" size={24} color="#fff" />
-      <Text style={styles.deleteText}>Delete</Text>
-    </RectButton>
-  );
-
-  const renderItem = ({ item }) => (
-    <Swipeable renderRightActions={() => renderRightActions(item.id)}>
-      <TouchableOpacity
-        style={styles.patientRow}
-        onPress={() => navigation.navigate("Summary", { patient: item })}
-      >
-        <View style={styles.patientInfo}>
-          <Image source={{ uri: item.avatar }} style={styles.avatar} />
-          <View style={{ marginLeft: 12 }}>
-            <Text style={styles.patientName}>{item.name}</Text>
-            <Text style={styles.patientDetails}>{item.details}</Text>
-          </View>
-        </View>
-        <View style={styles.pill}>
-          <Text style={styles.pillText}>
-            {item.riskLabel} – {item.riskPct}
-          </Text>
-          <View style={[styles.pillDot, { backgroundColor: item.riskColor }]} />
-        </View>
-      </TouchableOpacity>
-    </Swipeable>
-  );
 
   return (
     <SafeAreaView style={styles.root}>
@@ -137,7 +167,13 @@ export default function HomeScreen({ navigation }) {
         data={filtered}
         keyExtractor={(item) => item.id}
         contentContainerStyle={{ paddingBottom: 80 }}
-        renderItem={renderItem}
+        renderItem={({ item }) => (
+          <PatientRow
+            item={item}
+            onPress={() => navigation.navigate("Summary", { patient: item })}
+            onDelete={handleDelete}
+          />
+        )}
       />
     </SafeAreaView>
   );
@@ -145,6 +181,7 @@ export default function HomeScreen({ navigation }) {
 
 const styles = StyleSheet.create({
   root: { flex: 1, backgroundColor: "#151a1e" },
+
   header: {
     backgroundColor: "#151a1e",
     paddingVertical: 12,
@@ -156,6 +193,7 @@ const styles = StyleSheet.create({
     fontWeight: "700",
     textAlign: "center",
   },
+
   pageTitle: {
     color: "#fff",
     fontSize: 28,
@@ -170,6 +208,7 @@ const styles = StyleSheet.create({
     marginVertical: 8,
     paddingHorizontal: 16,
   },
+
   searchWrapper: {
     flexDirection: "row",
     backgroundColor: "#2b3740",
@@ -182,6 +221,7 @@ const styles = StyleSheet.create({
   },
   searchIcon: { marginRight: 8 },
   searchInput: { flex: 1, color: "#fff", fontSize: 16 },
+
   patientsHeader: {
     flexDirection: "row",
     alignItems: "center",
@@ -211,6 +251,7 @@ const styles = StyleSheet.create({
   avatar: { width: 56, height: 56, borderRadius: 28, backgroundColor: "#333" },
   patientName: { color: "#fff", fontSize: 16, fontWeight: "500" },
   patientDetails: { color: "#9eafbd", fontSize: 14 },
+
   pill: {
     flexDirection: "row",
     alignItems: "center",
