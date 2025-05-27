@@ -2,6 +2,7 @@
 import React, { useState, useEffect } from "react";
 import {
   SafeAreaView,
+  KeyboardAvoidingView,
   ScrollView,
   View,
   Text,
@@ -52,7 +53,7 @@ export default function AddPatientScreen({ navigation }) {
 
   return (
     <SafeAreaView style={styles.root}>
-      {/* Header */}
+      {/* fixed header */}
       <View style={styles.header}>
         <TouchableOpacity onPress={() => navigation.goBack()}>
           <MaterialCommunityIcons name="arrow-left" size={24} color="#fff" />
@@ -61,72 +62,87 @@ export default function AddPatientScreen({ navigation }) {
         <View style={{ width: 24 }} />
       </View>
 
-      <ScrollView contentContainerStyle={styles.content}>
-        <Text style={styles.title}>Add Patient Details</Text>
+      {/* inputs + footer slide up */}
+      <KeyboardAvoidingView
+        style={{ flex: 1 }}
+        behavior={Platform.OS === "ios" ? "padding" : "height"}
+        keyboardVerticalOffset={0}
+      >
+        <ScrollView
+          contentContainerStyle={styles.content}
+          keyboardShouldPersistTaps="handled"
+        >
+          <Text style={styles.title}>Add Patient Details</Text>
 
-        {/* Patient Name */}
-        <TextInput
-          style={styles.input}
-          placeholder="Patient Name"
-          placeholderTextColor="#9eafbd"
-          value={name}
-          onChangeText={setName}
-        />
+          {/* Patient Name */}
+          <TextInput
+            style={styles.input}
+            placeholder="Patient Name"
+            placeholderTextColor="#9eafbd"
+            value={name}
+            onChangeText={setName}
+          />
 
-        {/* Photo picker */}
-        <TouchableOpacity style={styles.photoRow} onPress={pickImage}>
-          {photoUri ? (
-            <Image source={{ uri: photoUri }} style={styles.photo} />
-          ) : (
-            <MaterialCommunityIcons
-              name="camera"
-              size={24}
-              color="#fff"
-              style={styles.photoIcon}
-            />
-          )}
-          <Text style={styles.photoText}>
-            {photoUri ? "Change Photo" : "Add Patient Photo"}
-          </Text>
-        </TouchableOpacity>
+          {/* Photo picker */}
+          <TouchableOpacity style={styles.photoRow} onPress={pickImage}>
+            {photoUri ? (
+              <Image source={{ uri: photoUri }} style={styles.photo} />
+            ) : (
+              <MaterialCommunityIcons
+                name="camera"
+                size={24}
+                color="#fff"
+                style={styles.photoIcon}
+              />
+            )}
+            <Text style={styles.photoText}>
+              {photoUri ? "Change Photo" : "Add Patient Photo"}
+            </Text>
+          </TouchableOpacity>
 
-        <Text style={styles.sectionTitle}>Clinical Information</Text>
+          <Text style={styles.sectionTitle}>Clinical Information</Text>
 
-        {/* Clinical fields */}
-        <TextInput
-          style={styles.input}
-          placeholder="Creatinine (mg/dL)"
-          placeholderTextColor="#9eafbd"
-          value={creatinine}
-          onChangeText={setCreatinine}
-        />
-        <TextInput
-          style={styles.input}
-          placeholder="Urine Output (mL/day)"
-          placeholderTextColor="#9eafbd"
-          value={urineOutput}
-          onChangeText={setUrineOutput}
-        />
-        <TextInput
-          style={styles.input}
-          placeholder="Age (years)"
-          placeholderTextColor="#9eafbd"
-          value={age}
-          onChangeText={setAge}
-          keyboardType="numeric"
-        />
-        <TextInput
-          style={styles.input}
-          placeholder="Gender"
-          placeholderTextColor="#9eafbd"
-          value={gender}
-          onChangeText={setGender}
-        />
+          {/* Clinical fields */}
+          <TextInput
+            style={styles.input}
+            placeholder="Creatinine (mg/dL)"
+            placeholderTextColor="#9eafbd"
+            value={creatinine}
+            onChangeText={setCreatinine}
+            keyboardType="numeric"
+          />
+          <TextInput
+            style={styles.input}
+            placeholder="Urine Output (mL/day)"
+            placeholderTextColor="#9eafbd"
+            value={urineOutput}
+            onChangeText={setUrineOutput}
+            keyboardType="numeric"
+          />
+          <TextInput
+            style={styles.input}
+            placeholder="Age (years)"
+            placeholderTextColor="#9eafbd"
+            value={age}
+            onChangeText={setAge}
+            keyboardType="numeric"
+          />
+          <TextInput
+            style={styles.input}
+            placeholder="Gender"
+            placeholderTextColor="#9eafbd"
+            value={gender}
+            onChangeText={setGender}
+          />
+        </ScrollView>
 
-        <TouchableOpacity style={styles.addButton} onPress={handleAdd}>
-          <Text style={styles.addButtonText}>Add</Text>
-        </TouchableOpacity>
-      </ScrollView>
+        {/* always-visible footer button */}
+        <View style={styles.footer}>
+          <TouchableOpacity style={styles.addButton} onPress={handleAdd}>
+            <Text style={styles.addButtonText}>Add</Text>
+          </TouchableOpacity>
+        </View>
+      </KeyboardAvoidingView>
     </SafeAreaView>
   );
 }
@@ -150,7 +166,7 @@ const styles = StyleSheet.create({
   content: {
     paddingHorizontal: 16,
     paddingTop: 8,
-    paddingBottom: 24,
+    paddingBottom: 16,
   },
   title: {
     color: "#fff",
@@ -191,13 +207,16 @@ const styles = StyleSheet.create({
     marginBottom: 8,
   },
 
+  footer: {
+    padding: 16,
+    backgroundColor: "#151a1e",
+  },
   addButton: {
     backgroundColor: "#cedfed",
     height: 48,
     borderRadius: 24,
     alignItems: "center",
     justifyContent: "center",
-    marginTop: 24,
   },
   addButtonText: {
     color: "#151a1e",
