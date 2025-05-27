@@ -2,12 +2,14 @@
 import React, { useState } from "react";
 import {
   SafeAreaView,
+  KeyboardAvoidingView,
   ScrollView,
   View,
   Text,
   TextInput,
   TouchableOpacity,
   StyleSheet,
+  Platform,
 } from "react-native";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
 
@@ -42,27 +44,38 @@ export default function UpdatePredictionScreen({ navigation }) {
         <View style={{ width: 24 }} />
       </View>
 
-      <ScrollView contentContainerStyle={styles.content}>
-        {fields.map(({ label, value, setter }) => (
-          <View key={label}>
-            <Text style={styles.inputLabel}>{label}</Text>
-            <TextInput
-              style={styles.input}
-              placeholder="Enter value"
-              placeholderTextColor="#91b0ca"
-              value={value}
-              onChangeText={setter}
-            />
-          </View>
-        ))}
-      </ScrollView>
+      {/* —— this lifts whole form & footer above keyboard —— */}
+      <KeyboardAvoidingView
+        style={{ flex: 1 }}
+        behavior={Platform.OS === "ios" ? "padding" : "height"}
+        keyboardVerticalOffset={0}
+      >
+        <ScrollView
+          contentContainerStyle={styles.content}
+          keyboardShouldPersistTaps="handled"
+        >
+          {fields.map(({ label, value, setter }) => (
+            <View key={label}>
+              <Text style={styles.inputLabel}>{label}</Text>
+              <TextInput
+                style={styles.input}
+                placeholder="Enter value"
+                placeholderTextColor="#91b0ca"
+                value={value}
+                onChangeText={setter}
+                keyboardType="numeric"
+              />
+            </View>
+          ))}
+        </ScrollView>
 
-      {/* —— Update button —— */}
-      <View style={styles.footer}>
-        <TouchableOpacity style={styles.updateButton} onPress={handleUpdate}>
-          <Text style={styles.updateButtonText}>Update</Text>
-        </TouchableOpacity>
-      </View>
+        {/* —— Update button always visible at bottom —— */}
+        <View style={styles.footer}>
+          <TouchableOpacity style={styles.updateButton} onPress={handleUpdate}>
+            <Text style={styles.updateButtonText}>Update</Text>
+          </TouchableOpacity>
+        </View>
+      </KeyboardAvoidingView>
     </SafeAreaView>
   );
 }
