@@ -1,10 +1,11 @@
+// screens/PatientSummaryScreen.js
 import React from "react";
 import {
   SafeAreaView,
   ScrollView,
-  TouchableOpacity,
-  Text,
   View,
+  Text,
+  TouchableOpacity,
   StyleSheet,
 } from "react-native";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
@@ -17,8 +18,19 @@ import LabTrendsSection from "./PatientSummaryScreen/components/LabTrendsSection
 export default function PatientSummaryScreen({ route, navigation }) {
   const { patient } = route.params;
 
+  // example labValues; you’ll want to pull these from your real data
+  const labValues = [
+    { label: "Creatinine", value: "2.5 mg/dL" },
+    { label: "BUN", value: "40 mg/dL" },
+    { label: "Potassium", value: "5.2 mEq/L" },
+    { label: "Sodium", value: "138 mEq/L" },
+    { label: "Bicarbonate", value: "22 mEq/L" },
+    { label: "Urine Output", value: "500 mL/day" },
+  ];
+
   return (
     <SafeAreaView style={styles.root}>
+      {/* Header */}
       <View style={styles.header}>
         <TouchableOpacity onPress={() => navigation.goBack()}>
           <MaterialCommunityIcons name="arrow-left" size={24} color="#fff" />
@@ -28,13 +40,15 @@ export default function PatientSummaryScreen({ route, navigation }) {
       </View>
 
       <ScrollView contentContainerStyle={{ paddingBottom: 40 }}>
+        {/* Profile */}
         <ProfileHeader
           avatar={patient.avatar}
           name={patient.name}
-          id="123456789"
+          id={patient.id}
           details={patient.details}
         />
 
+        {/* Clinical Info */}
         <ClinicalInfoSection
           data={[
             { label: "Weight", value: "75 kg" },
@@ -47,6 +61,7 @@ export default function PatientSummaryScreen({ route, navigation }) {
           onUpdate={() => navigation.navigate("UpdateClinicalInfo")}
         />
 
+        {/* Risk Section */}
         <RiskSection
           akiRisk={[
             { label: "Risk Score", value: "15%" },
@@ -55,6 +70,18 @@ export default function PatientSummaryScreen({ route, navigation }) {
           dialysisNeed={[{ label: "Probability", value: "5%" }]}
         />
 
+        {/* —— NEW: Lab Values Grid —— */}
+        <Text style={styles.sectionTitle}>Lab Values</Text>
+        <View style={styles.grid}>
+          {labValues.map((item) => (
+            <View key={item.label} style={styles.cell}>
+              <Text style={styles.cellLabel}>{item.label}</Text>
+              <Text style={styles.cellValue}>{item.value}</Text>
+            </View>
+          ))}
+        </View>
+
+        {/* (Optional) Lab Trends Chart */}
         <LabTrendsSection
           metric="Creatinine"
           value="1.2 mg/dL"
@@ -64,42 +91,17 @@ export default function PatientSummaryScreen({ route, navigation }) {
         />
       </ScrollView>
 
-      {/* Predict button */}
+      {/* —— UPDATED BUTTON —— */}
       <View style={styles.footer}>
         <TouchableOpacity
-          style={styles.predictButton}
+          style={styles.updateButton}
           onPress={() =>
-            navigation.navigate("PredictionReview", {
-              patient: {
-                avatar: patient.avatar,
-                name: patient.name,
-                id: patient.id,
-                details: patient.details,
-              },
-              prediction: {
-                akiRisk: "High (85%)",
-                dialysisNeed: "Likely (60%)",
-              },
-              clinicalInfo: [
-                { label: "Admission Date", value: "2024-07-26" },
-                { label: "Primary Diagnosis", value: "Sepsis" },
-                { label: "Comorbidities", value: "Hypertension, Diabetes" },
-                { label: "Medications", value: "Insulin, Metformin" },
-                { label: "Allergies", value: "Penicillin" },
-                { label: "Code Status", value: "Full Code" },
-              ],
-              labValues: [
-                { label: "Creatinine", value: "2.5 mg/dL" },
-                { label: "BUN", value: "40 mg/dL" },
-                { label: "Potassium", value: "5.2 mEq/L" },
-                { label: "Sodium", value: "138 mEq/L" },
-                { label: "Bicarbonate", value: "22 mEq/L" },
-                { label: "Urine Output", value: "500 mL/day" },
-              ],
+            navigation.navigate("UpdatePrediction", {
+              /* pass along whatever data UpdatePredictionScreen needs */
             })
           }
         >
-          <Text style={styles.predictText}>Predict</Text>
+          <Text style={styles.updateButtonText}>Update Predictions</Text>
         </TouchableOpacity>
       </View>
     </SafeAreaView>
@@ -121,19 +123,43 @@ const styles = StyleSheet.create({
     fontWeight: "700",
     textAlign: "center",
   },
-  predictButton: {
+
+  sectionTitle: {
+    color: "#fff",
+    fontSize: 22,
+    fontWeight: "700",
+    marginHorizontal: 16,
+    marginTop: 24,
+    marginBottom: 8,
+  },
+  grid: {
+    flexDirection: "row",
+    flexWrap: "wrap",
+    marginHorizontal: 16,
+  },
+  cell: {
+    width: "50%",
+    paddingVertical: 12,
+    borderTopWidth: 1,
+    borderColor: "#3e4e5b",
+    paddingHorizontal: 8,
+  },
+  cellLabel: { color: "#9eafbd", fontSize: 14 },
+  cellValue: { color: "#fff", fontSize: 14, marginTop: 4 },
+
+  footer: {
+    padding: 16,
+    backgroundColor: "#151a1e",
+  },
+  updateButton: {
     backgroundColor: "#cedfed",
     paddingVertical: 14,
     borderRadius: 24,
     alignItems: "center",
   },
-  predictText: {
+  updateButtonText: {
     color: "#151a1e",
     fontSize: 16,
     fontWeight: "700",
-  },
-  footer: {
-    padding: 16,
-    backgroundColor: "#151a1e",
   },
 });
