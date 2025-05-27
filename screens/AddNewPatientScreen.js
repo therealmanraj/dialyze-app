@@ -1,37 +1,36 @@
+// screens/AddNewPatientScreen.js
 import React, { useState } from "react";
 import {
   SafeAreaView,
+  KeyboardAvoidingView,
   ScrollView,
   View,
   Text,
   TextInput,
   TouchableOpacity,
   StyleSheet,
+  Platform,
 } from "react-native";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
 
 export default function AddNewPatientScreen({ navigation }) {
-  const [form, setForm] = useState({
-    name: "",
-    age: "",
-    gender: "",
-    notes: "",
-    creatinine: "",
-    bun: "",
-    urineOutput: "",
-    potassium: "",
-  });
+  const [name, setName] = useState("");
+  const [age, setAge] = useState("");
+  const [gender, setGender] = useState("");
+  const [notes, setNotes] = useState("");
+  const [creatinine, setCreatinine] = useState("");
+  const [bun, setBun] = useState("");
+  const [urineOutput, setUrineOutput] = useState("");
+  const [potassium, setPotassium] = useState("");
 
-  const update = (field, value) => setForm((f) => ({ ...f, [field]: value }));
-
-  const handleSave = () => {
-    // TODO: validate + persist
+  function handleSave() {
+    // TODO: persist patient
     navigation.goBack();
-  };
+  }
 
   return (
     <SafeAreaView style={styles.root}>
-      {/* — Header — */}
+      {/* header stays fixed */}
       <View style={styles.header}>
         <TouchableOpacity onPress={() => navigation.goBack()}>
           <MaterialCommunityIcons name="arrow-left" size={24} color="#fff" />
@@ -40,81 +39,125 @@ export default function AddNewPatientScreen({ navigation }) {
         <View style={{ width: 24 }} />
       </View>
 
-      <ScrollView contentContainerStyle={styles.content}>
-        {/* — Patient Info — */}
-        <Text style={styles.sectionTitle}>Patient Details</Text>
-        <Text style={styles.label}>Name</Text>
-        <TextInput
-          style={styles.input}
-          placeholder="Enter patient name"
-          placeholderTextColor="#91b0ca"
-          value={form.name}
-          onChangeText={(v) => update("name", v)}
-        />
-
-        <View style={styles.row}>
-          <View style={styles.half}>
-            <Text style={styles.label}>Age</Text>
+      {/* this will adjust when keyboard opens */}
+      <KeyboardAvoidingView
+        style={{ flex: 1 }}
+        behavior={Platform.OS === "ios" ? "padding" : "height"}
+        keyboardVerticalOffset={Platform.OS === "ios" ? 0 : 0}
+      >
+        <ScrollView
+          contentContainerStyle={styles.content}
+          keyboardShouldPersistTaps="handled"
+        >
+          {/* Patient name */}
+          <View style={styles.field}>
+            <Text style={styles.label}>Patient Name</Text>
             <TextInput
               style={styles.input}
-              placeholder="Enter age"
+              placeholder="Enter patient name"
               placeholderTextColor="#91b0ca"
-              keyboardType="numeric"
-              value={form.age}
-              onChangeText={(v) => update("age", v)}
+              value={name}
+              onChangeText={setName}
             />
           </View>
-          <View style={styles.half}>
-            <Text style={styles.label}>Gender</Text>
+
+          {/* Age & Gender */}
+          <View style={styles.row}>
+            <View style={[styles.field, { flex: 1, marginRight: 8 }]}>
+              <Text style={styles.label}>Age</Text>
+              <TextInput
+                style={styles.input}
+                placeholder="Enter age"
+                placeholderTextColor="#91b0ca"
+                keyboardType="numeric"
+                value={age}
+                onChangeText={setAge}
+              />
+            </View>
+            <View style={[styles.field, { flex: 1 }]}>
+              <Text style={styles.label}>Gender</Text>
+              <TextInput
+                style={styles.input}
+                placeholder="Enter gender"
+                placeholderTextColor="#91b0ca"
+                value={gender}
+                onChangeText={setGender}
+              />
+            </View>
+          </View>
+
+          {/* Clinical Notes */}
+          <View style={styles.field}>
+            <Text style={styles.label}>Clinical Notes</Text>
             <TextInput
-              style={styles.input}
-              placeholder="Male / Female"
+              style={[styles.input, { height: 120, textAlignVertical: "top" }]}
+              placeholder="Enter clinical notes"
               placeholderTextColor="#91b0ca"
-              value={form.gender}
-              onChangeText={(v) => update("gender", v)}
+              multiline
+              value={notes}
+              onChangeText={setNotes}
             />
           </View>
-        </View>
 
-        {/* — Clinical Notes — */}
-        <Text style={styles.sectionTitle}>Clinical Notes</Text>
-        <TextInput
-          style={styles.textArea}
-          placeholder="Enter clinical notes"
-          placeholderTextColor="#91b0ca"
-          multiline
-          value={form.notes}
-          onChangeText={(v) => update("notes", v)}
-        />
-
-        {/* — Lab Values — */}
-        <Text style={styles.sectionTitle}>Lab Values</Text>
-        {[
-          ["Creatinine (mg/dL)", "creatinine"],
-          ["BUN (mg/dL)", "bun"],
-          ["Urine Output (mL/day)", "urineOutput"],
-          ["Potassium (mEq/L)", "potassium"],
-        ].map(([label, key]) => (
-          <View key={key} style={styles.row}>
-            <View style={styles.full}>
-              <Text style={styles.label}>{label}</Text>
+          {/* Lab Values */}
+          <Text style={styles.sectionTitle}>Lab Values</Text>
+          <View style={styles.row}>
+            <View style={[styles.field, { flex: 1, marginRight: 8 }]}>
+              <Text style={styles.label}>Creatinine (mg/dL)</Text>
               <TextInput
                 style={styles.input}
                 placeholder="Enter value"
                 placeholderTextColor="#91b0ca"
                 keyboardType="numeric"
-                value={form[key]}
-                onChangeText={(v) => update(key, v)}
+                value={creatinine}
+                onChangeText={setCreatinine}
+              />
+            </View>
+            <View style={[styles.field, { flex: 1 }]}>
+              <Text style={styles.label}>BUN (mg/dL)</Text>
+              <TextInput
+                style={styles.input}
+                placeholder="Enter value"
+                placeholderTextColor="#91b0ca"
+                keyboardType="numeric"
+                value={bun}
+                onChangeText={setBun}
               />
             </View>
           </View>
-        ))}
+          <View style={styles.row}>
+            <View style={[styles.field, { flex: 1, marginRight: 8 }]}>
+              <Text style={styles.label}>Urine Output (mL/day)</Text>
+              <TextInput
+                style={styles.input}
+                placeholder="Enter value"
+                placeholderTextColor="#91b0ca"
+                keyboardType="numeric"
+                value={urineOutput}
+                onChangeText={setUrineOutput}
+              />
+            </View>
+            <View style={[styles.field, { flex: 1 }]}>
+              <Text style={styles.label}>Potassium (mEq/L)</Text>
+              <TextInput
+                style={styles.input}
+                placeholder="Enter value"
+                placeholderTextColor="#91b0ca"
+                keyboardType="numeric"
+                value={potassium}
+                onChangeText={setPotassium}
+              />
+            </View>
+          </View>
+        </ScrollView>
 
-        {/* — Save Button — */}
-        <TouchableOpacity style={styles.saveButton} onPress={handleSave}>
-          <Text style={styles.saveButtonText}>Save Patient</Text>
-        </TouchableOpacity>
-      </ScrollView>
+        {/* footer will move up with the rest */}
+        <View style={styles.footer}>
+          <TouchableOpacity style={styles.saveButton} onPress={handleSave}>
+            <Text style={styles.saveButtonText}>Save Patient</Text>
+          </TouchableOpacity>
+        </View>
+      </KeyboardAvoidingView>
     </SafeAreaView>
   );
 }
@@ -134,42 +177,52 @@ const styles = StyleSheet.create({
     fontWeight: "700",
     textAlign: "center",
   },
-  content: { padding: 16, paddingBottom: 32 },
-  sectionTitle: {
-    color: "#fff",
-    fontSize: 20,
-    fontWeight: "700",
-    marginTop: 24,
-    marginBottom: 8,
+  content: {
+    paddingHorizontal: 16,
+    paddingTop: 8,
+    paddingBottom: 16,
   },
-  label: { color: "#fff", fontSize: 14, marginBottom: 4 },
+  field: {
+    marginBottom: 16,
+  },
+  label: {
+    color: "#fff",
+    fontSize: 16,
+    marginBottom: 4,
+  },
   input: {
     backgroundColor: "#233748",
     borderRadius: 12,
-    height: 48,
-    paddingHorizontal: 12,
+    height: 56,
+    paddingHorizontal: 16,
     color: "#fff",
-    marginBottom: 16,
+    fontSize: 16,
   },
-  textArea: {
-    backgroundColor: "#233748",
-    borderRadius: 12,
-    minHeight: 100,
-    padding: 12,
+  row: {
+    flexDirection: "row",
+  },
+  sectionTitle: {
     color: "#fff",
-    textAlignVertical: "top",
-    marginBottom: 16,
+    fontSize: 22,
+    fontWeight: "700",
+    marginTop: 24,
+    marginHorizontal: 16,
+    marginBottom: 8,
   },
-  row: { flexDirection: "row", marginBottom: 8 },
-  half: { flex: 1, marginRight: 8 },
-  full: { flex: 1 },
+  footer: {
+    padding: 16,
+    backgroundColor: "#111a22",
+  },
   saveButton: {
     backgroundColor: "#0f7fdb",
     height: 48,
     borderRadius: 24,
     alignItems: "center",
     justifyContent: "center",
-    marginTop: 24,
   },
-  saveButtonText: { color: "#fff", fontSize: 16, fontWeight: "700" },
+  saveButtonText: {
+    color: "#fff",
+    fontSize: 16,
+    fontWeight: "700",
+  },
 });
