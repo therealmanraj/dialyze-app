@@ -12,7 +12,6 @@ import SettingsScreen from "./screens/SettingsScreen";
 
 import PatientSummaryScreen from "./screens/PatientSummaryScreen";
 import UpdateClinicalInfoScreen from "./screens/PatientSummaryScreen/UpdateClinicalInfoScreen";
-import PredictionReviewScreen from "./screens/PatientSummaryScreen/PredictionReviewScreen";
 import UpdatePredictionScreen from "./screens/PatientSummaryScreen/UpdatePredictionScreen";
 
 import PredictionOutcomeScreen from "./screens/QuickPredictionScreen/PredictionOutcomeScreen";
@@ -98,14 +97,6 @@ export default function App() {
         <Stack.Screen
           name="UpdateClinicalInfo"
           component={UpdateClinicalInfoScreen}
-          options={{
-            animation: "slide_from_right",
-            gestureEnabled: true,
-          }}
-        />
-        <Stack.Screen
-          name="PredictionReview"
-          component={PredictionReviewScreen}
           options={{
             animation: "slide_from_right",
             gestureEnabled: true,

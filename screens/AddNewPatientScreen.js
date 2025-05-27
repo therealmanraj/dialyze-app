@@ -13,24 +13,31 @@ import {
 } from "react-native";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
 
+import ClinicalInfoInputs from "./components/ClinicalInfoInputs";
+import LabValuesInputs from "./components/LabValuesInputs";
+
 export default function AddNewPatientScreen({ navigation }) {
-  const [name, setName] = useState("");
-  const [age, setAge] = useState("");
-  const [gender, setGender] = useState("");
-  const [notes, setNotes] = useState("");
-  const [creatinine, setCreatinine] = useState("");
-  const [bun, setBun] = useState("");
-  const [urineOutput, setUrineOutput] = useState("");
-  const [potassium, setPotassium] = useState("");
+  // clinical info
+  const [clin, setClin] = useState({
+    name: "",
+    photoUri: null,
+    age: "",
+    gender: "",
+    height: "",
+    weight: "",
+    notes: "",
+  });
+  // lab values
+  const [labValues, setLabValues] = useState({});
 
   function handleSave() {
-    // TODO: persist patient
+    // TODO: persist patient (clin + labValues)
     navigation.goBack();
   }
 
   return (
     <SafeAreaView style={styles.root}>
-      {/* header stays fixed */}
+      {/* fixed header */}
       <View style={styles.header}>
         <TouchableOpacity onPress={() => navigation.goBack()}>
           <MaterialCommunityIcons name="arrow-left" size={24} color="#fff" />
@@ -39,119 +46,49 @@ export default function AddNewPatientScreen({ navigation }) {
         <View style={{ width: 24 }} />
       </View>
 
-      {/* this will adjust when keyboard opens */}
+      {/* inputs + footer slide up */}
       <KeyboardAvoidingView
         style={{ flex: 1 }}
         behavior={Platform.OS === "ios" ? "padding" : "height"}
-        keyboardVerticalOffset={Platform.OS === "ios" ? 0 : 0}
+        keyboardVerticalOffset={0}
       >
         <ScrollView
           contentContainerStyle={styles.content}
           keyboardShouldPersistTaps="handled"
         >
-          {/* Patient name */}
-          <View style={styles.field}>
-            <Text style={styles.label}>Patient Name</Text>
-            <TextInput
-              style={styles.input}
-              placeholder="Enter patient name"
-              placeholderTextColor="#91b0ca"
-              value={name}
-              onChangeText={setName}
-            />
-          </View>
-
-          {/* Age & Gender */}
-          <View style={styles.row}>
-            <View style={[styles.field, { flex: 1, marginRight: 8 }]}>
-              <Text style={styles.label}>Age</Text>
-              <TextInput
-                style={styles.input}
-                placeholder="Enter age"
-                placeholderTextColor="#91b0ca"
-                keyboardType="numeric"
-                value={age}
-                onChangeText={setAge}
-              />
-            </View>
-            <View style={[styles.field, { flex: 1 }]}>
-              <Text style={styles.label}>Gender</Text>
-              <TextInput
-                style={styles.input}
-                placeholder="Enter gender"
-                placeholderTextColor="#91b0ca"
-                value={gender}
-                onChangeText={setGender}
-              />
-            </View>
-          </View>
+          {/* Clinical Info */}
+          <ClinicalInfoInputs
+            name={clin.name}
+            setName={(v) => setClin({ ...clin, name: v })}
+            photoUri={clin.photoUri}
+            setPhotoUri={(uri) => setClin({ ...clin, photoUri: uri })}
+            age={clin.age}
+            setAge={(v) => setClin({ ...clin, age: v })}
+            gender={clin.gender}
+            setGender={(v) => setClin({ ...clin, gender: v })}
+            height={clin.height}
+            setHeight={(v) => setClin({ ...clin, height: v })}
+            weight={clin.weight}
+            setWeight={(v) => setClin({ ...clin, weight: v })}
+          />
 
           {/* Clinical Notes */}
-          <View style={styles.field}>
-            <Text style={styles.label}>Clinical Notes</Text>
-            <TextInput
-              style={[styles.input, { height: 120, textAlignVertical: "top" }]}
-              placeholder="Enter clinical notes"
-              placeholderTextColor="#91b0ca"
-              multiline
-              value={notes}
-              onChangeText={setNotes}
-            />
-          </View>
+          <Text style={styles.sectionTitle}>Clinical Notes</Text>
+          <TextInput
+            style={[styles.input, { height: 120, textAlignVertical: "top" }]}
+            placeholder="Enter clinical notes"
+            placeholderTextColor="#91b0ca"
+            multiline
+            value={clin.notes}
+            onChangeText={(v) => setClin({ ...clin, notes: v })}
+          />
 
           {/* Lab Values */}
           <Text style={styles.sectionTitle}>Lab Values</Text>
-          <View style={styles.row}>
-            <View style={[styles.field, { flex: 1, marginRight: 8 }]}>
-              <Text style={styles.label}>Creatinine (mg/dL)</Text>
-              <TextInput
-                style={styles.input}
-                placeholder="Enter value"
-                placeholderTextColor="#91b0ca"
-                keyboardType="numeric"
-                value={creatinine}
-                onChangeText={setCreatinine}
-              />
-            </View>
-            <View style={[styles.field, { flex: 1 }]}>
-              <Text style={styles.label}>BUN (mg/dL)</Text>
-              <TextInput
-                style={styles.input}
-                placeholder="Enter value"
-                placeholderTextColor="#91b0ca"
-                keyboardType="numeric"
-                value={bun}
-                onChangeText={setBun}
-              />
-            </View>
-          </View>
-          <View style={styles.row}>
-            <View style={[styles.field, { flex: 1, marginRight: 8 }]}>
-              <Text style={styles.label}>Urine Output (mL/day)</Text>
-              <TextInput
-                style={styles.input}
-                placeholder="Enter value"
-                placeholderTextColor="#91b0ca"
-                keyboardType="numeric"
-                value={urineOutput}
-                onChangeText={setUrineOutput}
-              />
-            </View>
-            <View style={[styles.field, { flex: 1 }]}>
-              <Text style={styles.label}>Potassium (mEq/L)</Text>
-              <TextInput
-                style={styles.input}
-                placeholder="Enter value"
-                placeholderTextColor="#91b0ca"
-                keyboardType="numeric"
-                value={potassium}
-                onChangeText={setPotassium}
-              />
-            </View>
-          </View>
+          <LabValuesInputs labValues={labValues} setLabValues={setLabValues} />
         </ScrollView>
 
-        {/* footer will move up with the rest */}
+        {/* always-visible Save button */}
         <View style={styles.footer}>
           <TouchableOpacity style={styles.saveButton} onPress={handleSave}>
             <Text style={styles.saveButtonText}>Save Patient</Text>
@@ -182,32 +119,20 @@ const styles = StyleSheet.create({
     paddingTop: 8,
     paddingBottom: 16,
   },
-  field: {
-    marginBottom: 16,
-  },
-  label: {
-    color: "#fff",
-    fontSize: 16,
-    marginBottom: 4,
-  },
-  input: {
-    backgroundColor: "#233748",
-    borderRadius: 12,
-    height: 56,
-    paddingHorizontal: 16,
-    color: "#fff",
-    fontSize: 16,
-  },
-  row: {
-    flexDirection: "row",
-  },
   sectionTitle: {
     color: "#fff",
     fontSize: 22,
     fontWeight: "700",
     marginTop: 24,
-    marginHorizontal: 16,
     marginBottom: 8,
+  },
+  input: {
+    backgroundColor: "#233748",
+    borderRadius: 12,
+    paddingHorizontal: 16,
+    color: "#fff",
+    fontSize: 16,
+    marginBottom: 16,
   },
   footer: {
     padding: 16,
