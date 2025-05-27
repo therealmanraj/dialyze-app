@@ -1,59 +1,36 @@
 // screens/AddPatientScreen.js
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import {
   SafeAreaView,
   KeyboardAvoidingView,
   ScrollView,
   View,
   Text,
-  TextInput,
   TouchableOpacity,
   StyleSheet,
-  Image,
   Platform,
 } from "react-native";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
-import * as ImagePicker from "expo-image-picker";
+import ClinicalInfoInputs from "../components/ClinicalInfoInputs";
 
 export default function AddPatientScreen({ navigation }) {
-  const [name, setName] = useState("");
-  const [photoUri, setPhotoUri] = useState(null);
-  const [creatinine, setCreatinine] = useState("");
-  const [urineOutput, setUrineOutput] = useState("");
-  const [age, setAge] = useState("");
-  const [gender, setGender] = useState("");
-
-  // request permissions for camera roll
-  useEffect(() => {
-    (async () => {
-      if (Platform.OS !== "web") {
-        const { status } =
-          await ImagePicker.requestMediaLibraryPermissionsAsync();
-        if (status !== "granted") {
-          alert("Sorry, we need camera roll permissions to add a photo!");
-        }
-      }
-    })();
-  }, []);
-
-  async function pickImage() {
-    const result = await ImagePicker.launchImageLibraryAsync({
-      mediaTypes: ImagePicker.MediaTypeOptions.Images,
-      quality: 0.7,
-    });
-    if (!result.cancelled) {
-      setPhotoUri(result.uri);
-    }
-  }
+  const [clin, setClin] = useState({
+    name: "",
+    photoUri: null,
+    age: "",
+    gender: "",
+    height: "",
+    weight: "",
+  });
 
   function handleAdd() {
-    // TODO: validate & save the new patient
+    // TODO: persist patient (clin)
     navigation.navigate("MainTabs", { screen: "Home" });
   }
 
   return (
     <SafeAreaView style={styles.root}>
-      {/* fixed header */}
+      {/* header */}
       <View style={styles.header}>
         <TouchableOpacity onPress={() => navigation.goBack()}>
           <MaterialCommunityIcons name="arrow-left" size={24} color="#fff" />
@@ -62,7 +39,7 @@ export default function AddPatientScreen({ navigation }) {
         <View style={{ width: 24 }} />
       </View>
 
-      {/* inputs + footer slide up */}
+      {/* form */}
       <KeyboardAvoidingView
         style={{ flex: 1 }}
         behavior={Platform.OS === "ios" ? "padding" : "height"}
@@ -74,72 +51,26 @@ export default function AddPatientScreen({ navigation }) {
         >
           <Text style={styles.title}>Add Patient Details</Text>
 
-          {/* Patient Name */}
-          <TextInput
-            style={styles.input}
-            placeholder="Patient Name"
-            placeholderTextColor="#9eafbd"
-            value={name}
-            onChangeText={setName}
-          />
-
-          {/* Photo picker */}
-          <TouchableOpacity style={styles.photoRow} onPress={pickImage}>
-            {photoUri ? (
-              <Image source={{ uri: photoUri }} style={styles.photo} />
-            ) : (
-              <MaterialCommunityIcons
-                name="camera"
-                size={24}
-                color="#fff"
-                style={styles.photoIcon}
-              />
-            )}
-            <Text style={styles.photoText}>
-              {photoUri ? "Change Photo" : "Add Patient Photo"}
-            </Text>
-          </TouchableOpacity>
-
-          <Text style={styles.sectionTitle}>Clinical Information</Text>
-
-          {/* Clinical fields */}
-          <TextInput
-            style={styles.input}
-            placeholder="Creatinine (mg/dL)"
-            placeholderTextColor="#9eafbd"
-            value={creatinine}
-            onChangeText={setCreatinine}
-            keyboardType="numeric"
-          />
-          <TextInput
-            style={styles.input}
-            placeholder="Urine Output (mL/day)"
-            placeholderTextColor="#9eafbd"
-            value={urineOutput}
-            onChangeText={setUrineOutput}
-            keyboardType="numeric"
-          />
-          <TextInput
-            style={styles.input}
-            placeholder="Age (years)"
-            placeholderTextColor="#9eafbd"
-            value={age}
-            onChangeText={setAge}
-            keyboardType="numeric"
-          />
-          <TextInput
-            style={styles.input}
-            placeholder="Gender"
-            placeholderTextColor="#9eafbd"
-            value={gender}
-            onChangeText={setGender}
+          <ClinicalInfoInputs
+            name={clin.name}
+            setName={(v) => setClin({ ...clin, name: v })}
+            photoUri={clin.photoUri}
+            setPhotoUri={(uri) => setClin({ ...clin, photoUri: uri })}
+            age={clin.age}
+            setAge={(v) => setClin({ ...clin, age: v })}
+            gender={clin.gender}
+            setGender={(v) => setClin({ ...clin, gender: v })}
+            height={clin.height}
+            setHeight={(v) => setClin({ ...clin, height: v })}
+            weight={clin.weight}
+            setWeight={(v) => setClin({ ...clin, weight: v })}
           />
         </ScrollView>
 
-        {/* always-visible footer button */}
+        {/* footer */}
         <View style={styles.footer}>
           <TouchableOpacity style={styles.addButton} onPress={handleAdd}>
-            <Text style={styles.addButtonText}>Add</Text>
+            <Text style={styles.addButtonText}>Save Patient</Text>
           </TouchableOpacity>
         </View>
       </KeyboardAvoidingView>
@@ -162,7 +93,6 @@ const styles = StyleSheet.create({
     fontWeight: "700",
     textAlign: "center",
   },
-
   content: {
     paddingHorizontal: 16,
     paddingTop: 8,
@@ -175,38 +105,6 @@ const styles = StyleSheet.create({
     textAlign: "center",
     marginBottom: 16,
   },
-
-  input: {
-    backgroundColor: "#2b3740",
-    borderRadius: 12,
-    height: 56,
-    paddingHorizontal: 16,
-    color: "#fff",
-    fontSize: 16,
-    marginVertical: 8,
-  },
-
-  photoRow: {
-    flexDirection: "row",
-    alignItems: "center",
-    backgroundColor: "#2b3740",
-    borderRadius: 12,
-    height: 56,
-    marginVertical: 8,
-    paddingHorizontal: 16,
-  },
-  photoIcon: { marginRight: 12 },
-  photo: { width: 40, height: 40, borderRadius: 20, marginRight: 12 },
-  photoText: { color: "#fff", fontSize: 16 },
-
-  sectionTitle: {
-    color: "#fff",
-    fontSize: 22,
-    fontWeight: "700",
-    marginTop: 24,
-    marginBottom: 8,
-  },
-
   footer: {
     padding: 16,
     backgroundColor: "#151a1e",
