@@ -6,32 +6,22 @@ import {
   ScrollView,
   View,
   Text,
-  TextInput,
   TouchableOpacity,
   StyleSheet,
   Platform,
 } from "react-native";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
+import LabValuesInputs from "../components/LabValuesInputs";
 
-export default function UpdatePredictionScreen({ navigation }) {
-  const [creatinine, setCreatinine] = useState("");
-  const [bun, setBun] = useState("");
-  const [potassium, setPotassium] = useState("");
-  const [bicarbonate, setBicarbonate] = useState("");
-  const [urineOutput, setUrineOutput] = useState("");
+export default function UpdatePredictionScreen({ navigation, route }) {
+  // you could seed initial values from route.params.labValues if you like:
+  const initial = route.params?.labValues || {};
+  const [labValues, setLabValues] = useState(initial);
 
   function handleUpdate() {
-    // TODO: validate & re-run your prediction
+    // TODO: re-run your prediction using labValues…
     navigation.goBack();
   }
-
-  const fields = [
-    { label: "Creatinine", value: creatinine, setter: setCreatinine },
-    { label: "BUN", value: bun, setter: setBun },
-    { label: "Potassium", value: potassium, setter: setPotassium },
-    { label: "Bicarbonate", value: bicarbonate, setter: setBicarbonate },
-    { label: "Urine Output", value: urineOutput, setter: setUrineOutput },
-  ];
 
   return (
     <SafeAreaView style={styles.root}>
@@ -44,7 +34,7 @@ export default function UpdatePredictionScreen({ navigation }) {
         <View style={{ width: 24 }} />
       </View>
 
-      {/* —— this lifts whole form & footer above keyboard —— */}
+      {/* —— lifts form + footer above keyboard —— */}
       <KeyboardAvoidingView
         style={{ flex: 1 }}
         behavior={Platform.OS === "ios" ? "padding" : "height"}
@@ -54,22 +44,11 @@ export default function UpdatePredictionScreen({ navigation }) {
           contentContainerStyle={styles.content}
           keyboardShouldPersistTaps="handled"
         >
-          {fields.map(({ label, value, setter }) => (
-            <View key={label}>
-              <Text style={styles.inputLabel}>{label}</Text>
-              <TextInput
-                style={styles.input}
-                placeholder="Enter value"
-                placeholderTextColor="#91b0ca"
-                value={value}
-                onChangeText={setter}
-                keyboardType="numeric"
-              />
-            </View>
-          ))}
+          {/* === all your lab fields come from LabValuesInputs === */}
+          <LabValuesInputs labValues={labValues} setLabValues={setLabValues} />
         </ScrollView>
 
-        {/* —— Update button always visible at bottom —— */}
+        {/* —— always‐visible “Update” button —— */}
         <View style={styles.footer}>
           <TouchableOpacity style={styles.updateButton} onPress={handleUpdate}>
             <Text style={styles.updateButtonText}>Update</Text>
@@ -98,27 +77,13 @@ const styles = StyleSheet.create({
     fontWeight: "700",
     textAlign: "center",
   },
+
   content: {
     paddingHorizontal: 16,
     paddingTop: 8,
     paddingBottom: 24,
   },
-  inputLabel: {
-    color: "#fff",
-    fontSize: 22,
-    fontWeight: "700",
-    marginTop: 24,
-    marginBottom: 8,
-  },
-  input: {
-    backgroundColor: "#233748",
-    borderRadius: 12,
-    height: 56,
-    paddingHorizontal: 16,
-    color: "#fff",
-    fontSize: 16,
-    marginBottom: 8,
-  },
+
   footer: {
     paddingHorizontal: 16,
     paddingTop: 8,
