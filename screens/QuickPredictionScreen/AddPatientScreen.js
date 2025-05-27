@@ -24,14 +24,6 @@ export default function AddPatientScreen({ navigation, route }) {
     weight: "",
   });
 
-  // function handleAdd() {
-  //   // navigate back into the tabs, injecting newPatient
-  //   navigation.navigate("MainTabs", {
-  //     screen: "Home",
-  //     params: { newPatient: clin },
-  //   });
-  // }
-
   function handleAdd() {
     // 1) Build a full patient object, with a string ID so keyExtractor never sees undefined
     const newPatient = {
