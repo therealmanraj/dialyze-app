@@ -73,7 +73,7 @@ export default function App() {
             //   animation: 'default',            // platform default
             //   animation: 'none',               // no animation
             // }}
-            gestureEnabled: true,
+            gestureEnabled: false,
           }}
         />
 
