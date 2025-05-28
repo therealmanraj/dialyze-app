@@ -1,5 +1,5 @@
 // screens/AddNewPatientScreen.js
-import React, { useState } from "react";
+import React, { useState, useContext } from "react";
 import {
   SafeAreaView,
   KeyboardAvoidingView,
@@ -16,8 +16,14 @@ import { MaterialCommunityIcons } from "@expo/vector-icons";
 import ClinicalInfoInputs from "./components/ClinicalInfoInputs";
 import LabValuesInputs from "./components/LabValuesInputs";
 
+import placeholder from "../assets/placeholder.png"; // Adjust the path as needed
+
+import { PatientsContext } from "./contexts/PatientsContext";
+
 export default function AddNewPatientScreen({ navigation }) {
-  const DEFAULT_AVATAR = "https://via.placeholder.com/56"; // or your own placeholder asset
+  const DEFAULT_AVATAR = placeholder;
+
+  const { addPatient } = useContext(PatientsContext);
 
   // clinical info
   const [clin, setClin] = useState({
@@ -39,11 +45,13 @@ export default function AddNewPatientScreen({ navigation }) {
       details: `Age: ${clin.age.trim() || "N/A"}, ${
         clin.gender.trim() || "N/A"
       }`,
-      avatar: clin.photoUri || DEFAULT_AVATAR,
+      avatar: DEFAULT_AVATAR,
       riskLabel: "N/A",
       riskPct: "N/A",
       riskColor: "#ccc",
     };
+
+    addPatient(newPatient);
 
     navigation.navigate("MainTabs", {
       screen: "Home",

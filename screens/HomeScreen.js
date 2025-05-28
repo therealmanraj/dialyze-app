@@ -1,5 +1,5 @@
 // screens/HomeScreen.js
-import React, { useState, useEffect, useRef } from "react";
+import React, { useState, useRef, useContext, useEffect } from "react";
 import {
   SafeAreaView,
   View,
@@ -20,6 +20,8 @@ import { MaterialCommunityIcons } from "@expo/vector-icons";
 import Swipeable from "react-native-gesture-handler/Swipeable";
 import { RectButton } from "react-native-gesture-handler";
 
+import { PatientsContext } from "./contexts/PatientsContext";
+
 // Enable LayoutAnimation on Android
 if (
   Platform.OS === "android" &&
@@ -27,49 +29,6 @@ if (
 ) {
   UIManager.setLayoutAnimationEnabledExperimental(true);
 }
-
-const INITIAL_PATIENTS = [
-  {
-    id: "1",
-    name: "Ethan Carter",
-    details: "Age: 65, Male",
-    avatar:
-      "https://lh3.googleusercontent.com/aida-public/AB6AXuAMxlcPx1dh-l8uhb9AvXQovks5QvuaDw8nQlNHdEw_ih_jmt_2yAteEVaYa_QoEYS2XdZP9qbacppKkhvpbjflNr5hFfJUesihfdQQYkAYqCiNI5UvX_0bVNf1xIMQhz2xoLLJH7iD98IGVJhWnK4KGLaZ7zqs2wEWexXOJNMXOiy4fb6iidqojcOZhk_0jKQHefiuQZ474WDRqZA_xlK48aEtbPm4-lIkL9ObBX_ip1h4feAHQb58WPaw4NLs-B7A4cwKjVCcvnE",
-    riskLabel: "Medium",
-    riskPct: "50%",
-    riskColor: "#0bda5b",
-  },
-  {
-    id: "2",
-    name: "Sophia Clark",
-    details: "Age: 72, Female",
-    avatar:
-      "https://lh3.googleusercontent.com/aida-public/AB6AXuB9OboGcvAk2beHqEABPJ8Z-O-qesZemOu11NYQidOkhTrQ-pU_fCa1ZMirdpiQKTD9FceLQOQn0E2i0sS2SuqTColDfZz_oCczDvgLgleKYn9vijRA64GaNSqw9fv0Eg-2zeg-OMsi1oj6_jZ94Zms60Fon893UgswtZCEkqv7oobFaQRkTcty47mBJcPvzm-WCHCyvUxuT5MYFviOdfG2nqOZe-CjU9KxCgDtnIbnFnvgvoInzIWCxZEglukRqJu-KsDwwe4WIiA",
-    riskLabel: "High",
-    riskPct: "90%",
-    riskColor: "#e33e3e",
-  },
-  {
-    id: "3",
-    name: "John Smith",
-    details: "Age: 72, Male",
-    avatar:
-      "https://lh3.googleusercontent.com/aida-public/AB6AXuAMxlcPx1dh-l8uhb9AvXQovks5QvuaDw8nQlNHdEw_ih_jmt_2yAteEVaYa_QoEYS2XdZP9qbacppKkhvpbjflNr5hFfJUesihfdQQYkAYqCiNI5UvX_0bVNf1xIMQhz2xoLLJH7iD98IGVJhWnK4KGLaZ7zqs2wEWexXOJNMXOiy4fb6iidqojcOZhk_0jKQHefiuQZ474WDRqZA_xlK48aEtbPm4-lIkL9ObBX_ip1h4feAHQb58WPaw4NLs-B7A4cwKjVCcvnE",
-    riskLabel: "Low",
-    riskPct: "10%",
-    riskColor: "#0AD95C",
-  },
-  {
-    id: "4",
-    name: "Olivia Brown",
-    details: "Age: 20, Female",
-    avatar:
-      "https://lh3.googleusercontent.com/aida-public/AB6AXuB9OboGcvAk2beHqEABPJ8Z-O-qesZemOu11NYQidOkhTrQ-pU_fCa1ZMirdpiQKTD9FceLQOQn0E2i0sS2SuqTColDfZz_oCczDvgLgleKYn9vijRA64GaNSqw9fv0Eg-2zeg-OMsi1oj6_jZ94Zms60Fon893UgswtZCEkqv7oobFaQRkTcty47mBJcPvzm-WCHCyvUxuT5MYFviOdfG2nqOZe-CjU9KxCgDtnIbnFnvgvoInzIWCxZEglukRqJu-KsDwwe4WIiA",
-    riskLabel: "Low",
-    riskPct: "25%",
-    riskColor: "#0AD95C",
-  },
-];
 
 function PatientRow({ item, onPress, onDelete }) {
   const opacity = useRef(new Animated.Value(1)).current;
@@ -116,22 +75,12 @@ function PatientRow({ item, onPress, onDelete }) {
 
 export default function HomeScreen({ navigation, route }) {
   const [search, setSearch] = useState("");
-  const [patients, setPatients] = useState(INITIAL_PATIENTS);
-
-  // When coming back from AddNewPatient, merge in the new one:
-  useEffect(() => {
-    const np = route.params?.newPatient;
-    if (np) {
-      setPatients((prev) => [np, ...prev]);
-      navigation.setParams({ newPatient: undefined });
-    }
-  }, [route.params?.newPatient]);
+  const { patients, removePatient } = useContext(PatientsContext);
 
   const filtered = patients.filter((p) =>
     p.name.toLowerCase().includes(search.toLowerCase())
   );
-  const handleDelete = (id) =>
-    setPatients((prev) => prev.filter((p) => p.id !== id));
+  const handleDelete = (id) => removePatient(id);
 
   return (
     <SafeAreaView style={styles.root}>

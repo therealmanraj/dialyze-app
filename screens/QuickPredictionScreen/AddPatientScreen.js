@@ -1,5 +1,5 @@
 // screens/QuickPredictionScreen/AddPatientScreen.js
-import React, { useState } from "react";
+import React, { useState, useContext } from "react";
 import {
   SafeAreaView,
   KeyboardAvoidingView,
@@ -12,10 +12,14 @@ import {
 } from "react-native";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
 import ClinicalInfoInputs from "../components/ClinicalInfoInputs";
+import placeholder from "../../assets/placeholder.png"; // Adjust the path as needed
+
+import { PatientsContext } from "../contexts/PatientsContext";
 
 export default function AddPatientScreen({ navigation, route }) {
-  const DEFAULT_AVATAR = "https://via.placeholder.com/56"; // or your own placeholder asset
+  const DEFAULT_AVATAR = placeholder;
 
+  const { addPatient } = useContext(PatientsContext);
   const { akiRisk, dialysisNeed, labValues } = route.params;
   const [clin, setClin] = useState({
     name: "",
@@ -34,12 +38,13 @@ export default function AddPatientScreen({ navigation, route }) {
       details: `Age: ${clin.age.trim() || "N/A"}, ${
         clin.gender.trim() || "N/A"
       }`,
-      avatar: clin.photoUri || DEFAULT_AVATAR,
+      avatar: DEFAULT_AVATAR,
       riskLabel: "N/A",
       riskPct: "N/A",
       riskColor: "#ccc",
     };
 
+    addPatient(newPatient);
     // 2) Navigate back into Home, passing the newPatient param
     navigation.navigate("MainTabs", {
       screen: "Home",
