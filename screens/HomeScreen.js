@@ -15,7 +15,10 @@ import {
   UIManager,
 } from "react-native";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
-import { Swipeable, RectButton } from "react-native-gesture-handler";
+
+// pull in the Reanimated-based Swipeable
+import Swipeable from "react-native-gesture-handler/Swipeable";
+import { RectButton } from "react-native-gesture-handler";
 
 // Enable LayoutAnimation on Android
 if (
@@ -276,7 +279,6 @@ const styles = StyleSheet.create({
     alignItems: "center",
     width: 80,
     marginVertical: 4,
-    borderRadius: 12,
   },
   deleteText: { color: "#fff", fontSize: 12, marginTop: 4 },
 });
