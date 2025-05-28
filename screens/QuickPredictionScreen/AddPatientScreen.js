@@ -14,6 +14,8 @@ import { MaterialCommunityIcons } from "@expo/vector-icons";
 import ClinicalInfoInputs from "../components/ClinicalInfoInputs";
 
 export default function AddPatientScreen({ navigation, route }) {
+  const DEFAULT_AVATAR = "https://via.placeholder.com/56"; // or your own placeholder asset
+
   const { akiRisk, dialysisNeed, labValues } = route.params;
   const [clin, setClin] = useState({
     name: "",
@@ -28,18 +30,14 @@ export default function AddPatientScreen({ navigation, route }) {
     // 1) Build a full patient object, with a string ID so keyExtractor never sees undefined
     const newPatient = {
       id: Date.now().toString(),
-      name: clin.name,
-      details: `Age: ${clin.age}, ${clin.gender}`,
-      avatar: clin.photoUri,
-      riskLabel: akiRisk,
-      riskPct: dialysisNeed,
-      riskColor:
-        akiRisk === "High"
-          ? "#e33e3e"
-          : akiRisk === "Medium"
-          ? "#0bda5b"
-          : "#ccc",
-      labValues, // if you want to keep them around
+      name: clin.name.trim() || "Unnamed Patient",
+      details: `Age: ${clin.age.trim() || "N/A"}, ${
+        clin.gender.trim() || "N/A"
+      }`,
+      avatar: clin.photoUri || DEFAULT_AVATAR,
+      riskLabel: "N/A",
+      riskPct: "N/A",
+      riskColor: "#ccc",
     };
 
     // 2) Navigate back into Home, passing the newPatient param

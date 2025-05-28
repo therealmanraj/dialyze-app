@@ -17,6 +17,8 @@ import ClinicalInfoInputs from "./components/ClinicalInfoInputs";
 import LabValuesInputs from "./components/LabValuesInputs";
 
 export default function AddNewPatientScreen({ navigation }) {
+  const DEFAULT_AVATAR = "https://via.placeholder.com/56"; // or your own placeholder asset
+
   // clinical info
   const [clin, setClin] = useState({
     name: "",
@@ -32,11 +34,13 @@ export default function AddNewPatientScreen({ navigation }) {
 
   function handleSave() {
     const newPatient = {
-      id: Date.now().toString(), // ← unique id
-      name: clin.name,
-      details: `Age: ${clin.age}, ${clin.gender}`,
-      avatar: clin.photoUri, // if you want to show their photo
-      riskLabel: "N/A", // you can default these
+      id: Date.now().toString(),
+      name: clin.name.trim() || "Unnamed Patient",
+      details: `Age: ${clin.age.trim() || "N/A"}, ${
+        clin.gender.trim() || "N/A"
+      }`,
+      avatar: clin.photoUri || DEFAULT_AVATAR,
+      riskLabel: "N/A",
       riskPct: "N/A",
       riskColor: "#ccc",
     };
