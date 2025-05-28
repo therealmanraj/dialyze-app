@@ -1,5 +1,5 @@
 // screens/HomeScreen.js
-import React, { useState, useRef, useContext, useEffect } from "react";
+import React, { useState, useRef, useContext } from "react";
 import {
   SafeAreaView,
   View,
@@ -13,16 +13,15 @@ import {
   LayoutAnimation,
   Platform,
   UIManager,
+  Keyboard,
+  TouchableWithoutFeedback,
 } from "react-native";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
-
-// pull in the Reanimated-based Swipeable
 import Swipeable from "react-native-gesture-handler/Swipeable";
 import { RectButton } from "react-native-gesture-handler";
-
 import { PatientsContext } from "./contexts/PatientsContext";
 
-// Enable LayoutAnimation on Android
+// enable LayoutAnimation on Android…
 if (
   Platform.OS === "android" &&
   UIManager.setLayoutAnimationEnabledExperimental
@@ -42,14 +41,15 @@ function PatientRow({ item, onPress, onDelete }) {
       onDelete(item.id);
     });
   };
-  const rightAction = () => (
-    <RectButton style={styles.deleteButton} onPress={handleDelete}>
-      <MaterialCommunityIcons name="trash-can" size={24} color="#fff" />
-      <Text style={styles.deleteText}>Delete</Text>
-    </RectButton>
-  );
   return (
-    <Swipeable renderRightActions={rightAction}>
+    <Swipeable
+      renderRightActions={() => (
+        <RectButton style={styles.deleteButton} onPress={handleDelete}>
+          <MaterialCommunityIcons name="trash-can" size={24} color="#fff" />
+          <Text style={styles.deleteText}>Delete</Text>
+        </RectButton>
+      )}
+    >
       <Animated.View style={{ opacity }}>
         <TouchableOpacity style={styles.patientRow} onPress={onPress}>
           <View style={styles.patientInfo}>
@@ -73,67 +73,70 @@ function PatientRow({ item, onPress, onDelete }) {
   );
 }
 
-export default function HomeScreen({ navigation, route }) {
+export default function HomeScreen({ navigation }) {
   const [search, setSearch] = useState("");
   const { patients, removePatient } = useContext(PatientsContext);
 
   const filtered = patients.filter((p) =>
     p.name.toLowerCase().includes(search.toLowerCase())
   );
-  const handleDelete = (id) => removePatient(id);
 
   return (
-    <SafeAreaView style={styles.root}>
-      <View style={styles.header}>
-        <Text style={styles.headerTitle}>Dialyze</Text>
-      </View>
-      <Text style={styles.pageTitle}>Welcome to Dialyze</Text>
-      <Text style={styles.pageSub}>
-        Explore the app’s functionality with our demo patient list.
-      </Text>
+    // this will catch any tap outside the TextInput and dismiss the keyboard
+    <TouchableWithoutFeedback onPress={Keyboard.dismiss} accessible={false}>
+      <SafeAreaView style={styles.root}>
+        <View style={styles.header}>
+          <Text style={styles.headerTitle}>Dialyze</Text>
+        </View>
+        <Text style={styles.pageTitle}>Welcome to Dialyze</Text>
+        <Text style={styles.pageSub}>
+          Explore the app’s functionality with our demo patient list.
+        </Text>
 
-      {/* Search bar */}
-      <View style={styles.searchWrapper}>
-        <MaterialCommunityIcons
-          name="magnify"
-          size={24}
-          color="#9eafbd"
-          style={styles.searchIcon}
-        />
-        <TextInput
-          placeholder="Search patients"
-          placeholderTextColor="#9eafbd"
-          value={search}
-          onChangeText={setSearch}
-          style={styles.searchInput}
-        />
-      </View>
-
-      {/* Header + Add */}
-      <View style={styles.patientsHeader}>
-        <Text style={styles.patientsTitle}>Patients</Text>
-        <TouchableOpacity
-          style={styles.addButton}
-          onPress={() => navigation.navigate("AddNewPatient")}
-        >
-          <Text style={styles.addButtonText}>Add Patient</Text>
-        </TouchableOpacity>
-      </View>
-
-      {/* List */}
-      <FlatList
-        data={filtered}
-        keyExtractor={(item) => item.id.toString()}
-        renderItem={({ item }) => (
-          <PatientRow
-            item={item}
-            onPress={() => navigation.navigate("Summary", { patient: item })}
-            onDelete={() => handleDelete(item.id)}
+        {/* Search bar */}
+        <View style={styles.searchWrapper}>
+          <MaterialCommunityIcons
+            name="magnify"
+            size={24}
+            color="#9eafbd"
+            style={styles.searchIcon}
           />
-        )}
-        contentContainerStyle={{ paddingBottom: 80 }}
-      />
-    </SafeAreaView>
+          <TextInput
+            placeholder="Search patients"
+            placeholderTextColor="#9eafbd"
+            value={search}
+            onChangeText={setSearch}
+            style={styles.searchInput}
+          />
+        </View>
+
+        {/* Header + Add */}
+        <View style={styles.patientsHeader}>
+          <Text style={styles.patientsTitle}>Patients</Text>
+          <TouchableOpacity
+            style={styles.addButton}
+            onPress={() => navigation.navigate("AddNewPatient")}
+          >
+            <Text style={styles.addButtonText}>Add Patient</Text>
+          </TouchableOpacity>
+        </View>
+
+        {/* List */}
+        <FlatList
+          data={filtered}
+          keyExtractor={(item) => item.id.toString()}
+          renderItem={({ item }) => (
+            <PatientRow
+              item={item}
+              onPress={() => navigation.navigate("Summary", { patient: item })}
+              onDelete={() => removePatient(item.id)}
+            />
+          )}
+          contentContainerStyle={{ paddingBottom: 80 }}
+          keyboardShouldPersistTaps="handled"
+        />
+      </SafeAreaView>
+    </TouchableWithoutFeedback>
   );
 }
 
