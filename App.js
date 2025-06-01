@@ -13,7 +13,7 @@ import AddNewPatientScreen from "./screens/AddNewPatientScreen";
 import QuickPredictionScreen from "./screens/QuickPredictionScreen";
 import SettingsScreen from "./screens/SettingsScreen";
 
-import PatientSummaryScreen from "./screens/PatientSummaryScreen";
+import PatientSummaryScreen from "./screens/PatientSummaryScreen/PatientSummaryScreen";
 import UpdateClinicalInfoScreen from "./screens/PatientSummaryScreen/UpdateClinicalInfoScreen";
 import UpdatePredictionScreen from "./screens/PatientSummaryScreen/UpdatePredictionScreen";
 
