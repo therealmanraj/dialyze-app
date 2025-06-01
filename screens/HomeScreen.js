@@ -21,7 +21,7 @@ import Swipeable from "react-native-gesture-handler/Swipeable";
 import { RectButton } from "react-native-gesture-handler";
 import { PatientsContext } from "./contexts/PatientsContext";
 
-// enable LayoutAnimation on Android…
+// Enable LayoutAnimation on Android…
 if (
   Platform.OS === "android" &&
   UIManager.setLayoutAnimationEnabledExperimental
@@ -31,6 +31,7 @@ if (
 
 function PatientRow({ item, onPress, onDelete }) {
   const opacity = useRef(new Animated.Value(1)).current;
+
   const handleDelete = () => {
     Animated.timing(opacity, {
       toValue: 0,
@@ -41,35 +42,46 @@ function PatientRow({ item, onPress, onDelete }) {
       onDelete(item.id);
     });
   };
+
   return (
-    <Swipeable
-      renderRightActions={() => (
-        <RectButton style={styles.deleteButton} onPress={handleDelete}>
-          <MaterialCommunityIcons name="trash-can" size={24} color="#fff" />
-          <Text style={styles.deleteText}>Delete</Text>
-        </RectButton>
-      )}
-    >
-      <Animated.View style={{ opacity }}>
-        <TouchableOpacity style={styles.patientRow} onPress={onPress}>
-          <View style={styles.patientInfo}>
-            <Image source={{ uri: item.avatar }} style={styles.avatar} />
-            <View style={{ marginLeft: 12 }}>
-              <Text style={styles.patientName}>{item.name}</Text>
-              <Text style={styles.patientDetails}>{item.details}</Text>
+    // 1) Wrap everything in a container that has your margins.
+    //    This container is always full-width (minus margins),
+    //    even when the row is swiped.
+    <View style={styles.rowContainer}>
+      <Swipeable
+        renderRightActions={() => (
+          <RectButton style={styles.deleteButton} onPress={handleDelete}>
+            <MaterialCommunityIcons name="trash-can" size={24} color="#fff" />
+            <Text style={styles.deleteText}>Delete</Text>
+          </RectButton>
+        )}
+      >
+        <Animated.View style={{ opacity }}>
+          {/*
+            2) Inside here, give your TouchableOpacity “flex: 1” (or width: '100%') 
+               so that it always fills its parent’s width. That way, when the 
+               red ‘Delete’ button slides in, the grey row content never “collapses.”
+          */}
+          <TouchableOpacity style={styles.patientRowInner} onPress={onPress}>
+            <View style={styles.patientInfo}>
+              <Image source={{ uri: item.avatar }} style={styles.avatar} />
+              <View style={{ marginLeft: 12 }}>
+                <Text style={styles.patientName}>{item.name}</Text>
+                <Text style={styles.patientDetails}>{item.details}</Text>
+              </View>
             </View>
-          </View>
-          <View style={styles.pill}>
-            <Text style={styles.pillText}>
-              {item.riskLabel} – {item.riskPct}
-            </Text>
-            <View
-              style={[styles.pillDot, { backgroundColor: item.riskColor }]}
-            />
-          </View>
-        </TouchableOpacity>
-      </Animated.View>
-    </Swipeable>
+            <View style={styles.pill}>
+              <Text style={styles.pillText}>
+                {item.riskLabel} – {item.riskPct}
+              </Text>
+              <View
+                style={[styles.pillDot, { backgroundColor: item.riskColor }]}
+              />
+            </View>
+          </TouchableOpacity>
+        </Animated.View>
+      </Swipeable>
+    </View>
   );
 }
 
@@ -82,7 +94,6 @@ export default function HomeScreen({ navigation }) {
   );
 
   return (
-    // this will catch any tap outside the TextInput and dismiss the keyboard
     <TouchableWithoutFeedback onPress={Keyboard.dismiss} accessible={false}>
       <SafeAreaView style={styles.root}>
         <View style={styles.header}>
@@ -142,6 +153,7 @@ export default function HomeScreen({ navigation }) {
 
 const styles = StyleSheet.create({
   root: { flex: 1, backgroundColor: "#151a1e" },
+
   header: {
     backgroundColor: "#151a1e",
     paddingVertical: 12,
@@ -153,6 +165,7 @@ const styles = StyleSheet.create({
     fontWeight: "700",
     textAlign: "center",
   },
+
   pageTitle: {
     color: "#fff",
     fontSize: 28,
@@ -167,6 +180,7 @@ const styles = StyleSheet.create({
     marginVertical: 8,
     paddingHorizontal: 16,
   },
+
   searchWrapper: {
     flexDirection: "row",
     backgroundColor: "#2b3740",
@@ -179,6 +193,7 @@ const styles = StyleSheet.create({
   },
   searchIcon: { marginRight: 8 },
   searchInput: { flex: 1, color: "#fff", fontSize: 16 },
+
   patientsHeader: {
     flexDirection: "row",
     alignItems: "center",
@@ -194,19 +209,30 @@ const styles = StyleSheet.create({
     borderRadius: 20,
   },
   addButtonText: { color: "#151a1e", fontWeight: "700", fontSize: 14 },
-  patientRow: {
+
+  // ─── NEW: Wrap each row in a container that has margins, so the row itself is full-width:
+  rowContainer: {
+    marginHorizontal: 16,
+    marginVertical: 4,
+  },
+
+  // ─── PATIENT ROW INNER ──────────────────────────────────────────────
+  // Give this a flex: 1 (or width: '100%') so it cannot shrink when Swipeable shows the button.
+  patientRowInner: {
     flexDirection: "row",
     alignItems: "center",
     justifyContent: "space-between",
     backgroundColor: "#151a1e",
-    marginHorizontal: 16,
-    marginVertical: 4,
     paddingVertical: 12,
+    paddingHorizontal: 0,
+    flex: 1, // <— make the inner row stretch to fill the parent (rowContainer)
   },
+
   patientInfo: { flexDirection: "row", alignItems: "center" },
   avatar: { width: 56, height: 56, borderRadius: 28, backgroundColor: "#333" },
   patientName: { color: "#fff", fontSize: 16, fontWeight: "500" },
   patientDetails: { color: "#9eafbd", fontSize: 14 },
+
   pill: {
     flexDirection: "row",
     alignItems: "center",
@@ -225,6 +251,7 @@ const styles = StyleSheet.create({
     fontWeight: "500",
   },
   pillDot: { width: 10, height: 10, borderRadius: 5, marginRight: 8 },
+
   deleteButton: {
     backgroundColor: "red",
     justifyContent: "center",
