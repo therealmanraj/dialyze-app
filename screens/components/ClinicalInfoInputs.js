@@ -42,12 +42,16 @@ export default function ClinicalInfoInputs({
   }, []);
 
   async function pickImage() {
-    const result = await ImagePicker.launchImageLibraryAsync({
+    // ←── REPLACED with the “working” code:
+    let result = await ImagePicker.launchImageLibraryAsync({
       mediaTypes: ImagePicker.MediaTypeOptions.Images,
-      quality: 0.7,
+      allowsEditing: true,
+      aspect: [4, 3],
+      quality: 1,
     });
-    if (!result.cancelled) {
-      setPhotoUri(result.uri);
+
+    if (!result.canceled) {
+      setPhotoUri(result.assets[0].uri);
     }
   }
 
