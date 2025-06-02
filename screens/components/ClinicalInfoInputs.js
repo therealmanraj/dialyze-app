@@ -1,5 +1,5 @@
 // screens/components/ClinicalInfoInputs.js
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import {
   View,
   Text,
@@ -26,6 +26,9 @@ export default function ClinicalInfoInputs({
   weight,
   setWeight,
 }) {
+  // Local state to toggle the Gender dropdown
+  const [showGenderOptions, setShowGenderOptions] = useState(false);
+
   useEffect(() => {
     (async () => {
       if (Platform.OS !== "web") {
@@ -47,6 +50,9 @@ export default function ClinicalInfoInputs({
       setPhotoUri(result.uri);
     }
   }
+
+  // Hard‐coded gender options
+  const GENDER_OPTIONS = ["Male", "Female", "Other"];
 
   return (
     <View style={styles.container}>
@@ -73,9 +79,7 @@ export default function ClinicalInfoInputs({
         </Text>
       </TouchableOpacity>
 
-      {/* Here’s the magic: 
-          parent row is just flexDirection: 'row',
-          each child wrapper is flex:1 */}
+      {/* Age & Gender Row */}
       <View style={styles.row}>
         <View style={styles.half}>
           <FormField
@@ -86,16 +90,55 @@ export default function ClinicalInfoInputs({
             onChangeText={setAge}
           />
         </View>
+
         <View style={[styles.half, styles.rightGap]}>
-          <FormField
-            label="Gender"
-            placeholder="Enter gender"
-            value={gender}
-            onChangeText={setGender}
-          />
+          <Text style={styles.label}>Gender</Text>
+
+          {/* ── CUSTOM DROPDOWN FOR GENDER ──────────────────────────── */}
+          <View>
+            {/* The visible “button” that shows current value or placeholder */}
+            <TouchableOpacity
+              style={styles.dropdownButton}
+              onPress={() => setShowGenderOptions((prev) => !prev)}
+            >
+              <Text
+                style={[
+                  styles.dropdownButtonText,
+                  !gender && styles.placeholderText,
+                ]}
+              >
+                {gender || "Select gender"}
+              </Text>
+              <MaterialCommunityIcons
+                name={showGenderOptions ? "chevron-up" : "chevron-down"}
+                size={20}
+                color="#fff"
+                style={styles.dropdownIcon}
+              />
+            </TouchableOpacity>
+
+            {/* The list of options, shown only when showGenderOptions===true */}
+            {showGenderOptions && (
+              <View style={styles.dropdownListContainer}>
+                {GENDER_OPTIONS.map((opt) => (
+                  <TouchableOpacity
+                    key={opt}
+                    style={styles.dropdownItem}
+                    onPress={() => {
+                      setGender(opt);
+                      setShowGenderOptions(false);
+                    }}
+                  >
+                    <Text style={styles.dropdownItemText}>{opt}</Text>
+                  </TouchableOpacity>
+                ))}
+              </View>
+            )}
+          </View>
         </View>
       </View>
 
+      {/* Height & Weight Row */}
       <View style={styles.row}>
         <View style={styles.half}>
           <FormField
@@ -134,6 +177,7 @@ const styles = StyleSheet.create({
   rightGap: {
     marginLeft: 8,
   },
+
   photoRow: {
     flexDirection: "row",
     alignItems: "center",
@@ -146,4 +190,53 @@ const styles = StyleSheet.create({
   photoIcon: { marginRight: 12 },
   photo: { width: 40, height: 40, borderRadius: 20, marginRight: 12 },
   photoText: { color: "#fff", fontSize: 16 },
+
+  label: {
+    color: "#fff",
+    fontSize: 16,
+    marginBottom: 4,
+  },
+
+  // ─── DROPDOWN “BUTTON” (always visible) ─────────────────────────
+  dropdownButton: {
+    backgroundColor: "#233748",
+    borderRadius: 12,
+    height: 56,
+    flexDirection: "row",
+    alignItems: "center",
+    paddingHorizontal: 12,
+    justifyContent: "space-between",
+  },
+  dropdownButtonText: {
+    color: "#fff",
+    fontSize: 16,
+  },
+  placeholderText: {
+    color: "#9eafbd", // lighter color when no selection
+  },
+  dropdownIcon: {
+    marginLeft: 8,
+  },
+
+  // ─── DROPDOWN LIST (only when showGenderOptions===true) ───────────
+  dropdownListContainer: {
+    position: "absolute",
+    top: 56, // drop below the “button” by its height
+    left: 0,
+    right: 0,
+    backgroundColor: "#233748",
+    borderRadius: 8,
+    marginTop: 4,
+    zIndex: 10,
+  },
+  dropdownItem: {
+    paddingVertical: 12,
+    paddingHorizontal: 16,
+    borderBottomWidth: 1,
+    borderBottomColor: "#1e2a36",
+  },
+  dropdownItemText: {
+    color: "#fff",
+    fontSize: 16,
+  },
 });
