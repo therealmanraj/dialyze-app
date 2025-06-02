@@ -16,7 +16,7 @@ import { MaterialCommunityIcons } from "@expo/vector-icons";
 import ClinicalInfoInputs from "./components/ClinicalInfoInputs";
 import LabValuesInputs from "./components/LabValuesInputs";
 
-import placeholder from "../assets/placeholder.png"; // Adjust the path as needed
+import placeholder from "../assets/placeholder.png"; // Adjust path if needed
 
 import { PatientsContext } from "./contexts/PatientsContext";
 
@@ -39,13 +39,15 @@ export default function AddNewPatientScreen({ navigation }) {
   const [labValues, setLabValues] = useState({});
 
   function handleSave() {
+    // Build the newPatient object, using clin.photoUri if present:
     const newPatient = {
       id: Date.now().toString(),
       name: clin.name.trim() || "Unnamed Patient",
+      // details string should include both age & gender (or “N/A” if empty)
       details: `Age: ${clin.age.trim() || "N/A"}, ${
         clin.gender.trim() || "N/A"
       }`,
-      avatar: DEFAULT_AVATAR,
+      avatar: clin.photoUri || DEFAULT_AVATAR, // ← here’s the change
       riskLabel: "N/A",
       riskPct: "N/A",
       riskColor: "#ccc",
@@ -53,6 +55,7 @@ export default function AddNewPatientScreen({ navigation }) {
 
     addPatient(newPatient);
 
+    // Navigate back to Home (so the FlatList will show the new avatar)
     navigation.navigate("MainTabs", {
       screen: "Home",
       params: { newPatient },
@@ -70,11 +73,9 @@ export default function AddNewPatientScreen({ navigation }) {
         <View style={{ width: 24 }} />
       </View>
 
-      {/* inputs + footer slide up */}
       <KeyboardAvoidingView
         style={{ flex: 1 }}
         behavior={Platform.OS === "ios" ? "padding" : "height"}
-        keyboardVerticalOffset={0}
       >
         <ScrollView
           contentContainerStyle={styles.content}
