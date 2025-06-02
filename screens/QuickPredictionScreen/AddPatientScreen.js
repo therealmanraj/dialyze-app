@@ -21,6 +21,7 @@ export default function AddPatientScreen({ navigation, route }) {
 
   const { addPatient } = useContext(PatientsContext);
   const { akiRisk, dialysisNeed, labValues } = route.params;
+
   const [clin, setClin] = useState({
     name: "",
     photoUri: null,
@@ -38,13 +39,14 @@ export default function AddPatientScreen({ navigation, route }) {
       details: `Age: ${clin.age.trim() || "N/A"}, ${
         clin.gender.trim() || "N/A"
       }`,
-      avatar: DEFAULT_AVATAR,
+      avatar: clin.photoUri || DEFAULT_AVATAR, // ← use picked URI if available
       riskLabel: "N/A",
       riskPct: "N/A",
       riskColor: "#ccc",
     };
 
     addPatient(newPatient);
+
     // 2) Navigate back into Home, passing the newPatient param
     navigation.navigate("MainTabs", {
       screen: "Home",
