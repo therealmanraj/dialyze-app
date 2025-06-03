@@ -16,15 +16,32 @@ import ClinicalInfoSection from "./components/ClinicalInfoSection";
 import RiskSection from "./components/RiskSection";
 import LabTrendsSection from "./components/LabTrendsSection";
 
+// ── STEP A: Re‐declare UNIT_MAP so we can append units here as well
+//     (Must match whatever you used in LabValuesInputs.js)
+const UNIT_MAP = {
+  HCO3: "mEq/L",
+  Creatinine: "mg/dL",
+  "Mean Arterial Pressure": "mmHg",
+  Procalcitonin: "ng/mL",
+  Bilirubin: "mg/dL",
+  pH: "", // unitless
+  Albumin: "g/dL",
+  Urea: "mg/dL",
+  "White Blood Cell Count": "×10³/µL",
+  SOFA: "points",
+  APACHEII: "points",
+  Glasgow: "points",
+};
+
 export default function PatientSummaryScreen({ route, navigation }) {
-  // 1) Pull patientId (not the whole object) from route.params
+  // 1) Pull patientId from route.params
   const { patientId } = route.params;
 
-  // 2) Grab all patients from context, then find the one with this ID
+  // 2) Grab all patients from context, then find this one
   const { patients } = useContext(PatientsContext);
   const patient = patients.find((p) => p.id === patientId);
 
-  // If for some reason patient is not found, you can early‐return a placeholder
+  // If not found, early return:
   if (!patient) {
     return (
       <SafeAreaView style={styles.root}>
@@ -44,23 +61,20 @@ export default function PatientSummaryScreen({ route, navigation }) {
     );
   }
 
-  // ── STEP 1: Extract weight/height strings (or default to empty)
+  // ── Compute BMI using weight & height from patient.clinical
   const weightStr = patient.clinical?.weight || "";
   const heightStr = patient.clinical?.height || "";
-
-  // ── STEP 2: Parse to numbers
   const weightNum = parseFloat(weightStr);
   const heightNumCm = parseFloat(heightStr);
 
-  // ── STEP 3: Compute BMI (kg / m²) only if both are valid positive numbers
   let bmiDisplay = "—";
   if (!isNaN(weightNum) && !isNaN(heightNumCm) && heightNumCm > 0) {
     const heightMeters = heightNumCm / 100;
     const rawBmi = weightNum / (heightMeters * heightMeters);
-    bmiDisplay = rawBmi.toFixed(1); // one decimal place
+    bmiDisplay = rawBmi.toFixed(1);
   }
 
-  // ── Keep existing labValues as before
+  // ── Grab labValues (object) or fallback to empty object
   const labValuesObject = patient.labValues || {};
 
   return (
@@ -75,7 +89,7 @@ export default function PatientSummaryScreen({ route, navigation }) {
       </View>
 
       <ScrollView contentContainerStyle={{ paddingBottom: 40 }}>
-        {/* Profile (photo + name + details) */}
+        {/* Profile section (avatar, name, ID, details) */}
         <ProfileHeader
           avatar={patient.avatar}
           name={patient.name}
@@ -83,23 +97,22 @@ export default function PatientSummaryScreen({ route, navigation }) {
           details={patient.details}
         />
 
-        {/* Clinical Info: now inject the computed BMI */}
+        {/* Clinical Information */}
         <ClinicalInfoSection
           data={[
             { label: "Weight", value: `${weightStr} kg` },
             { label: "Height", value: `${heightStr} cm` },
-            { label: "BMI", value: bmiDisplay }, // ◀– use calculated BMI
+            { label: "BMI", value: bmiDisplay },
             { label: "Age", value: patient.clinical.age },
             { label: "Gender", value: patient.clinical.gender },
             { label: "Notes", value: patient.clinical.notes || "—" },
           ]}
           onUpdate={() =>
-            // 3) When launching update screen, pass patientId as well
             navigation.navigate("UpdateClinicalInfo", { patientId: patient.id })
           }
         />
 
-        {/* Risk Section (unchanged) */}
+        {/* AKI Risk (unchanged) */}
         <RiskSection
           akiRisk={[
             { label: "Risk Score", value: patient.riskPct },
@@ -108,15 +121,27 @@ export default function PatientSummaryScreen({ route, navigation }) {
           dialysisNeed={[{ label: "Probability", value: "—" }]}
         />
 
-        {/* Lab Values Grid: iterate over patient.labValues */}
+        {/* ── LAB VALUES GRID ─────────────────────────────────────────── */}
         <Text style={styles.sectionTitle}>Lab Values</Text>
         <View style={styles.grid}>
-          {Object.entries(labValuesObject).map(([labKey, labVal]) => (
-            <View key={labKey} style={styles.cell}>
-              <Text style={styles.cellLabel}>{labKey}</Text>
-              <Text style={styles.cellValue}>{labVal}</Text>
-            </View>
-          ))}
+          {Object.entries(labValuesObject).map(([labKey, labVal]) => {
+            // Lookup the correct unit (could be empty if no unit)
+            const unit = UNIT_MAP[labKey] || "";
+            // If the stored value is non‐empty, show “value + unit”,
+            // otherwise show a dash.
+            const displayValue = labVal
+              ? unit
+                ? `${labVal} ${unit}`
+                : `${labVal}`
+              : "—";
+
+            return (
+              <View key={labKey} style={styles.cell}>
+                <Text style={styles.cellLabel}>{labKey}</Text>
+                <Text style={styles.cellValue}>{displayValue}</Text>
+              </View>
+            );
+          })}
         </View>
 
         {/* (Optional) Lab Trends Chart */}
@@ -129,7 +154,7 @@ export default function PatientSummaryScreen({ route, navigation }) {
         />
       </ScrollView>
 
-      {/* Footer Button */}
+      {/* Footer “Update Predictions” button */}
       <View style={styles.footer}>
         <TouchableOpacity
           style={styles.updateButton}
@@ -183,8 +208,15 @@ const styles = StyleSheet.create({
     borderColor: "#3e4e5b",
     paddingHorizontal: 8,
   },
-  cellLabel: { color: "#9eafbd", fontSize: 14 },
-  cellValue: { color: "#fff", fontSize: 14, marginTop: 4 },
+  cellLabel: {
+    color: "#9eafbd",
+    fontSize: 14,
+  },
+  cellValue: {
+    color: "#fff",
+    fontSize: 14,
+    marginTop: 4,
+  },
 
   footer: {
     padding: 16,
