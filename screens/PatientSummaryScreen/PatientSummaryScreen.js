@@ -7,7 +7,6 @@ import {
   Text,
   TouchableOpacity,
   StyleSheet,
-  Image,
 } from "react-native";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
 
@@ -19,8 +18,23 @@ import LabTrendsSection from "./components/LabTrendsSection";
 export default function PatientSummaryScreen({ route, navigation }) {
   const { patient } = route.params;
 
-  // If patient.labValues is an object, e.g. { Creatinine: "1.2 mg/dL", BUN: "40 mg/dL", … }
-  // Otherwise, if you stored labValues as an array of { label, value }, adjust accordingly.
+  // ── STEP 1: Extract weight/height strings (or default to empty)
+  const weightStr = patient.clinical?.weight || "";
+  const heightStr = patient.clinical?.height || "";
+
+  // ── STEP 2: Parse to numbers
+  const weightNum = parseFloat(weightStr);
+  const heightNumCm = parseFloat(heightStr);
+
+  // ── STEP 3: Compute BMI (kg / m²) only if both are valid positive numbers
+  let bmiDisplay = "—";
+  if (!isNaN(weightNum) && !isNaN(heightNumCm) && heightNumCm > 0) {
+    const heightMeters = heightNumCm / 100;
+    const rawBmi = weightNum / (heightMeters * heightMeters);
+    bmiDisplay = rawBmi.toFixed(1); // one decimal place
+  }
+
+  // ── Keep existing labValues as before
   const labValuesObject = patient.labValues || {};
 
   return (
@@ -43,15 +57,14 @@ export default function PatientSummaryScreen({ route, navigation }) {
           details={patient.details}
         />
 
-        {/* Clinical Info: read from patient.clinical */}
+        {/* Clinical Info: now inject the computed BMI */}
         <ClinicalInfoSection
           data={[
-            { label: "Weight", value: `${patient.clinical.weight} kg` },
-            { label: "Height", value: `${patient.clinical.height} cm` },
-            { label: "BMI", value: "—" }, // if you want to compute BMI on the fly, you could
+            { label: "Weight", value: `${weightStr} kg` },
+            { label: "Height", value: `${heightStr} cm` },
+            { label: "BMI", value: bmiDisplay }, // ◀– use calculated BMI
             { label: "Age", value: patient.clinical.age },
             { label: "Gender", value: patient.clinical.gender },
-            // You can also show “Notes” if you wish:
             { label: "Notes", value: patient.clinical.notes || "—" },
           ]}
           onUpdate={() => navigation.navigate("UpdateClinicalInfo")}

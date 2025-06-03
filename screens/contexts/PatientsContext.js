@@ -17,7 +17,25 @@ const INITIAL_PATIENTS = [
     riskLabel: "Medium",
     riskPct: "50%",
     riskColor: "#0bda5b",
+    // ← Add a “clinical” object with every sub‐key (even if empty):
+    clinical: {
+      weight: "75", // weight in kg
+      height: "175", // height in cm
+      age: "65", // age in years
+      gender: "Male", // gender string
+      notes: "", // any free‐text notes
+    },
+    // ← Add a “labValues” object (empty for now)
+    labValues: {
+      Creatinine: "2.5 mg/dL",
+      BUN: "40 mg/dL",
+      Potassium: "5.2 mEq/L",
+      Sodium: "138 mEq/L",
+      Bicarbonate: "22 mEq/L",
+      // …any other labs you want to seed…
+    },
   },
+
   {
     id: "2",
     name: "Sophia Clark",
@@ -27,7 +45,22 @@ const INITIAL_PATIENTS = [
     riskLabel: "High",
     riskPct: "90%",
     riskColor: "#e33e3e",
+    clinical: {
+      weight: "68",
+      height: "160",
+      age: "72",
+      gender: "Female",
+      notes: "Diabetic, HTN",
+    },
+    labValues: {
+      Creatinine: "1.8 mg/dL",
+      BUN: "35 mg/dL",
+      Potassium: "4.8 mEq/L",
+      Sodium: "135 mEq/L",
+      Bicarbonate: "20 mEq/L",
+    },
   },
+
   {
     id: "3",
     name: "John Smith",
@@ -37,7 +70,22 @@ const INITIAL_PATIENTS = [
     riskLabel: "Low",
     riskPct: "10%",
     riskColor: "#0AD95C",
+    clinical: {
+      weight: "82",
+      height: "180",
+      age: "72",
+      gender: "Male",
+      notes: "",
+    },
+    labValues: {
+      Creatinine: "1.2 mg/dL",
+      BUN: "28 mg/dL",
+      Potassium: "4.5 mEq/L",
+      Sodium: "140 mEq/L",
+      Bicarbonate: "24 mEq/L",
+    },
   },
+
   {
     id: "4",
     name: "Olivia Brown",
@@ -47,6 +95,20 @@ const INITIAL_PATIENTS = [
     riskLabel: "Low",
     riskPct: "25%",
     riskColor: "#0AD95C",
+    clinical: {
+      weight: "",
+      height: "",
+      age: "20",
+      gender: "Female",
+      notes: "",
+    },
+    labValues: {
+      Creatinine: "",
+      BUN: "",
+      Potassium: "",
+      Sodium: "",
+      Bicarbonate: "",
+    },
   },
 ];
 
