@@ -1,5 +1,5 @@
 // screens/PatientSummaryScreen.js
-import React from "react";
+import React, { useContext } from "react";
 import {
   SafeAreaView,
   ScrollView,
@@ -10,13 +10,39 @@ import {
 } from "react-native";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
 
+import { PatientsContext } from "../contexts/PatientsContext";
 import ProfileHeader from "./components/ProfileHeader";
 import ClinicalInfoSection from "./components/ClinicalInfoSection";
 import RiskSection from "./components/RiskSection";
 import LabTrendsSection from "./components/LabTrendsSection";
 
 export default function PatientSummaryScreen({ route, navigation }) {
-  const { patient } = route.params;
+  // 1) Pull patientId (not the whole object) from route.params
+  const { patientId } = route.params;
+
+  // 2) Grab all patients from context, then find the one with this ID
+  const { patients } = useContext(PatientsContext);
+  const patient = patients.find((p) => p.id === patientId);
+
+  // If for some reason patient is not found, you can early‐return a placeholder
+  if (!patient) {
+    return (
+      <SafeAreaView style={styles.root}>
+        <View style={styles.header}>
+          <TouchableOpacity onPress={() => navigation.goBack()}>
+            <MaterialCommunityIcons name="arrow-left" size={24} color="#fff" />
+          </TouchableOpacity>
+          <Text style={styles.headerTitle}>Patient not found</Text>
+          <View style={{ width: 24 }} />
+        </View>
+        <View
+          style={{ flex: 1, alignItems: "center", justifyContent: "center" }}
+        >
+          <Text style={{ color: "#fff" }}>No such patient.</Text>
+        </View>
+      </SafeAreaView>
+    );
+  }
 
   // ── STEP 1: Extract weight/height strings (or default to empty)
   const weightStr = patient.clinical?.weight || "";
@@ -68,7 +94,8 @@ export default function PatientSummaryScreen({ route, navigation }) {
             { label: "Notes", value: patient.clinical.notes || "—" },
           ]}
           onUpdate={() =>
-            navigation.navigate("UpdateClinicalInfo", { patient })
+            // 3) When launching update screen, pass patientId as well
+            navigation.navigate("UpdateClinicalInfo", { patientId })
           }
         />
 

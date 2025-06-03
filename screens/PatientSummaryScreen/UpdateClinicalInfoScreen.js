@@ -16,33 +16,38 @@ import { PatientsContext } from "../contexts/PatientsContext";
 import ClinicalInfoInputs from "../components/ClinicalInfoInputs";
 
 export default function UpdateClinicalInfoScreen({ route, navigation }) {
-  // 1) Get the patient object from route.params:
-  const { patient } = route.params;
+  // 1) Read just patientId from params
+  const { patientId } = route.params;
 
-  // 2) Grab the context function for updating clinical info:
-  const { updatePatientClinical } = useContext(PatientsContext);
+  // 2) Grab both the full list and the updater function from context
+  const { patients, updatePatientClinical } = useContext(PatientsContext);
 
-  // 3) Create state variables for each clinical field:
+  // 3) Find the “live” patient object by ID
+  const patient = patients.find((p) => p.id === patientId);
+
+  // 4) Local state for each clinical field (strings)
   const [weight, setWeight] = useState("");
   const [height, setHeight] = useState("");
   const [age, setAge] = useState("");
   const [gender, setGender] = useState("");
   const [notes, setNotes] = useState("");
 
-  // 4) On mount, initialize those useState(...) fields from patient.clinical:
+  // 5) Initialize those fields from patient.clinical once we have it
   useEffect(() => {
-    if (patient.clinical) {
-      setWeight(patient.clinical.weight || "");
-      setHeight(patient.clinical.height || "");
-      setAge(patient.clinical.age || "");
-      setGender(patient.clinical.gender || "");
-      setNotes(patient.clinical.notes || "");
-    }
+    if (!patient) return;
+
+    const { clinical } = patient;
+    setWeight(clinical.weight || "");
+    setHeight(clinical.height || "");
+    setAge(clinical.age || "");
+    setGender(clinical.gender || "");
+    setNotes(clinical.notes || "");
   }, [patient]);
 
-  // 5) When “Update” is pressed, push the new .clinical back into context:
+  // 6) When user presses “Update,” call context updater and then goBack()
   const handleUpdate = () => {
-    // Build a newClinical object—only include fields we want to overwrite:
+    if (!patient) return;
+
     const newClinical = {
       weight: weight.trim(),
       height: height.trim(),
@@ -51,12 +56,29 @@ export default function UpdateClinicalInfoScreen({ route, navigation }) {
       notes: notes.trim(),
     };
 
-    // Call the context updater:
     updatePatientClinical(patient.id, newClinical);
-
-    // Go back to the summary screen:
     navigation.goBack();
   };
+
+  // If patient somehow is not found, show a fallback
+  if (!patient) {
+    return (
+      <SafeAreaView style={styles.root}>
+        <View style={styles.header}>
+          <TouchableOpacity onPress={() => navigation.goBack()}>
+            <MaterialCommunityIcons name="arrow-left" size={24} color="#fff" />
+          </TouchableOpacity>
+          <Text style={styles.headerTitle}>Update Clinical Information</Text>
+          <View style={{ width: 24 }} />
+        </View>
+        <View
+          style={{ flex: 1, justifyContent: "center", alignItems: "center" }}
+        >
+          <Text style={{ color: "#fff" }}>Patient not found.</Text>
+        </View>
+      </SafeAreaView>
+    );
+  }
 
   return (
     <SafeAreaView style={styles.root}>
@@ -80,9 +102,9 @@ export default function UpdateClinicalInfoScreen({ route, navigation }) {
           keyboardShouldPersistTaps="handled"
         >
           <ClinicalInfoInputs
-            name={""} // no name field here, just clinical inputs
-            setName={() => {}} // no-op
-            photoUri={patient.avatar} // we ignore photo on this screen
+            name={""} // not editing name here
+            setName={() => {}}
+            photoUri={patient.avatar} // ignoring photo changes on this screen
             setPhotoUri={() => {}}
             age={age}
             setAge={setAge}
@@ -92,11 +114,9 @@ export default function UpdateClinicalInfoScreen({ route, navigation }) {
             setHeight={setHeight}
             weight={weight}
             setWeight={setWeight}
-            // We added “notes” inside ClinicalInfoInputs? If not, treat notes separately:
-            // But since your ClinicalInfoInputs does not handle notes, we’ll add a quick text input below:
           />
 
-          {/* If you want a “Notes” field, you can add it below ClinicalInfoInputs: */}
+          {/* Notes field (ClinicalInfoInputs doesn’t include notes) */}
           <View style={{ marginTop: 16, marginBottom: 16 }}>
             <Text style={styles.label}>Notes</Text>
             <TextInput

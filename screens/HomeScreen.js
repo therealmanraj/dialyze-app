@@ -139,7 +139,9 @@ export default function HomeScreen({ navigation }) {
           renderItem={({ item }) => (
             <PatientRow
               item={item}
-              onPress={() => navigation.navigate("Summary", { patient: item })}
+              onPress={() =>
+                navigation.navigate("Summary", { patientId: item.id })
+              }
               onDelete={() => removePatient(item.id)}
             />
           )}
