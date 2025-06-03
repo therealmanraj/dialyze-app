@@ -12,15 +12,14 @@ import {
 } from "react-native";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
 import ClinicalInfoInputs from "../components/ClinicalInfoInputs";
-import placeholder from "../../assets/placeholder.png"; // Adjust the path as needed
-
+import placeholder from "../../assets/placeholder.png";
 import { PatientsContext } from "../contexts/PatientsContext";
 
 export default function AddPatientScreen({ navigation, route }) {
   const DEFAULT_AVATAR = placeholder;
-
   const { addPatient } = useContext(PatientsContext);
-  const { akiRisk, dialysisNeed, labValues } = route.params;
+  // you may have route.params (akiRisk, dialysisNeed, labValues) here
+  const { labValues: incomingLabValues = {} } = route.params || {};
 
   const [clin, setClin] = useState({
     name: "",
@@ -29,25 +28,35 @@ export default function AddPatientScreen({ navigation, route }) {
     gender: "",
     height: "",
     weight: "",
+    notes: "",
   });
 
   function handleAdd() {
-    // 1) Build a full patient object, with a string ID so keyExtractor never sees undefined
     const newPatient = {
       id: Date.now().toString(),
       name: clin.name.trim() || "Unnamed Patient",
       details: `Age: ${clin.age.trim() || "N/A"}, ${
         clin.gender.trim() || "N/A"
       }`,
-      avatar: clin.photoUri || DEFAULT_AVATAR, // ← use picked URI if available
+      avatar: clin.photoUri || DEFAULT_AVATAR,
       riskLabel: "N/A",
       riskPct: "N/A",
       riskColor: "#ccc",
+
+      clinical: {
+        age: clin.age,
+        gender: clin.gender,
+        height: clin.height,
+        weight: clin.weight,
+        notes: clin.notes,
+        photoUri: clin.photoUri,
+      },
+      // either use incomingLabValues or {} if none
+      labValues: { ...incomingLabValues },
     };
 
     addPatient(newPatient);
 
-    // 2) Navigate back into Home, passing the newPatient param
     navigation.navigate("MainTabs", {
       screen: "Home",
       params: { newPatient },
@@ -56,7 +65,6 @@ export default function AddPatientScreen({ navigation, route }) {
 
   return (
     <SafeAreaView style={styles.root}>
-      {/* header */}
       <View style={styles.header}>
         <TouchableOpacity onPress={() => navigation.goBack()}>
           <MaterialCommunityIcons name="arrow-left" size={24} color="#fff" />
@@ -65,7 +73,6 @@ export default function AddPatientScreen({ navigation, route }) {
         <View style={{ width: 24 }} />
       </View>
 
-      {/* form */}
       <KeyboardAvoidingView
         style={{ flex: 1 }}
         behavior={Platform.OS === "ios" ? "padding" : "height"}
@@ -86,10 +93,11 @@ export default function AddPatientScreen({ navigation, route }) {
             setHeight={(v) => setClin({ ...clin, height: v })}
             weight={clin.weight}
             setWeight={(v) => setClin({ ...clin, weight: v })}
+            notes={clin.notes}
+            setNotes={(v) => setClin({ ...clin, notes: v })}
           />
         </ScrollView>
 
-        {/* footer */}
         <View style={styles.footer}>
           <TouchableOpacity style={styles.addButton} onPress={handleAdd}>
             <Text style={styles.addButtonText}>Save Patient</Text>

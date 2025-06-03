@@ -51,6 +51,16 @@ export default function AddNewPatientScreen({ navigation }) {
       riskLabel: "N/A",
       riskPct: "N/A",
       riskColor: "#ccc",
+      // ← ADD THESE TWO FIELDS:
+      clinical: {
+        age: clin.age,
+        gender: clin.gender,
+        height: clin.height,
+        weight: clin.weight,
+        notes: clin.notes,
+        photoUri: clin.photoUri,
+      },
+      labValues: { ...labValues },
     };
 
     addPatient(newPatient);

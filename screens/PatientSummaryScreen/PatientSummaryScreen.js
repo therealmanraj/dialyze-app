@@ -7,26 +7,21 @@ import {
   Text,
   TouchableOpacity,
   StyleSheet,
+  Image,
 } from "react-native";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
 
 import ProfileHeader from "./components/ProfileHeader";
-import ClinicalInfoSection from ".//components/ClinicalInfoSection";
+import ClinicalInfoSection from "./components/ClinicalInfoSection";
 import RiskSection from "./components/RiskSection";
 import LabTrendsSection from "./components/LabTrendsSection";
 
 export default function PatientSummaryScreen({ route, navigation }) {
   const { patient } = route.params;
 
-  // example labValues; you’ll want to pull these from your real data
-  const labValues = [
-    { label: "Creatinine", value: "2.5 mg/dL" },
-    { label: "BUN", value: "40 mg/dL" },
-    { label: "Potassium", value: "5.2 mEq/L" },
-    { label: "Sodium", value: "138 mEq/L" },
-    { label: "Bicarbonate", value: "22 mEq/L" },
-    { label: "Urine Output", value: "500 mL/day" },
-  ];
+  // If patient.labValues is an object, e.g. { Creatinine: "1.2 mg/dL", BUN: "40 mg/dL", … }
+  // Otherwise, if you stored labValues as an array of { label, value }, adjust accordingly.
+  const labValuesObject = patient.labValues || {};
 
   return (
     <SafeAreaView style={styles.root}>
@@ -40,7 +35,7 @@ export default function PatientSummaryScreen({ route, navigation }) {
       </View>
 
       <ScrollView contentContainerStyle={{ paddingBottom: 40 }}>
-        {/* Profile */}
+        {/* Profile (photo + name + details) */}
         <ProfileHeader
           avatar={patient.avatar}
           name={patient.name}
@@ -48,35 +43,36 @@ export default function PatientSummaryScreen({ route, navigation }) {
           details={patient.details}
         />
 
-        {/* Clinical Info */}
+        {/* Clinical Info: read from patient.clinical */}
         <ClinicalInfoSection
           data={[
-            { label: "Weight", value: "75 kg" },
-            { label: "Height", value: "175 cm" },
-            { label: "BMI", value: "24.5" },
-            { label: "BSA", value: "1.8 m²" },
-            { label: "Age", value: "65" },
-            { label: "Gender", value: "Male" },
+            { label: "Weight", value: `${patient.clinical.weight} kg` },
+            { label: "Height", value: `${patient.clinical.height} cm` },
+            { label: "BMI", value: "—" }, // if you want to compute BMI on the fly, you could
+            { label: "Age", value: patient.clinical.age },
+            { label: "Gender", value: patient.clinical.gender },
+            // You can also show “Notes” if you wish:
+            { label: "Notes", value: patient.clinical.notes || "—" },
           ]}
           onUpdate={() => navigation.navigate("UpdateClinicalInfo")}
         />
 
-        {/* Risk Section */}
+        {/* Risk Section (unchanged) */}
         <RiskSection
           akiRisk={[
-            { label: "Risk Score", value: "15%" },
-            { label: "Risk Level", value: "Low" },
+            { label: "Risk Score", value: patient.riskPct },
+            { label: "Risk Level", value: patient.riskLabel },
           ]}
-          dialysisNeed={[{ label: "Probability", value: "5%" }]}
+          dialysisNeed={[{ label: "Probability", value: "—" }]}
         />
 
-        {/* —— NEW: Lab Values Grid —— */}
+        {/* Lab Values Grid: iterate over patient.labValues */}
         <Text style={styles.sectionTitle}>Lab Values</Text>
         <View style={styles.grid}>
-          {labValues.map((item) => (
-            <View key={item.label} style={styles.cell}>
-              <Text style={styles.cellLabel}>{item.label}</Text>
-              <Text style={styles.cellValue}>{item.value}</Text>
+          {Object.entries(labValuesObject).map(([labKey, labVal]) => (
+            <View key={labKey} style={styles.cell}>
+              <Text style={styles.cellLabel}>{labKey}</Text>
+              <Text style={styles.cellValue}>{labVal}</Text>
             </View>
           ))}
         </View>
@@ -84,20 +80,20 @@ export default function PatientSummaryScreen({ route, navigation }) {
         {/* (Optional) Lab Trends Chart */}
         <LabTrendsSection
           metric="Creatinine"
-          value="1.2 mg/dL"
+          value={patient.labValues.Creatinine || "—"}
           changePct="+10%"
           labels={["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"]}
           data={[80, 95, 60, 75, 100, 85, 90]}
         />
       </ScrollView>
 
-      {/* —— UPDATED BUTTON —— */}
+      {/* Footer Button */}
       <View style={styles.footer}>
         <TouchableOpacity
           style={styles.updateButton}
           onPress={() =>
             navigation.navigate("UpdatePrediction", {
-              /* pass along whatever data UpdatePredictionScreen needs */
+              /* pass along whatever data you need */
             })
           }
         >
