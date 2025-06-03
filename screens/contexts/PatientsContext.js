@@ -95,43 +95,49 @@ const INITIAL_PATIENTS = [
 export function PatientsProvider({ children }) {
   const [patients, setPatients] = useState(INITIAL_PATIENTS);
 
-  // 3) addPatient: prepend a brand-new patient, ensuring it has a clinical sub‐object
-  const addPatient = (patient) =>
+  // 3) addPatient: same as before
+  const addPatient = (newPatient) =>
     setPatients((prev) => [
       {
-        ...patient,
+        ...newPatient,
         clinical: {
-          weight: patient.clinical?.weight || "",
-          height: patient.clinical?.height || "",
-          age: patient.clinical?.age || "",
-          gender: patient.clinical?.gender || "",
-          notes: patient.clinical?.notes || "",
+          weight: newPatient.clinical?.weight || "",
+          height: newPatient.clinical?.height || "",
+          age: newPatient.clinical?.age || "",
+          gender: newPatient.clinical?.gender || "",
+          notes: newPatient.clinical?.notes || "",
         },
-        labValues: patient.labValues || {},
+        labValues: newPatient.labValues || {},
       },
       ...prev,
     ]);
 
-  // 4) removePatient: filter out one by id
+  // 4) removePatient: same as before
   const removePatient = (id) =>
     setPatients((prev) => prev.filter((p) => p.id !== id));
 
-  // 5) updatePatient: merge in any fields (name, avatar, clinical) that were passed
+  // 5) updatePatient: merge in any fields we pass, including 'clinical' or 'labValues'
   const updatePatient = (id, updates) => {
-    // `updates` might contain:
-    //    { name: "NewName", avatar: "newUrl", clinical: { age:"30", height: "170", … } }
     setPatients((prev) =>
       prev.map((p) => {
         if (p.id !== id) return p;
+
         return {
           ...p,
           // overwrite name/avatar if provided:
           name: updates.name !== undefined ? updates.name : p.name,
           avatar: updates.avatar !== undefined ? updates.avatar : p.avatar,
-          // merge the clinical sub‐object:
+
+          // merge the existing clinical + any new clinical fields:
           clinical: {
             ...p.clinical,
             ...(updates.clinical || {}),
+          },
+
+          // merge the existing labValues + any new labValues:
+          labValues: {
+            ...p.labValues,
+            ...(updates.labValues || {}),
           },
         };
       })

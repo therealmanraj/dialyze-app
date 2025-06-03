@@ -1,5 +1,5 @@
 // screens/UpdatePredictionScreen.js
-import React, { useState } from "react";
+import React, { useContext, useState } from "react";
 import {
   SafeAreaView,
   KeyboardAvoidingView,
@@ -11,15 +11,23 @@ import {
   Platform,
 } from "react-native";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
+import { PatientsContext } from "../contexts/PatientsContext";
 import LabValuesInputs from "../components/LabValuesInputs";
 
 export default function UpdatePredictionScreen({ navigation, route }) {
-  // you could seed initial values from route.params.labValues if you like:
-  const initial = route.params?.labValues || {};
-  const [labValues, setLabValues] = useState(initial);
+  // 1) Grab patientId and initial labValues from params
+  const { patientId, labValues: initialLab } = route.params;
+
+  // 2) Pull updatePatient from context
+  const { updatePatient } = useContext(PatientsContext);
+
+  // 3) Keep local state of labValues
+  const [labValues, setLabValues] = useState(initialLab || {});
 
   function handleUpdate() {
-    // TODO: re-run your prediction using labValues…
+    // 4) Call context updater so that patient.labValues gets overwritten
+    updatePatient(patientId, { labValues });
+    // 5) Go back to summary screen
     navigation.goBack();
   }
 
@@ -34,7 +42,7 @@ export default function UpdatePredictionScreen({ navigation, route }) {
         <View style={{ width: 24 }} />
       </View>
 
-      {/* —— lifts form + footer above keyboard —— */}
+      {/* —— lift form + footer above keyboard —— */}
       <KeyboardAvoidingView
         style={{ flex: 1 }}
         behavior={Platform.OS === "ios" ? "padding" : "height"}
@@ -44,7 +52,7 @@ export default function UpdatePredictionScreen({ navigation, route }) {
           contentContainerStyle={styles.content}
           keyboardShouldPersistTaps="handled"
         >
-          {/* === all your lab fields come from LabValuesInputs === */}
+          {/* All your lab fields come from LabValuesInputs */}
           <LabValuesInputs labValues={labValues} setLabValues={setLabValues} />
         </ScrollView>
 
@@ -77,13 +85,11 @@ const styles = StyleSheet.create({
     fontWeight: "700",
     textAlign: "center",
   },
-
   content: {
     paddingHorizontal: 16,
     paddingTop: 8,
     paddingBottom: 24,
   },
-
   footer: {
     paddingHorizontal: 16,
     paddingTop: 8,

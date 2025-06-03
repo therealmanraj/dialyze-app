@@ -135,7 +135,8 @@ export default function PatientSummaryScreen({ route, navigation }) {
           style={styles.updateButton}
           onPress={() =>
             navigation.navigate("UpdatePrediction", {
-              /* pass along whatever data you need */
+              patientId: patient.id,
+              labValues: patient.labValues,
             })
           }
         >
