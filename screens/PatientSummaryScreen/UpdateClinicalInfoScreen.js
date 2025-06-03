@@ -1,6 +1,5 @@
 // screens/UpdateClinicalInfoScreen.js
-
-import React, { useState } from "react";
+import React, { useState, useContext, useEffect } from "react";
 import {
   SafeAreaView,
   View,
@@ -10,18 +9,52 @@ import {
   KeyboardAvoidingView,
   StyleSheet,
   Platform,
+  TextInput,
 } from "react-native";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
+import { PatientsContext } from "../contexts/PatientsContext";
 import ClinicalInfoInputs from "../components/ClinicalInfoInputs";
 
-export default function UpdateClinicalInfoScreen({ navigation }) {
+export default function UpdateClinicalInfoScreen({ route, navigation }) {
+  // 1) Get the patient object from route.params:
+  const { patient } = route.params;
+
+  // 2) Grab the context function for updating clinical info:
+  const { updatePatientClinical } = useContext(PatientsContext);
+
+  // 3) Create state variables for each clinical field:
   const [weight, setWeight] = useState("");
   const [height, setHeight] = useState("");
   const [age, setAge] = useState("");
   const [gender, setGender] = useState("");
+  const [notes, setNotes] = useState("");
 
+  // 4) On mount, initialize those useState(...) fields from patient.clinical:
+  useEffect(() => {
+    if (patient.clinical) {
+      setWeight(patient.clinical.weight || "");
+      setHeight(patient.clinical.height || "");
+      setAge(patient.clinical.age || "");
+      setGender(patient.clinical.gender || "");
+      setNotes(patient.clinical.notes || "");
+    }
+  }, [patient]);
+
+  // 5) When “Update” is pressed, push the new .clinical back into context:
   const handleUpdate = () => {
-    // TODO: persist or pass these values back...
+    // Build a newClinical object—only include fields we want to overwrite:
+    const newClinical = {
+      weight: weight.trim(),
+      height: height.trim(),
+      age: age.trim(),
+      gender: gender.trim(),
+      notes: notes.trim(),
+    };
+
+    // Call the context updater:
+    updatePatientClinical(patient.id, newClinical);
+
+    // Go back to the summary screen:
     navigation.goBack();
   };
 
@@ -47,15 +80,34 @@ export default function UpdateClinicalInfoScreen({ navigation }) {
           keyboardShouldPersistTaps="handled"
         >
           <ClinicalInfoInputs
-            weight={weight}
-            setWeight={setWeight}
-            height={height}
-            setHeight={setHeight}
+            name={""} // no name field here, just clinical inputs
+            setName={() => {}} // no-op
+            photoUri={patient.avatar} // we ignore photo on this screen
+            setPhotoUri={() => {}}
             age={age}
             setAge={setAge}
             gender={gender}
             setGender={setGender}
+            height={height}
+            setHeight={setHeight}
+            weight={weight}
+            setWeight={setWeight}
+            // We added “notes” inside ClinicalInfoInputs? If not, treat notes separately:
+            // But since your ClinicalInfoInputs does not handle notes, we’ll add a quick text input below:
           />
+
+          {/* If you want a “Notes” field, you can add it below ClinicalInfoInputs: */}
+          <View style={{ marginTop: 16, marginBottom: 16 }}>
+            <Text style={styles.label}>Notes</Text>
+            <TextInput
+              style={[styles.input, { height: 80, textAlignVertical: "top" }]}
+              placeholder="Enter clinical notes"
+              placeholderTextColor="#91b0ca"
+              multiline
+              value={notes}
+              onChangeText={setNotes}
+            />
+          </View>
         </ScrollView>
 
         {/* always-visible update button */}
@@ -91,6 +143,18 @@ const styles = StyleSheet.create({
     paddingHorizontal: 16,
     paddingTop: 8,
     paddingBottom: 16,
+  },
+  label: {
+    color: "#fff",
+    fontSize: 16,
+    marginBottom: 4,
+  },
+  input: {
+    backgroundColor: "#233748",
+    borderRadius: 12,
+    paddingHorizontal: 16,
+    color: "#fff",
+    fontSize: 16,
   },
   footer: {
     padding: 16,

@@ -67,7 +67,9 @@ export default function PatientSummaryScreen({ route, navigation }) {
             { label: "Gender", value: patient.clinical.gender },
             { label: "Notes", value: patient.clinical.notes || "—" },
           ]}
-          onUpdate={() => navigation.navigate("UpdateClinicalInfo")}
+          onUpdate={() =>
+            navigation.navigate("UpdateClinicalInfo", { patient })
+          }
         />
 
         {/* Risk Section (unchanged) */}

@@ -1,12 +1,15 @@
-// contexts/PatientsContext.js
+// screens/contexts/PatientsContext.js
 import React, { createContext, useState } from "react";
 
+// 1) Define the shape of our context
 export const PatientsContext = createContext({
-  patients: [],
-  addPatient: () => {},
-  removePatient: () => {},
+  patients: [], // array of patient objects
+  addPatient: () => {}, // function to add a new patient
+  removePatient: () => {}, // function to remove one by id
+  updatePatientClinical: () => {}, // NEW: function to update clinical info
 });
 
+// 2) Provide some "clinical" defaults for each initial patient to avoid undefined errors
 const INITIAL_PATIENTS = [
   {
     id: "1",
@@ -17,25 +20,19 @@ const INITIAL_PATIENTS = [
     riskLabel: "Medium",
     riskPct: "50%",
     riskColor: "#0bda5b",
-    // ← Add a “clinical” object with every sub‐key (even if empty):
     clinical: {
-      weight: "75", // weight in kg
-      height: "175", // height in cm
-      age: "65", // age in years
-      gender: "Male", // gender string
-      notes: "", // any free‐text notes
+      weight: "75", // in kg
+      height: "175", // in cm
+      age: "65",
+      gender: "Male",
+      notes: "",
     },
-    // ← Add a “labValues” object (empty for now)
     labValues: {
-      Creatinine: "2.5 mg/dL",
+      Creatinine: "1.2 mg/dL",
       BUN: "40 mg/dL",
-      Potassium: "5.2 mEq/L",
-      Sodium: "138 mEq/L",
-      Bicarbonate: "22 mEq/L",
-      // …any other labs you want to seed…
+      // …add any others you want
     },
   },
-
   {
     id: "2",
     name: "Sophia Clark",
@@ -46,21 +43,17 @@ const INITIAL_PATIENTS = [
     riskPct: "90%",
     riskColor: "#e33e3e",
     clinical: {
-      weight: "68",
-      height: "160",
+      weight: "80",
+      height: "168",
       age: "72",
       gender: "Female",
-      notes: "Diabetic, HTN",
+      notes: "",
     },
     labValues: {
       Creatinine: "1.8 mg/dL",
-      BUN: "35 mg/dL",
-      Potassium: "4.8 mEq/L",
-      Sodium: "135 mEq/L",
-      Bicarbonate: "20 mEq/L",
+      BUN: "50 mg/dL",
     },
   },
-
   {
     id: "3",
     name: "John Smith",
@@ -71,21 +64,17 @@ const INITIAL_PATIENTS = [
     riskPct: "10%",
     riskColor: "#0AD95C",
     clinical: {
-      weight: "82",
+      weight: "68",
       height: "180",
       age: "72",
       gender: "Male",
       notes: "",
     },
     labValues: {
-      Creatinine: "1.2 mg/dL",
-      BUN: "28 mg/dL",
-      Potassium: "4.5 mEq/L",
-      Sodium: "140 mEq/L",
-      Bicarbonate: "24 mEq/L",
+      Creatinine: "0.9 mg/dL",
+      BUN: "18 mg/dL",
     },
   },
-
   {
     id: "4",
     name: "Olivia Brown",
@@ -96,18 +85,15 @@ const INITIAL_PATIENTS = [
     riskPct: "25%",
     riskColor: "#0AD95C",
     clinical: {
-      weight: "",
-      height: "",
+      weight: "60",
+      height: "165",
       age: "20",
       gender: "Female",
       notes: "",
     },
     labValues: {
-      Creatinine: "",
-      BUN: "",
-      Potassium: "",
-      Sodium: "",
-      Bicarbonate: "",
+      Creatinine: "0.7 mg/dL",
+      BUN: "12 mg/dL",
     },
   },
 ];
@@ -115,13 +101,53 @@ const INITIAL_PATIENTS = [
 export function PatientsProvider({ children }) {
   const [patients, setPatients] = useState(INITIAL_PATIENTS);
 
-  const addPatient = (patient) => setPatients((prev) => [patient, ...prev]);
+  // 3) addPatient: prepend a brand-new patient, making sure to include a “clinical” field
+  const addPatient = (patient) =>
+    setPatients((prev) => [
+      {
+        ...patient,
+        // If no clinical object was passed in, default to these empty strings
+        clinical: {
+          weight: patient.clinical?.weight || "",
+          height: patient.clinical?.height || "",
+          age: patient.clinical?.age || "",
+          gender: patient.clinical?.gender || "",
+          notes: patient.clinical?.notes || "",
+        },
+        labValues: patient.labValues || {},
+      },
+      ...prev,
+    ]);
 
+  // 4) removePatient: filter out one by id
   const removePatient = (id) =>
     setPatients((prev) => prev.filter((p) => p.id !== id));
 
+  // 5) updatePatientClinical: locate the patient by id and merge in new `clinical` values
+  const updatePatientClinical = (id, newClinical) => {
+    setPatients((prev) =>
+      prev.map((p) => {
+        if (p.id !== id) return p;
+        return {
+          ...p,
+          clinical: {
+            ...p.clinical,
+            ...newClinical,
+          },
+        };
+      })
+    );
+  };
+
   return (
-    <PatientsContext.Provider value={{ patients, addPatient, removePatient }}>
+    <PatientsContext.Provider
+      value={{
+        patients,
+        addPatient,
+        removePatient,
+        updatePatientClinical, // ← expose the new updater function
+      }}
+    >
       {children}
     </PatientsContext.Provider>
   );
