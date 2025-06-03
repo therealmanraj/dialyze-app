@@ -67,7 +67,10 @@ function PatientRow({ item, onPress, onDelete }) {
               <Image source={{ uri: item.avatar }} style={styles.avatar} />
               <View style={{ marginLeft: 12 }}>
                 <Text style={styles.patientName}>{item.name}</Text>
-                <Text style={styles.patientDetails}>{item.details}</Text>
+                <Text style={styles.patientDetails}>
+                  Age: {item.clinical.age || "N/A"},{" "}
+                  {item.clinical.gender || "N/A"}
+                </Text>
               </View>
             </View>
             <View style={styles.pill}>
