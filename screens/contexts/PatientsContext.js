@@ -6,10 +6,9 @@ export const PatientsContext = createContext({
   patients: [], // array of patient objects
   addPatient: () => {}, // function to add a new patient
   removePatient: () => {}, // function to remove one by id
-  updatePatientClinical: () => {}, // NEW: function to update clinical info
+  updatePatient: () => {}, // ‹‹ REPLACED: one updater that can modify name/avatar/clinical
 });
 
-// 2) Provide some "clinical" defaults for each initial patient to avoid undefined errors
 const INITIAL_PATIENTS = [
   {
     id: "1",
@@ -29,7 +28,6 @@ const INITIAL_PATIENTS = [
     labValues: {
       Creatinine: "1.2 mg/dL",
       BUN: "40 mg/dL",
-      // …add any others you want
     },
   },
   {
@@ -97,12 +95,11 @@ const INITIAL_PATIENTS = [
 export function PatientsProvider({ children }) {
   const [patients, setPatients] = useState(INITIAL_PATIENTS);
 
-  // 3) addPatient: prepend a brand-new patient, making sure to include a “clinical” field
+  // 3) addPatient: prepend a brand-new patient, ensuring it has a clinical sub‐object
   const addPatient = (patient) =>
     setPatients((prev) => [
       {
         ...patient,
-        // If no clinical object was passed in, default to these empty strings
         clinical: {
           weight: patient.clinical?.weight || "",
           height: patient.clinical?.height || "",
@@ -119,16 +116,22 @@ export function PatientsProvider({ children }) {
   const removePatient = (id) =>
     setPatients((prev) => prev.filter((p) => p.id !== id));
 
-  // 5) updatePatientClinical: locate the patient by id and merge in new `clinical` values
-  const updatePatientClinical = (id, newClinical) => {
+  // 5) updatePatient: merge in any fields (name, avatar, clinical) that were passed
+  const updatePatient = (id, updates) => {
+    // `updates` might contain:
+    //    { name: "NewName", avatar: "newUrl", clinical: { age:"30", height: "170", … } }
     setPatients((prev) =>
       prev.map((p) => {
         if (p.id !== id) return p;
         return {
           ...p,
+          // overwrite name/avatar if provided:
+          name: updates.name !== undefined ? updates.name : p.name,
+          avatar: updates.avatar !== undefined ? updates.avatar : p.avatar,
+          // merge the clinical sub‐object:
           clinical: {
             ...p.clinical,
-            ...newClinical,
+            ...(updates.clinical || {}),
           },
         };
       })
@@ -141,7 +144,7 @@ export function PatientsProvider({ children }) {
         patients,
         addPatient,
         removePatient,
-        updatePatientClinical, // ← expose the new updater function
+        updatePatient, // ‹‹ expose this single updater
       }}
     >
       {children}

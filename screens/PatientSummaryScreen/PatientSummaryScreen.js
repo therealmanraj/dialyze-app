@@ -95,7 +95,7 @@ export default function PatientSummaryScreen({ route, navigation }) {
           ]}
           onUpdate={() =>
             // 3) When launching update screen, pass patientId as well
-            navigation.navigate("UpdateClinicalInfo", { patientId })
+            navigation.navigate("UpdateClinicalInfo", { patientId: patient.id })
           }
         />
 

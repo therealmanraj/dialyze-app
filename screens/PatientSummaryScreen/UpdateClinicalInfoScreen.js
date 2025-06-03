@@ -19,35 +19,47 @@ export default function UpdateClinicalInfoScreen({ route, navigation }) {
   // 1) Read just patientId from params
   const { patientId } = route.params;
 
-  // 2) Grab both the full list and the updater function from context
-  const { patients, updatePatientClinical } = useContext(PatientsContext);
+  // 2) Grab both the full list and our updater from context
+  const { patients, updatePatient } = useContext(PatientsContext);
 
   // 3) Find the “live” patient object by ID
   const patient = patients.find((p) => p.id === patientId);
 
-  // 4) Local state for each clinical field (strings)
+  // 4) Local state for every field we want to edit:
+  //    • name        (string)
+  //    • photoUri    (string)
+  //    • weight      (string)
+  //    • height      (string)
+  //    • age         (string)
+  //    • gender      (string)
+  //    • notes       (string)
+  const [name, setName] = useState("");
+  const [photoUri, setPhotoUri] = useState("");
   const [weight, setWeight] = useState("");
   const [height, setHeight] = useState("");
   const [age, setAge] = useState("");
   const [gender, setGender] = useState("");
   const [notes, setNotes] = useState("");
 
-  // 5) Initialize those fields from patient.clinical once we have it
+  // 5) Initialize those fields from patient once we have it
   useEffect(() => {
     if (!patient) return;
 
-    const { clinical } = patient;
-    setWeight(clinical.weight || "");
-    setHeight(clinical.height || "");
-    setAge(clinical.age || "");
-    setGender(clinical.gender || "");
-    setNotes(clinical.notes || "");
+    setName(patient.name || "");
+    setPhotoUri(patient.avatar || "");
+    const c = patient.clinical || {};
+    setWeight(c.weight || "");
+    setHeight(c.height || "");
+    setAge(c.age || "");
+    setGender(c.gender || "");
+    setNotes(c.notes || "");
   }, [patient]);
 
   // 6) When user presses “Update,” call context updater and then goBack()
   const handleUpdate = () => {
     if (!patient) return;
 
+    // Build a newClinical object
     const newClinical = {
       weight: weight.trim(),
       height: height.trim(),
@@ -56,11 +68,18 @@ export default function UpdateClinicalInfoScreen({ route, navigation }) {
       notes: notes.trim(),
     };
 
-    updatePatientClinical(patient.id, newClinical);
+    // Call the unified updater:
+    updatePatient(patient.id, {
+      name: name.trim(),
+      avatar: photoUri, // pass the new (or unchanged) photo URI
+      clinical: newClinical, // pass all clinical fields as an object
+    });
+
+    // Return to the previous screen
     navigation.goBack();
   };
 
-  // If patient somehow is not found, show a fallback
+  // If somehow our patientID didn’t match anything, show a fallback:
   if (!patient) {
     return (
       <SafeAreaView style={styles.root}>
@@ -71,9 +90,7 @@ export default function UpdateClinicalInfoScreen({ route, navigation }) {
           <Text style={styles.headerTitle}>Update Clinical Information</Text>
           <View style={{ width: 24 }} />
         </View>
-        <View
-          style={{ flex: 1, justifyContent: "center", alignItems: "center" }}
-        >
+        <View style={styles.fallbackContainer}>
           <Text style={{ color: "#fff" }}>Patient not found.</Text>
         </View>
       </SafeAreaView>
@@ -82,7 +99,7 @@ export default function UpdateClinicalInfoScreen({ route, navigation }) {
 
   return (
     <SafeAreaView style={styles.root}>
-      {/* fixed header */}
+      {/* Fixed header */}
       <View style={styles.header}>
         <TouchableOpacity onPress={() => navigation.goBack()}>
           <MaterialCommunityIcons name="arrow-left" size={24} color="#fff" />
@@ -91,7 +108,7 @@ export default function UpdateClinicalInfoScreen({ route, navigation }) {
         <View style={{ width: 24 }} />
       </View>
 
-      {/* form + footer slide up with keyboard */}
+      {/* Form + keyboard handling */}
       <KeyboardAvoidingView
         style={{ flex: 1 }}
         behavior={Platform.OS === "ios" ? "padding" : "height"}
@@ -101,11 +118,12 @@ export default function UpdateClinicalInfoScreen({ route, navigation }) {
           contentContainerStyle={styles.form}
           keyboardShouldPersistTaps="handled"
         >
+          {/* Pass **all** editable fields into ClinicalInfoInputs. */}
           <ClinicalInfoInputs
-            name={""} // not editing name here
-            setName={() => {}}
-            photoUri={patient.avatar} // ignoring photo changes on this screen
-            setPhotoUri={() => {}}
+            name={name}
+            setName={setName}
+            photoUri={photoUri}
+            setPhotoUri={setPhotoUri}
             age={age}
             setAge={setAge}
             gender={gender}
@@ -116,7 +134,7 @@ export default function UpdateClinicalInfoScreen({ route, navigation }) {
             setWeight={setWeight}
           />
 
-          {/* Notes field (ClinicalInfoInputs doesn’t include notes) */}
+          {/* Notes is not part of ClinicalInfoInputs, so we add it manually: */}
           <View style={{ marginTop: 16, marginBottom: 16 }}>
             <Text style={styles.label}>Notes</Text>
             <TextInput
@@ -130,7 +148,7 @@ export default function UpdateClinicalInfoScreen({ route, navigation }) {
           </View>
         </ScrollView>
 
-        {/* always-visible update button */}
+        {/* Always-visible “Update” button */}
         <View style={styles.footer}>
           <TouchableOpacity style={styles.updateButton} onPress={handleUpdate}>
             <Text style={styles.updateButtonText}>Update</Text>
@@ -158,6 +176,11 @@ const styles = StyleSheet.create({
     fontSize: 18,
     fontWeight: "700",
     textAlign: "center",
+  },
+  fallbackContainer: {
+    flex: 1,
+    justifyContent: "center",
+    alignItems: "center",
   },
   form: {
     paddingHorizontal: 16,
