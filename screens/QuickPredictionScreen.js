@@ -45,10 +45,7 @@ export default function QuickPredictionScreen({ navigation }) {
   }
 
   return (
-    <SafeAreaView
-      style={styles.root}
-      edges={["top", "left", "right", "bottom"]}
-    >
+    <SafeAreaView style={styles.root} edges={["top", "left", "right"]}>
       <View style={styles.header}>
         <Text style={styles.headerTitle}>Dialyze</Text>
       </View>
