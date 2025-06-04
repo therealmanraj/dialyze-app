@@ -8,6 +8,7 @@ import {
   TouchableOpacity,
   StyleSheet,
   Platform,
+  Image,
 } from "react-native";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
 import ClinicalInfoInputs from "../components/ClinicalInfoInputs";
@@ -16,7 +17,7 @@ import { PatientsContext } from "../contexts/PatientsContext";
 import { SafeAreaView } from "react-native-safe-area-context";
 
 export default function AddPatientScreen({ navigation, route }) {
-  const DEFAULT_AVATAR = placeholder;
+  const DEFAULT_AVATAR = Image.resolveAssetSource(placeholder).uri;
   const { addPatient } = useContext(PatientsContext);
   const { labValues: incomingLabValues = {} } = route.params || {};
 

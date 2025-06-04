@@ -9,6 +9,7 @@ import {
   TouchableOpacity,
   StyleSheet,
   Platform,
+  Image,
 } from "react-native";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
 import { SafeAreaView } from "react-native-safe-area-context";
@@ -21,7 +22,7 @@ import placeholder from "../assets/placeholder.png";
 import { PatientsContext } from "./contexts/PatientsContext";
 
 export default function AddNewPatientScreen({ navigation }) {
-  const DEFAULT_AVATAR = placeholder;
+  const DEFAULT_AVATAR = Image.resolveAssetSource(placeholder).uri;
 
   const { addPatient } = useContext(PatientsContext);
 
