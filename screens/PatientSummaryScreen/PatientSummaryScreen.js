@@ -9,7 +9,6 @@ import {
   StyleSheet,
 } from "react-native";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
-
 import { PatientsContext } from "../contexts/PatientsContext";
 import ProfileHeader from "./components/ProfileHeader";
 import ClinicalInfoSection from "./components/ClinicalInfoSection";
@@ -31,9 +30,23 @@ const UNIT_MAP = {
   Glasgow: "points",
 };
 
+const LAB_FIELDS = [
+  "HCO3",
+  "Creatinine",
+  "Mean Arterial Pressure",
+  "Procalcitonin",
+  "Bilirubin",
+  "pH",
+  "Albumin",
+  "Urea",
+  "White Blood Cell Count",
+  "SOFA",
+  "APACHEII",
+  "Glasgow",
+];
+
 export default function PatientSummaryScreen({ route, navigation }) {
   const { patientId } = route.params;
-
   const { patients } = useContext(PatientsContext);
   const patient = patients.find((p) => p.id === patientId);
 
@@ -69,6 +82,19 @@ export default function PatientSummaryScreen({ route, navigation }) {
   }
 
   const labValuesObject = patient.labValues || {};
+
+  const allLabsFilled = LAB_FIELDS.every((key) => {
+    const v = labValuesObject[key];
+    return typeof v === "string" && v.trim() !== "";
+  });
+
+  const buttonLabel = allLabsFilled ? "Update Predictions" : "Add Lab Values";
+  const buttonAction = () => {
+    navigation.navigate("UpdatePrediction", {
+      patientId: patient.id,
+      labValues: patient.labValues,
+    });
+  };
 
   return (
     <SafeAreaView style={styles.root}>
@@ -139,16 +165,8 @@ export default function PatientSummaryScreen({ route, navigation }) {
       </ScrollView>
 
       <View style={styles.footer}>
-        <TouchableOpacity
-          style={styles.updateButton}
-          onPress={() =>
-            navigation.navigate("UpdatePrediction", {
-              patientId: patient.id,
-              labValues: patient.labValues,
-            })
-          }
-        >
-          <Text style={styles.updateButtonText}>Update Predictions</Text>
+        <TouchableOpacity style={styles.updateButton} onPress={buttonAction}>
+          <Text style={styles.updateButtonText}>{buttonLabel}</Text>
         </TouchableOpacity>
       </View>
     </SafeAreaView>
