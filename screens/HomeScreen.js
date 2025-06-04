@@ -55,7 +55,7 @@ function PatientRow({ item, onPress, onDelete, onSwipeOpen }) {
         }}
         renderRightActions={(progress, dragX) => {
           const trans = dragX.interpolate({
-            inputRange: [-80, 0],
+            inputRange: [-50, 0],
             outputRange: [0, 80],
             extrapolate: "clamp",
           });
@@ -259,7 +259,6 @@ const styles = StyleSheet.create({
     backgroundColor: "#151a1e",
     paddingVertical: 12,
     paddingHorizontal: 16,
-    borderRadius: 8,
   },
   patientInfo: { flexDirection: "row", alignItems: "center" },
   avatar: { width: 56, height: 56, borderRadius: 28, backgroundColor: "#333" },
