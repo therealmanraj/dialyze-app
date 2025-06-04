@@ -48,9 +48,9 @@ export default function LabValuesInputs({ labValues, setLabValues }) {
             label={leftKey}
             unit={UNIT_MAP[leftKey] || ""}
             rawValue={labValues[leftKey] ?? ""}
-            onRawChange={(newRaw) => {
-              setLabValues({ ...labValues, [leftKey]: newRaw });
-            }}
+            onRawChange={(newRaw) =>
+              setLabValues({ ...labValues, [leftKey]: newRaw })
+            }
             style={styles.half}
           />
 
@@ -59,9 +59,9 @@ export default function LabValuesInputs({ labValues, setLabValues }) {
               label={rightKey}
               unit={UNIT_MAP[rightKey] || ""}
               rawValue={labValues[rightKey] ?? ""}
-              onRawChange={(newRaw) => {
-                setLabValues({ ...labValues, [rightKey]: newRaw });
-              }}
+              onRawChange={(newRaw) =>
+                setLabValues({ ...labValues, [rightKey]: newRaw })
+              }
               style={[styles.half, styles.rightGap]}
             />
           ) : (
@@ -114,7 +114,9 @@ const styles = StyleSheet.create({
     marginLeft: 8,
   },
 
-  fieldContainer: {},
+  fieldContainer: {
+    marginBottom: 16,
+  },
   fieldLabel: {
     color: "#fff",
     fontSize: 16,
@@ -128,13 +130,12 @@ const styles = StyleSheet.create({
 
   inputBox: {
     flex: 1,
+    height: 56,
     backgroundColor: "#233748",
     borderRadius: 12,
-    height: 56,
     paddingHorizontal: 16,
     color: "#fff",
     fontSize: 16,
-
     ...Platform.select({
       ios: { paddingVertical: 14 },
       android: {},
