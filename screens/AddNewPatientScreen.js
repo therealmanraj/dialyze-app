@@ -1,7 +1,6 @@
 // screens/AddNewPatientScreen.js
 import React, { useState, useContext } from "react";
 import {
-  SafeAreaView,
   KeyboardAvoidingView,
   ScrollView,
   View,
@@ -12,6 +11,7 @@ import {
   Platform,
 } from "react-native";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
+import { SafeAreaView } from "react-native-safe-area-context";
 
 import ClinicalInfoInputs from "./components/ClinicalInfoInputs";
 import LabValuesInputs from "./components/LabValuesInputs";
@@ -67,7 +67,7 @@ export default function AddNewPatientScreen({ navigation }) {
   }
 
   return (
-    <SafeAreaView style={styles.root}>
+    <SafeAreaView style={styles.root} edges={["top", "left", "right"]}>
       <View style={styles.header}>
         <TouchableOpacity onPress={() => navigation.goBack()}>
           <MaterialCommunityIcons name="arrow-left" size={24} color="#fff" />

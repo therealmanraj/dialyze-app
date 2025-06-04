@@ -1,7 +1,6 @@
 // screens/PredictionOutcomeScreen.js
 import React from "react";
 import {
-  SafeAreaView,
   ScrollView,
   View,
   Text,
@@ -9,12 +8,13 @@ import {
   StyleSheet,
 } from "react-native";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
+import { SafeAreaView } from "react-native-safe-area-context";
 
 export default function PredictionOutcomeScreen({ navigation, route }) {
   const { akiRisk, dialysisNeed, labValues } = route.params;
 
   return (
-    <SafeAreaView style={styles.root}>
+    <SafeAreaView style={styles.root} edges={["top", "left", "right"]}>
       <View style={styles.header}>
         <TouchableOpacity onPress={() => navigation.goBack()}>
           <MaterialCommunityIcons name="arrow-left" size={24} color="#fff" />

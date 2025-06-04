@@ -1,7 +1,6 @@
 // screens/UpdateClinicalInfoScreen.js
 import React, { useState, useContext, useEffect } from "react";
 import {
-  SafeAreaView,
   View,
   Text,
   TouchableOpacity,
@@ -12,6 +11,7 @@ import {
   TextInput,
 } from "react-native";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
+import { SafeAreaView } from "react-native-safe-area-context";
 import { PatientsContext } from "../contexts/PatientsContext";
 import ClinicalInfoInputs from "../components/ClinicalInfoInputs";
 
@@ -65,7 +65,7 @@ export default function UpdateClinicalInfoScreen({ route, navigation }) {
 
   if (!patient) {
     return (
-      <SafeAreaView style={styles.root}>
+      <SafeAreaView style={styles.root} edges={["top", "left", "right"]}>
         <View style={styles.header}>
           <TouchableOpacity onPress={() => navigation.goBack()}>
             <MaterialCommunityIcons name="arrow-left" size={24} color="#fff" />
@@ -81,7 +81,7 @@ export default function UpdateClinicalInfoScreen({ route, navigation }) {
   }
 
   return (
-    <SafeAreaView style={styles.root}>
+    <SafeAreaView style={styles.root} edges={["top", "left", "right"]}>
       <View style={styles.header}>
         <TouchableOpacity onPress={() => navigation.goBack()}>
           <MaterialCommunityIcons name="arrow-left" size={24} color="#fff" />

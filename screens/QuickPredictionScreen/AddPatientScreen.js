@@ -1,7 +1,6 @@
 // screens/QuickPredictionScreen/AddPatientScreen.js
 import React, { useState, useContext } from "react";
 import {
-  SafeAreaView,
   KeyboardAvoidingView,
   ScrollView,
   View,
@@ -14,6 +13,7 @@ import { MaterialCommunityIcons } from "@expo/vector-icons";
 import ClinicalInfoInputs from "../components/ClinicalInfoInputs";
 import placeholder from "../../assets/placeholder.png";
 import { PatientsContext } from "../contexts/PatientsContext";
+import { SafeAreaView } from "react-native-safe-area-context";
 
 export default function AddPatientScreen({ navigation, route }) {
   const DEFAULT_AVATAR = placeholder;
@@ -62,7 +62,7 @@ export default function AddPatientScreen({ navigation, route }) {
   }
 
   return (
-    <SafeAreaView style={styles.root}>
+    <SafeAreaView style={styles.root} edges={["top", "left", "right"]}>
       <View style={styles.header}>
         <TouchableOpacity onPress={() => navigation.goBack()}>
           <MaterialCommunityIcons name="arrow-left" size={24} color="#fff" />

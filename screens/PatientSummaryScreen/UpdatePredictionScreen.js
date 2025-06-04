@@ -1,7 +1,6 @@
 // screens/UpdatePredictionScreen.js
 import React, { useContext, useState } from "react";
 import {
-  SafeAreaView,
   KeyboardAvoidingView,
   ScrollView,
   View,
@@ -11,6 +10,7 @@ import {
   Platform,
 } from "react-native";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
+import { SafeAreaView } from "react-native-safe-area-context";
 import { PatientsContext } from "../contexts/PatientsContext";
 import LabValuesInputs from "../components/LabValuesInputs";
 
@@ -27,7 +27,7 @@ export default function UpdatePredictionScreen({ navigation, route }) {
   }
 
   return (
-    <SafeAreaView style={styles.root}>
+    <SafeAreaView style={styles.root} edges={["top", "left", "right"]}>
       <View style={styles.header}>
         <TouchableOpacity onPress={() => navigation.goBack()}>
           <MaterialCommunityIcons name="close" size={24} color="#fff" />

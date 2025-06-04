@@ -1,7 +1,7 @@
 // screens/QuickPredictionScreen.js
 import React, { useState } from "react";
+import { SafeAreaView } from "react-native-safe-area-context";
 import {
-  SafeAreaView,
   KeyboardAvoidingView,
   ScrollView,
   View,
@@ -45,7 +45,7 @@ export default function QuickPredictionScreen({ navigation }) {
   }
 
   return (
-    <SafeAreaView style={styles.root}>
+    <SafeAreaView style={styles.root} edges={["top", "left", "right"]}>
       <View style={styles.header}>
         <Text style={styles.headerTitle}>Dialyze</Text>
       </View>

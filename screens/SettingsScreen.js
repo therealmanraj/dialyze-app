@@ -1,7 +1,7 @@
 // screens/SettingsScreen.js
 import React, { useState } from "react";
+import { SafeAreaView } from "react-native-safe-area-context";
 import {
-  SafeAreaView,
   ScrollView,
   View,
   Text,
@@ -15,7 +15,7 @@ export default function SettingsScreen({ navigation }) {
   const [notificationsEnabled, setNotificationsEnabled] = useState(false);
 
   return (
-    <SafeAreaView style={styles.root}>
+    <SafeAreaView style={styles.root} edges={["top", "left", "right"]}>
       <View style={styles.header}>
         <Text style={styles.headerTitle}>Dialyze</Text>
       </View>

@@ -1,7 +1,6 @@
 // screens/PatientSummaryScreen.js
 import React, { useContext } from "react";
 import {
-  SafeAreaView,
   ScrollView,
   View,
   Text,
@@ -14,6 +13,7 @@ import ProfileHeader from "./components/ProfileHeader";
 import ClinicalInfoSection from "./components/ClinicalInfoSection";
 import RiskSection from "./components/RiskSection";
 import LabTrendsSection from "./components/LabTrendsSection";
+import { SafeAreaView } from "react-native-safe-area-context";
 
 const UNIT_MAP = {
   HCO3: "mEq/L",
@@ -52,7 +52,7 @@ export default function PatientSummaryScreen({ route, navigation }) {
 
   if (!patient) {
     return (
-      <SafeAreaView style={styles.root}>
+      <SafeAreaView style={styles.root} edges={["top", "left", "right"]}>
         <View style={styles.header}>
           <TouchableOpacity onPress={() => navigation.goBack()}>
             <MaterialCommunityIcons name="arrow-left" size={24} color="#fff" />
@@ -97,7 +97,7 @@ export default function PatientSummaryScreen({ route, navigation }) {
   };
 
   return (
-    <SafeAreaView style={styles.root}>
+    <SafeAreaView style={styles.root} edges={["top", "left", "right"]}>
       <View style={styles.header}>
         <TouchableOpacity onPress={() => navigation.goBack()}>
           <MaterialCommunityIcons name="arrow-left" size={24} color="#fff" />
