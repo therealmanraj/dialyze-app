@@ -24,8 +24,8 @@ const INITIAL_PATIENTS = [
       notes: "",
     },
     labValues: {
-      Creatinine: "1.2 mg/dL",
-      BUN: "40 mg/dL",
+      Creatinine: "1.2",
+      BUN: "40",
     },
   },
   {
@@ -44,8 +44,8 @@ const INITIAL_PATIENTS = [
       notes: "",
     },
     labValues: {
-      Creatinine: "1.8 mg/dL",
-      BUN: "50 mg/dL",
+      Creatinine: "1.8",
+      BUN: "50",
     },
   },
   {
@@ -64,8 +64,8 @@ const INITIAL_PATIENTS = [
       notes: "",
     },
     labValues: {
-      Creatinine: "0.9 mg/dL",
-      BUN: "18 mg/dL",
+      Creatinine: "0.9",
+      BUN: "18",
     },
   },
   {
@@ -84,8 +84,8 @@ const INITIAL_PATIENTS = [
       notes: "",
     },
     labValues: {
-      Creatinine: "0.7 mg/dL",
-      BUN: "12 mg/dL",
+      Creatinine: "0.7",
+      BUN: "12",
     },
   },
 ];
