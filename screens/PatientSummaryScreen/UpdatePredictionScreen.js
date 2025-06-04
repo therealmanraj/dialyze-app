@@ -15,25 +15,19 @@ import { PatientsContext } from "../contexts/PatientsContext";
 import LabValuesInputs from "../components/LabValuesInputs";
 
 export default function UpdatePredictionScreen({ navigation, route }) {
-  // 1) Grab patientId and initial labValues from params
   const { patientId, labValues: initialLab } = route.params;
 
-  // 2) Pull updatePatient from context
   const { updatePatient } = useContext(PatientsContext);
 
-  // 3) Keep local state of labValues
   const [labValues, setLabValues] = useState(initialLab || {});
 
   function handleUpdate() {
-    // 4) Call context updater so that patient.labValues gets overwritten
     updatePatient(patientId, { labValues });
-    // 5) Go back to summary screen
     navigation.goBack();
   }
 
   return (
     <SafeAreaView style={styles.root}>
-      {/* —— header —— */}
       <View style={styles.header}>
         <TouchableOpacity onPress={() => navigation.goBack()}>
           <MaterialCommunityIcons name="close" size={24} color="#fff" />
@@ -42,7 +36,6 @@ export default function UpdatePredictionScreen({ navigation, route }) {
         <View style={{ width: 24 }} />
       </View>
 
-      {/* —— lift form + footer above keyboard —— */}
       <KeyboardAvoidingView
         style={{ flex: 1 }}
         behavior={Platform.OS === "ios" ? "padding" : "height"}
@@ -52,11 +45,9 @@ export default function UpdatePredictionScreen({ navigation, route }) {
           contentContainerStyle={styles.content}
           keyboardShouldPersistTaps="handled"
         >
-          {/* All your lab fields come from LabValuesInputs */}
           <LabValuesInputs labValues={labValues} setLabValues={setLabValues} />
         </ScrollView>
 
-        {/* —— always‐visible “Update” button —— */}
         <View style={styles.footer}>
           <TouchableOpacity style={styles.updateButton} onPress={handleUpdate}>
             <Text style={styles.updateButtonText}>Update</Text>

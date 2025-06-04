@@ -14,11 +14,9 @@ import { MaterialCommunityIcons } from "@expo/vector-icons";
 import LabValuesInputs from "./components/LabValuesInputs";
 
 export default function QuickPredictionScreen({ navigation }) {
-  // unified lab‐values state
   const [labValues, setLabValues] = useState({});
 
   function handlePredict() {
-    // You can pick out just the four you care about, or pass the whole object
     navigation.navigate("PredictionOutcome", {
       akiRisk: "Moderate",
       dialysisNeed: "Low",
@@ -28,19 +26,16 @@ export default function QuickPredictionScreen({ navigation }) {
 
   return (
     <SafeAreaView style={styles.root}>
-      {/* fixed header */}
       <View style={styles.header}>
         <Text style={styles.headerTitle}>Dialyze</Text>
       </View>
 
-      {/* fixed page title & subtitle */}
       <Text style={styles.pageTitle}>Quick Prediction</Text>
       <Text style={styles.pageSub}>
         Enter lab values to get an immediate prediction of Acute Kidney Injury
         risk and dialysis need.
       </Text>
 
-      {/* inputs + button slide up above keyboard */}
       <KeyboardAvoidingView
         style={{ flex: 1 }}
         behavior={Platform.OS === "ios" ? "padding" : "height"}
@@ -50,7 +45,6 @@ export default function QuickPredictionScreen({ navigation }) {
           contentContainerStyle={styles.content}
           keyboardShouldPersistTaps="handled"
         >
-          {/* inject shared LabValuesInputs here */}
           <LabValuesInputs labValues={labValues} setLabValues={setLabValues} />
         </ScrollView>
 

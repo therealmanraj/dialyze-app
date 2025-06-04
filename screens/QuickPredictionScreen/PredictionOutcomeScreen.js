@@ -15,13 +15,11 @@ export default function PredictionOutcomeScreen({ navigation, route }) {
 
   return (
     <SafeAreaView style={styles.root}>
-      {/* Header */}
       <View style={styles.header}>
         <TouchableOpacity onPress={() => navigation.goBack()}>
           <MaterialCommunityIcons name="arrow-left" size={24} color="#fff" />
         </TouchableOpacity>
         <Text style={styles.headerTitle}>Dialyze</Text>
-        {/* spacer to center the title */}
         <View style={{ width: 24 }} />
       </View>
 
@@ -66,17 +64,17 @@ const styles = StyleSheet.create({
 
   header: {
     flexDirection: "row",
-    justifyContent: "space-between", // <--- distribute back/title/spacer
+    justifyContent: "space-between",
     alignItems: "center",
     padding: 16,
     backgroundColor: "#151a1e",
   },
   headerTitle: {
-    flex: 1, // <--- take up all remaining space
+    flex: 1,
     color: "#fff",
     fontSize: 18,
     fontWeight: "700",
-    textAlign: "center", // <--- center within that space
+    textAlign: "center",
   },
 
   content: {

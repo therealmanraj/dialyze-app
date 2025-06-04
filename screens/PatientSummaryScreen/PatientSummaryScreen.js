@@ -16,15 +16,13 @@ import ClinicalInfoSection from "./components/ClinicalInfoSection";
 import RiskSection from "./components/RiskSection";
 import LabTrendsSection from "./components/LabTrendsSection";
 
-// ── STEP A: Re‐declare UNIT_MAP so we can append units here as well
-//     (Must match whatever you used in LabValuesInputs.js)
 const UNIT_MAP = {
   HCO3: "mEq/L",
   Creatinine: "mg/dL",
   "Mean Arterial Pressure": "mmHg",
   Procalcitonin: "ng/mL",
   Bilirubin: "mg/dL",
-  pH: "", // unitless
+  pH: "",
   Albumin: "g/dL",
   Urea: "mg/dL",
   "White Blood Cell Count": "×10³/µL",
@@ -34,14 +32,11 @@ const UNIT_MAP = {
 };
 
 export default function PatientSummaryScreen({ route, navigation }) {
-  // 1) Pull patientId from route.params
   const { patientId } = route.params;
 
-  // 2) Grab all patients from context, then find this one
   const { patients } = useContext(PatientsContext);
   const patient = patients.find((p) => p.id === patientId);
 
-  // If not found, early return:
   if (!patient) {
     return (
       <SafeAreaView style={styles.root}>
@@ -61,7 +56,6 @@ export default function PatientSummaryScreen({ route, navigation }) {
     );
   }
 
-  // ── Compute BMI using weight & height from patient.clinical
   const weightStr = patient.clinical?.weight || "";
   const heightStr = patient.clinical?.height || "";
   const weightNum = parseFloat(weightStr);
@@ -74,12 +68,10 @@ export default function PatientSummaryScreen({ route, navigation }) {
     bmiDisplay = rawBmi.toFixed(1);
   }
 
-  // ── Grab labValues (object) or fallback to empty object
   const labValuesObject = patient.labValues || {};
 
   return (
     <SafeAreaView style={styles.root}>
-      {/* Header */}
       <View style={styles.header}>
         <TouchableOpacity onPress={() => navigation.goBack()}>
           <MaterialCommunityIcons name="arrow-left" size={24} color="#fff" />
@@ -89,7 +81,6 @@ export default function PatientSummaryScreen({ route, navigation }) {
       </View>
 
       <ScrollView contentContainerStyle={{ paddingBottom: 40 }}>
-        {/* Profile section (avatar, name, ID, details) */}
         <ProfileHeader
           avatar={patient.avatar}
           name={patient.name}
@@ -97,7 +88,6 @@ export default function PatientSummaryScreen({ route, navigation }) {
           details={patient.details}
         />
 
-        {/* Clinical Information */}
         <ClinicalInfoSection
           data={[
             { label: "Weight", value: `${weightStr} kg` },
@@ -112,7 +102,6 @@ export default function PatientSummaryScreen({ route, navigation }) {
           }
         />
 
-        {/* AKI Risk (unchanged) */}
         <RiskSection
           akiRisk={[
             { label: "Risk Score", value: patient.riskPct },
@@ -121,14 +110,10 @@ export default function PatientSummaryScreen({ route, navigation }) {
           dialysisNeed={[{ label: "Probability", value: "—" }]}
         />
 
-        {/* ── LAB VALUES GRID ─────────────────────────────────────────── */}
         <Text style={styles.sectionTitle}>Lab Values</Text>
         <View style={styles.grid}>
           {Object.entries(labValuesObject).map(([labKey, labVal]) => {
-            // Lookup the correct unit (could be empty if no unit)
             const unit = UNIT_MAP[labKey] || "";
-            // If the stored value is non‐empty, show “value + unit”,
-            // otherwise show a dash.
             const displayValue = labVal
               ? unit
                 ? `${labVal} ${unit}`
@@ -144,7 +129,6 @@ export default function PatientSummaryScreen({ route, navigation }) {
           })}
         </View>
 
-        {/* (Optional) Lab Trends Chart */}
         <LabTrendsSection
           metric="Creatinine"
           value={patient.labValues.Creatinine || "—"}
@@ -154,7 +138,6 @@ export default function PatientSummaryScreen({ route, navigation }) {
         />
       </ScrollView>
 
-      {/* Footer “Update Predictions” button */}
       <View style={styles.footer}>
         <TouchableOpacity
           style={styles.updateButton}

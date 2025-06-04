@@ -16,7 +16,7 @@ import { MaterialCommunityIcons } from "@expo/vector-icons";
 import ClinicalInfoInputs from "./components/ClinicalInfoInputs";
 import LabValuesInputs from "./components/LabValuesInputs";
 
-import placeholder from "../assets/placeholder.png"; // Adjust path if needed
+import placeholder from "../assets/placeholder.png";
 
 import { PatientsContext } from "./contexts/PatientsContext";
 
@@ -25,7 +25,6 @@ export default function AddNewPatientScreen({ navigation }) {
 
   const { addPatient } = useContext(PatientsContext);
 
-  // clinical info
   const [clin, setClin] = useState({
     name: "",
     photoUri: null,
@@ -35,23 +34,19 @@ export default function AddNewPatientScreen({ navigation }) {
     weight: "",
     notes: "",
   });
-  // lab values
   const [labValues, setLabValues] = useState({});
 
   function handleSave() {
-    // Build the newPatient object, using clin.photoUri if present:
     const newPatient = {
       id: Date.now().toString(),
       name: clin.name.trim() || "Unnamed Patient",
-      // details string should include both age & gender (or “N/A” if empty)
       details: `Age: ${clin.age.trim() || "N/A"}, ${
         clin.gender.trim() || "N/A"
       }`,
-      avatar: clin.photoUri || DEFAULT_AVATAR, // ← here’s the change
+      avatar: clin.photoUri || DEFAULT_AVATAR,
       riskLabel: "N/A",
       riskPct: "N/A",
       riskColor: "#ccc",
-      // ← ADD THESE TWO FIELDS:
       clinical: {
         age: clin.age,
         gender: clin.gender,
@@ -65,7 +60,6 @@ export default function AddNewPatientScreen({ navigation }) {
 
     addPatient(newPatient);
 
-    // Navigate back to Home (so the FlatList will show the new avatar)
     navigation.navigate("MainTabs", {
       screen: "Home",
       params: { newPatient },
@@ -74,7 +68,6 @@ export default function AddNewPatientScreen({ navigation }) {
 
   return (
     <SafeAreaView style={styles.root}>
-      {/* fixed header */}
       <View style={styles.header}>
         <TouchableOpacity onPress={() => navigation.goBack()}>
           <MaterialCommunityIcons name="arrow-left" size={24} color="#fff" />
@@ -91,7 +84,6 @@ export default function AddNewPatientScreen({ navigation }) {
           contentContainerStyle={styles.content}
           keyboardShouldPersistTaps="handled"
         >
-          {/* Clinical Info */}
           <ClinicalInfoInputs
             name={clin.name}
             setName={(v) => setClin({ ...clin, name: v })}
@@ -107,7 +99,6 @@ export default function AddNewPatientScreen({ navigation }) {
             setWeight={(v) => setClin({ ...clin, weight: v })}
           />
 
-          {/* Clinical Notes */}
           <Text style={styles.sectionTitle}>Clinical Notes</Text>
           <TextInput
             style={[styles.input, { height: 120, textAlignVertical: "top" }]}
@@ -118,12 +109,10 @@ export default function AddNewPatientScreen({ navigation }) {
             onChangeText={(v) => setClin({ ...clin, notes: v })}
           />
 
-          {/* Lab Values */}
           <Text style={styles.sectionTitle}>Lab Values</Text>
           <LabValuesInputs labValues={labValues} setLabValues={setLabValues} />
         </ScrollView>
 
-        {/* always-visible Save button */}
         <View style={styles.footer}>
           <TouchableOpacity style={styles.saveButton} onPress={handleSave}>
             <Text style={styles.saveButtonText}>Save Patient</Text>

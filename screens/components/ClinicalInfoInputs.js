@@ -26,7 +26,6 @@ export default function ClinicalInfoInputs({
   weight,
   setWeight,
 }) {
-  // Local state to toggle the Gender dropdown
   const [showGenderOptions, setShowGenderOptions] = useState(false);
 
   useEffect(() => {
@@ -42,7 +41,6 @@ export default function ClinicalInfoInputs({
   }, []);
 
   async function pickImage() {
-    // ←── REPLACED with the “working” code:
     let result = await ImagePicker.launchImageLibraryAsync({
       mediaTypes: ImagePicker.MediaTypeOptions.Images,
       allowsEditing: true,
@@ -55,7 +53,6 @@ export default function ClinicalInfoInputs({
     }
   }
 
-  // Hard‐coded gender options
   const GENDER_OPTIONS = ["Male", "Female", "Other"];
 
   return (
@@ -83,7 +80,6 @@ export default function ClinicalInfoInputs({
         </Text>
       </TouchableOpacity>
 
-      {/* Age & Gender Row */}
       <View style={styles.row}>
         <View style={styles.half}>
           <FormField
@@ -98,9 +94,7 @@ export default function ClinicalInfoInputs({
         <View style={[styles.half, styles.rightGap]}>
           <Text style={styles.label}>Gender</Text>
 
-          {/* ── CUSTOM DROPDOWN FOR GENDER ──────────────────────────── */}
           <View>
-            {/* The visible “button” that shows current value or placeholder */}
             <TouchableOpacity
               style={styles.dropdownButton}
               onPress={() => setShowGenderOptions((prev) => !prev)}
@@ -121,7 +115,6 @@ export default function ClinicalInfoInputs({
               />
             </TouchableOpacity>
 
-            {/* The list of options, shown only when showGenderOptions===true */}
             {showGenderOptions && (
               <View style={styles.dropdownListContainer}>
                 {GENDER_OPTIONS.map((opt) => (
@@ -142,7 +135,6 @@ export default function ClinicalInfoInputs({
         </View>
       </View>
 
-      {/* Height & Weight Row */}
       <View style={styles.row}>
         <View style={styles.half}>
           <FormField
@@ -181,7 +173,6 @@ const styles = StyleSheet.create({
   rightGap: {
     marginLeft: 8,
   },
-
   photoRow: {
     flexDirection: "row",
     alignItems: "center",
@@ -194,14 +185,11 @@ const styles = StyleSheet.create({
   photoIcon: { marginRight: 12 },
   photo: { width: 40, height: 40, borderRadius: 20, marginRight: 12 },
   photoText: { color: "#fff", fontSize: 16 },
-
   label: {
     color: "#fff",
     fontSize: 16,
     marginBottom: 4,
   },
-
-  // ─── DROPDOWN “BUTTON” (always visible) ─────────────────────────
   dropdownButton: {
     backgroundColor: "#233748",
     borderRadius: 12,
@@ -216,16 +204,14 @@ const styles = StyleSheet.create({
     fontSize: 16,
   },
   placeholderText: {
-    color: "#9eafbd", // lighter color when no selection
+    color: "#9eafbd",
   },
   dropdownIcon: {
     marginLeft: 8,
   },
-
-  // ─── DROPDOWN LIST (only when showGenderOptions===true) ───────────
   dropdownListContainer: {
     position: "absolute",
-    top: 56, // drop below the “button” by its height
+    top: 56,
     left: 0,
     right: 0,
     backgroundColor: "#233748",

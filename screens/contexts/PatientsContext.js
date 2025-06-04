@@ -1,12 +1,10 @@
-// screens/contexts/PatientsContext.js
 import React, { createContext, useState } from "react";
 
-// 1) Define the shape of our context
 export const PatientsContext = createContext({
-  patients: [], // array of patient objects
-  addPatient: () => {}, // function to add a new patient
-  removePatient: () => {}, // function to remove one by id
-  updatePatient: () => {}, // ‹‹ REPLACED: one updater that can modify name/avatar/clinical
+  patients: [],
+  addPatient: () => {},
+  removePatient: () => {},
+  updatePatient: () => {},
 });
 
 const INITIAL_PATIENTS = [
@@ -19,8 +17,8 @@ const INITIAL_PATIENTS = [
     riskPct: "50%",
     riskColor: "#0bda5b",
     clinical: {
-      weight: "75", // in kg
-      height: "175", // in cm
+      weight: "75",
+      height: "175",
       age: "65",
       gender: "Male",
       notes: "",
@@ -95,7 +93,6 @@ const INITIAL_PATIENTS = [
 export function PatientsProvider({ children }) {
   const [patients, setPatients] = useState(INITIAL_PATIENTS);
 
-  // 3) addPatient: same as before
   const addPatient = (newPatient) =>
     setPatients((prev) => [
       {
@@ -112,11 +109,9 @@ export function PatientsProvider({ children }) {
       ...prev,
     ]);
 
-  // 4) removePatient: same as before
   const removePatient = (id) =>
     setPatients((prev) => prev.filter((p) => p.id !== id));
 
-  // 5) updatePatient: merge in any fields we pass, including 'clinical' or 'labValues'
   const updatePatient = (id, updates) => {
     setPatients((prev) =>
       prev.map((p) => {
@@ -124,17 +119,14 @@ export function PatientsProvider({ children }) {
 
         return {
           ...p,
-          // overwrite name/avatar if provided:
           name: updates.name !== undefined ? updates.name : p.name,
           avatar: updates.avatar !== undefined ? updates.avatar : p.avatar,
 
-          // merge the existing clinical + any new clinical fields:
           clinical: {
             ...p.clinical,
             ...(updates.clinical || {}),
           },
 
-          // merge the existing labValues + any new labValues:
           labValues: {
             ...p.labValues,
             ...(updates.labValues || {}),
@@ -150,7 +142,7 @@ export function PatientsProvider({ children }) {
         patients,
         addPatient,
         removePatient,
-        updatePatient, // ‹‹ expose this single updater
+        updatePatient,
       }}
     >
       {children}

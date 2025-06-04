@@ -1,4 +1,3 @@
-// screens/HomeScreen.js
 import React, { useState, useRef, useContext } from "react";
 import {
   SafeAreaView,
@@ -21,7 +20,6 @@ import Swipeable from "react-native-gesture-handler/Swipeable";
 import { RectButton } from "react-native-gesture-handler";
 import { PatientsContext } from "./contexts/PatientsContext";
 
-// Enable LayoutAnimation on Android…
 if (
   Platform.OS === "android" &&
   UIManager.setLayoutAnimationEnabledExperimental
@@ -44,9 +42,6 @@ function PatientRow({ item, onPress, onDelete }) {
   };
 
   return (
-    // 1) Wrap everything in a container that has your margins.
-    //    This container is always full-width (minus margins),
-    //    even when the row is swiped.
     <View style={styles.rowContainer}>
       <Swipeable
         renderRightActions={() => (
@@ -57,11 +52,6 @@ function PatientRow({ item, onPress, onDelete }) {
         )}
       >
         <Animated.View style={{ opacity }}>
-          {/*
-            2) Inside here, give your TouchableOpacity “flex: 1” (or width: '100%') 
-               so that it always fills its parent’s width. That way, when the 
-               red ‘Delete’ button slides in, the grey row content never “collapses.”
-          */}
           <TouchableOpacity style={styles.patientRowInner} onPress={onPress}>
             <View style={styles.patientInfo}>
               <Image source={{ uri: item.avatar }} style={styles.avatar} />
@@ -104,10 +94,9 @@ export default function HomeScreen({ navigation }) {
         </View>
         <Text style={styles.pageTitle}>Welcome to Dialyze</Text>
         <Text style={styles.pageSub}>
-          Explore the app’s functionality with our demo patient list.
+          Explore the app's functionality with our demo patient list.
         </Text>
 
-        {/* Search bar */}
         <View style={styles.searchWrapper}>
           <MaterialCommunityIcons
             name="magnify"
@@ -124,7 +113,6 @@ export default function HomeScreen({ navigation }) {
           />
         </View>
 
-        {/* Header + Add */}
         <View style={styles.patientsHeader}>
           <Text style={styles.patientsTitle}>Patients</Text>
           <TouchableOpacity
@@ -135,7 +123,6 @@ export default function HomeScreen({ navigation }) {
           </TouchableOpacity>
         </View>
 
-        {/* List */}
         <FlatList
           data={filtered}
           keyExtractor={(item) => item.id.toString()}
@@ -215,14 +202,11 @@ const styles = StyleSheet.create({
   },
   addButtonText: { color: "#151a1e", fontWeight: "700", fontSize: 14 },
 
-  // ─── NEW: Wrap each row in a container that has margins, so the row itself is full-width:
   rowContainer: {
     marginHorizontal: 16,
     marginVertical: 4,
   },
 
-  // ─── PATIENT ROW INNER ──────────────────────────────────────────────
-  // Give this a flex: 1 (or width: '100%') so it cannot shrink when Swipeable shows the button.
   patientRowInner: {
     flexDirection: "row",
     alignItems: "center",
@@ -230,7 +214,7 @@ const styles = StyleSheet.create({
     backgroundColor: "#151a1e",
     paddingVertical: 12,
     paddingHorizontal: 0,
-    flex: 1, // <— make the inner row stretch to fill the parent (rowContainer)
+    flex: 1,
   },
 
   patientInfo: { flexDirection: "row", alignItems: "center" },

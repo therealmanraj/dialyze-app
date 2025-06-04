@@ -6,7 +6,7 @@ import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
 
-import { PatientsProvider } from "./screens/contexts/PatientsContext"; // ← import your provider
+import { PatientsProvider } from "./screens/contexts/PatientsContext";
 
 import HomeScreen from "./screens/HomeScreen";
 import AddNewPatientScreen from "./screens/AddNewPatientScreen";
@@ -54,7 +54,6 @@ function MainTabs() {
 export default function App() {
   return (
     <GestureHandlerRootView style={{ flex: 1 }}>
-      {/* ← Wrap your whole app in PatientsProvider */}
       <PatientsProvider>
         <NavigationContainer>
           <Stack.Navigator

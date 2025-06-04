@@ -18,7 +18,6 @@ import { PatientsContext } from "../contexts/PatientsContext";
 export default function AddPatientScreen({ navigation, route }) {
   const DEFAULT_AVATAR = placeholder;
   const { addPatient } = useContext(PatientsContext);
-  // you may have route.params (akiRisk, dialysisNeed, labValues) here
   const { labValues: incomingLabValues = {} } = route.params || {};
 
   const [clin, setClin] = useState({
@@ -51,7 +50,6 @@ export default function AddPatientScreen({ navigation, route }) {
         notes: clin.notes,
         photoUri: clin.photoUri,
       },
-      // either use incomingLabValues or {} if none
       labValues: { ...incomingLabValues },
     };
 

@@ -25,7 +25,6 @@ export default function SettingsScreen({ navigation }) {
       </Text>
 
       <ScrollView contentContainerStyle={styles.content}>
-        {/* General */}
         <Text style={styles.sectionHeading}>General</Text>
 
         <View style={styles.row}>
@@ -46,7 +45,6 @@ export default function SettingsScreen({ navigation }) {
           />
         </View>
 
-        {/* About */}
         <Text style={styles.sectionHeading}>About</Text>
 
         <View style={styles.row}>
@@ -54,12 +52,7 @@ export default function SettingsScreen({ navigation }) {
           <Text style={styles.value}>1.0.0</Text>
         </View>
 
-        <TouchableOpacity
-          style={styles.row}
-          onPress={() => {
-            /* TODO: nav to TOS */
-          }}
-        >
+        <TouchableOpacity style={styles.row} onPress={() => {}}>
           <Text style={styles.label}>Terms of Service</Text>
           <MaterialCommunityIcons
             name="chevron-right"
@@ -68,12 +61,7 @@ export default function SettingsScreen({ navigation }) {
           />
         </TouchableOpacity>
 
-        <TouchableOpacity
-          style={styles.row}
-          onPress={() => {
-            /* TODO: nav to Privacy */
-          }}
-        >
+        <TouchableOpacity style={styles.row} onPress={() => {}}>
           <Text style={styles.label}>Privacy Policy</Text>
           <MaterialCommunityIcons
             name="chevron-right"
