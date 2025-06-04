@@ -15,7 +15,10 @@ export default function SettingsScreen({ navigation }) {
   const [notificationsEnabled, setNotificationsEnabled] = useState(false);
 
   return (
-    <SafeAreaView style={styles.root} edges={["top", "left", "right"]}>
+    <SafeAreaView
+      style={styles.root}
+      edges={["top", "left", "right", "bottom"]}
+    >
       <View style={styles.header}>
         <Text style={styles.headerTitle}>Dialyze</Text>
       </View>

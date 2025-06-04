@@ -52,7 +52,10 @@ export default function PatientSummaryScreen({ route, navigation }) {
 
   if (!patient) {
     return (
-      <SafeAreaView style={styles.root} edges={["top", "left", "right"]}>
+      <SafeAreaView
+        style={styles.root}
+        edges={["top", "left", "right", "bottom"]}
+      >
         <View style={styles.header}>
           <TouchableOpacity onPress={() => navigation.goBack()}>
             <MaterialCommunityIcons name="arrow-left" size={24} color="#fff" />
@@ -97,7 +100,10 @@ export default function PatientSummaryScreen({ route, navigation }) {
   };
 
   return (
-    <SafeAreaView style={styles.root} edges={["top", "left", "right"]}>
+    <SafeAreaView
+      style={styles.root}
+      edges={["top", "left", "right", "bottom"]}
+    >
       <View style={styles.header}>
         <TouchableOpacity onPress={() => navigation.goBack()}>
           <MaterialCommunityIcons name="arrow-left" size={24} color="#fff" />

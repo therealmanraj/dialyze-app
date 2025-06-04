@@ -88,7 +88,10 @@ export default function HomeScreen({ navigation }) {
 
   return (
     <TouchableWithoutFeedback onPress={Keyboard.dismiss} accessible={false}>
-      <SafeAreaView style={styles.root} edges={["top", "left", "right"]}>
+      <SafeAreaView
+        style={styles.root}
+        edges={["top", "left", "right", "bottom"]}
+      >
         <View style={styles.header}>
           <Text style={styles.headerTitle}>Dialyze</Text>
         </View>
