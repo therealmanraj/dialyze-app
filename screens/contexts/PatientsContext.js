@@ -25,7 +25,6 @@ const INITIAL_PATIENTS = [
     },
     labValues: {
       Creatinine: "1.2",
-      BUN: "40",
     },
   },
   {
@@ -45,7 +44,6 @@ const INITIAL_PATIENTS = [
     },
     labValues: {
       Creatinine: "1.8",
-      BUN: "50",
     },
   },
   {
@@ -65,7 +63,6 @@ const INITIAL_PATIENTS = [
     },
     labValues: {
       Creatinine: "0.9",
-      BUN: "18",
     },
   },
   {
@@ -85,7 +82,6 @@ const INITIAL_PATIENTS = [
     },
     labValues: {
       Creatinine: "0.7",
-      BUN: "12",
     },
   },
 ];
