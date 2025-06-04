@@ -1,6 +1,6 @@
 import React, { useState, useRef, useContext } from "react";
+import { SafeAreaView } from "react-native-safe-area-context";
 import {
-  SafeAreaView,
   View,
   Text,
   TextInput,
@@ -88,7 +88,7 @@ export default function HomeScreen({ navigation }) {
 
   return (
     <TouchableWithoutFeedback onPress={Keyboard.dismiss} accessible={false}>
-      <SafeAreaView style={styles.root}>
+      <SafeAreaView style={styles.root} edges={["top", "left", "right"]}>
         <View style={styles.header}>
           <Text style={styles.headerTitle}>Dialyze</Text>
         </View>

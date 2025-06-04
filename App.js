@@ -5,6 +5,7 @@ import { NavigationContainer } from "@react-navigation/native";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
+import { SafeAreaProvider, SafeAreaView } from "react-native-safe-area-context";
 
 import { PatientsProvider } from "./screens/contexts/PatientsContext";
 
@@ -53,53 +54,55 @@ function MainTabs() {
 
 export default function App() {
   return (
-    <GestureHandlerRootView style={{ flex: 1 }}>
-      <PatientsProvider>
-        <NavigationContainer>
-          <Stack.Navigator
-            screenOptions={{ headerShown: false, animation: "none" }}
-          >
-            <Stack.Screen
-              name="MainTabs"
-              component={MainTabs}
-              options={{
-                animation: "slide_from_bottom",
-                gestureEnabled: false,
-              }}
-            />
-            <Stack.Screen
-              name="Summary"
-              component={PatientSummaryScreen}
-              options={{ animation: "slide_from_right" }}
-            />
-            <Stack.Screen
-              name="AddNewPatient"
-              component={AddNewPatientScreen}
-              options={{ animation: "slide_from_right" }}
-            />
-            <Stack.Screen
-              name="UpdateClinicalInfo"
-              component={UpdateClinicalInfoScreen}
-              options={{ animation: "slide_from_right" }}
-            />
-            <Stack.Screen
-              name="UpdatePrediction"
-              component={UpdatePredictionScreen}
-              options={{ animation: "slide_from_right" }}
-            />
-            <Stack.Screen
-              name="PredictionOutcome"
-              component={PredictionOutcomeScreen}
-              options={{ animation: "slide_from_right" }}
-            />
-            <Stack.Screen
-              name="AddPatient"
-              component={AddPatientScreen}
-              options={{ animation: "slide_from_right" }}
-            />
-          </Stack.Navigator>
-        </NavigationContainer>
-      </PatientsProvider>
-    </GestureHandlerRootView>
+    <SafeAreaProvider>
+      <GestureHandlerRootView style={{ flex: 1 }}>
+        <PatientsProvider>
+          <NavigationContainer>
+            <Stack.Navigator
+              screenOptions={{ headerShown: false, animation: "none" }}
+            >
+              <Stack.Screen
+                name="MainTabs"
+                component={MainTabs}
+                options={{
+                  animation: "slide_from_bottom",
+                  gestureEnabled: false,
+                }}
+              />
+              <Stack.Screen
+                name="Summary"
+                component={PatientSummaryScreen}
+                options={{ animation: "slide_from_right" }}
+              />
+              <Stack.Screen
+                name="AddNewPatient"
+                component={AddNewPatientScreen}
+                options={{ animation: "slide_from_right" }}
+              />
+              <Stack.Screen
+                name="UpdateClinicalInfo"
+                component={UpdateClinicalInfoScreen}
+                options={{ animation: "slide_from_right" }}
+              />
+              <Stack.Screen
+                name="UpdatePrediction"
+                component={UpdatePredictionScreen}
+                options={{ animation: "slide_from_right" }}
+              />
+              <Stack.Screen
+                name="PredictionOutcome"
+                component={PredictionOutcomeScreen}
+                options={{ animation: "slide_from_right" }}
+              />
+              <Stack.Screen
+                name="AddPatient"
+                component={AddPatientScreen}
+                options={{ animation: "slide_from_right" }}
+              />
+            </Stack.Navigator>
+          </NavigationContainer>
+        </PatientsProvider>
+      </GestureHandlerRootView>
+    </SafeAreaProvider>
   );
 }
