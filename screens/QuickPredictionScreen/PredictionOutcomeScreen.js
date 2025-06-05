@@ -10,7 +10,6 @@ import {
 import { MaterialCommunityIcons } from "@expo/vector-icons";
 import { SafeAreaView } from "react-native-safe-area-context";
 
-// 1) Import your RiskSection component:
 import RiskSection from "../components/RiskSection";
 
 export default function PredictionOutcomeScreen({ navigation, route }) {
@@ -38,9 +37,6 @@ export default function PredictionOutcomeScreen({ navigation, route }) {
       riskLevel = "High";
     }
   }
-
-  const akiRiskArr = [{ label: "Risk Level", value: riskLevel }];
-  const dialysisNeedArr = [{ label: "Probability", value: pct }];
 
   return (
     <SafeAreaView

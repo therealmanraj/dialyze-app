@@ -19,7 +19,13 @@ import { SafeAreaView } from "react-native-safe-area-context";
 export default function AddPatientScreen({ navigation, route }) {
   const DEFAULT_AVATAR = Image.resolveAssetSource(placeholder).uri;
   const { addPatient } = useContext(PatientsContext);
-  const { labValues: incomingLabValues = {} } = route.params || {};
+  const {
+    PredictedClass = null,
+    PredictedProba = null,
+    riskLevel = "N/A",
+    pct = "N/A",
+    labValues: incomingLabValues = {},
+  } = route.params || {};
 
   const [clin, setClin] = useState({
     name: "",
@@ -39,9 +45,16 @@ export default function AddPatientScreen({ navigation, route }) {
         clin.gender.trim() || "N/A"
       }`,
       avatar: clin.photoUri || DEFAULT_AVATAR,
-      riskLabel: "N/A",
-      riskPct: "N/A",
-      riskColor: "#ccc",
+      riskLabel: riskLevel,
+      riskPct: pct,
+      riskColor:
+        riskLevel === "Low"
+          ? "#4caf50"
+          : riskLevel === "Medium"
+          ? "#fbc02d"
+          : riskLevel === "High"
+          ? "#e53935"
+          : "#cccccc",
 
       clinical: {
         age: clin.age,
