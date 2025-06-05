@@ -9,6 +9,7 @@ import {
   TouchableOpacity,
   StyleSheet,
   Platform,
+  Alert,
 } from "react-native";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
 import LabValuesInputs from "./components/LabValuesInputs";
@@ -37,11 +38,20 @@ export default function QuickPredictionScreen({ navigation }) {
   });
 
   function handlePredict() {
-    navigation.navigate("PredictionOutcome", {
-      akiRisk: "Moderate",
-      dialysisNeed: "Low",
-      labValues,
-    });
+    const jsonString = JSON.stringify(labValues, null, 2);
+
+    Alert.alert("Current Lab Values", jsonString, [
+      {
+        text: "OK",
+        onPress: () => {
+          navigation.navigate("PredictionOutcome", {
+            akiRisk: "Moderate",
+            dialysisNeed: "Low",
+            labValues,
+          });
+        },
+      },
+    ]);
   }
 
   return (
