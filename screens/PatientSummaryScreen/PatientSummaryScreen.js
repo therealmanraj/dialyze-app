@@ -11,7 +11,7 @@ import { MaterialCommunityIcons } from "@expo/vector-icons";
 import { PatientsContext } from "../contexts/PatientsContext";
 import ProfileHeader from "./components/ProfileHeader";
 import ClinicalInfoSection from "./components/ClinicalInfoSection";
-import RiskSection from "./components/RiskSection";
+import RiskSection from "../components/RiskSection";
 import LabTrendsSection from "./components/LabTrendsSection";
 import { SafeAreaView } from "react-native-safe-area-context";
 
@@ -139,7 +139,10 @@ export default function PatientSummaryScreen({ route, navigation }) {
             { label: "Risk Score", value: patient.riskPct },
             { label: "Risk Level", value: patient.riskLabel },
           ]}
-          dialysisNeed={[{ label: "Probability", value: "—" }]}
+          dialysisNeed={[
+            { label: "Score", value: "—" },
+            { label: "Probability", value: "—" },
+          ]}
         />
 
         <Text style={styles.sectionTitle}>Lab Values</Text>

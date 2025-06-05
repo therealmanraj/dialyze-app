@@ -1,8 +1,10 @@
-// screens/QuickPredictionScreen.js
-import React, { useState, useEffect } from "react";
+// screens/QuickPredictionScreen.js────────────────────────────────────
+
+import React, { useState } from "react";
 import { SafeAreaView } from "react-native-safe-area-context";
 import {
   KeyboardAvoidingView,
+  ScrollView,
   View,
   Text,
   TouchableOpacity,
@@ -11,9 +13,7 @@ import {
   Alert,
   ActivityIndicator,
 } from "react-native";
-
-// We no longer need the LabValuesInputs component here, since we hard-code values.
-// import LabValuesInputs from "./components/LabValuesInputs";
+import LabValuesInputs from "./components/LabValuesInputs";
 
 import {
   SageMakerRuntimeClient,
@@ -53,33 +53,14 @@ const AWS_CREDENTIALS = {
 };
 
 export default function QuickPredictionScreen({ navigation }) {
-  // 1) Initialize labValues with dummy values so that allFields===true:
-  //    You can change these to any numeric‐looking strings you like.
-  const DUMMY_VALUES = {
-    HCO3: "10.0",
-    Creatinine: "1.2",
-    "Mean Arterial Pressure": "10.0",
-    Procalcitonin: "0.05",
-    Bilirubin: "1.0",
-    pH: "7.4",
-    Albumin: "4.0",
-    Urea: "5.0",
-    "White Blood Cell Count": "8.0",
-    SOFA: "2.0",
-    APACHEII: "10.0",
-    Glasgow: "14.0",
-  };
-
-  const [labValues, setLabValues] = useState(DUMMY_VALUES);
+  const [labValues, setLabValues] = useState({});
   const [loading, setLoading] = useState(false);
 
-  // 2) allFilled will be true immediately, since we've pre‐populated every key:
   const allFilled = LAB_FIELDS.every((key) => {
     const v = labValues[key];
     return typeof v === "string" && v.trim() !== "";
   });
 
-  // 3) Build the SageMakerRuntime client just once
   const client = new SageMakerRuntimeClient({
     region: REGION,
     credentials: AWS_CREDENTIALS,
@@ -88,7 +69,6 @@ export default function QuickPredictionScreen({ navigation }) {
   async function handlePredict() {
     if (!allFilled) return;
 
-    // 4) Convert each value to float (or null if NaN)
     const payloadObject = {};
     LAB_FIELDS.forEach((key) => {
       const num = parseFloat(labValues[key]);
@@ -107,7 +87,6 @@ export default function QuickPredictionScreen({ navigation }) {
     try {
       const response = await client.send(command);
 
-      // 5) Decode the response body (Uint8Array or .text())
       let responseBody = "";
       if (response.Body instanceof Uint8Array) {
         responseBody = new TextDecoder("utf-8").decode(response.Body);
@@ -126,7 +105,6 @@ export default function QuickPredictionScreen({ navigation }) {
         );
       }
 
-      // 6) Navigate to PredictionOutcome, passing along the parsed result
       navigation.navigate("PredictionOutcome", {
         prediction: parsed,
         labValues,
@@ -145,13 +123,6 @@ export default function QuickPredictionScreen({ navigation }) {
     }
   }
 
-  // You could also auto-trigger the API call on mount if you like:
-  // useEffect(() => {
-  //   if (allFilled) {
-  //     handlePredict();
-  //   }
-  // }, [allFilled]);
-
   return (
     <SafeAreaView style={styles.root} edges={["top", "left", "right"]}>
       <View style={styles.header}>
@@ -160,8 +131,7 @@ export default function QuickPredictionScreen({ navigation }) {
 
       <Text style={styles.pageTitle}>Quick Prediction</Text>
       <Text style={styles.pageSub}>
-        We have pre‐filled lab values for you—just tap “Predict” to call the
-        model.
+        Enter lab values to get an immediate prediction of AKI risk.
       </Text>
 
       <KeyboardAvoidingView
@@ -169,19 +139,12 @@ export default function QuickPredictionScreen({ navigation }) {
         behavior={Platform.OS === "ios" ? "padding" : "height"}
         keyboardVerticalOffset={0}
       >
-        {/* 
-          Instead of showing input fields, we simply show the dummy values on screen.
-          If you still want to see them, you could render them as plain text. 
-          Otherwise you can omit this entire block.
-        */}
-        <View style={styles.content}>
-          {LAB_FIELDS.map((fld) => (
-            <View key={fld} style={styles.row}>
-              <Text style={styles.fieldLabel}>{fld}:</Text>
-              <Text style={styles.fieldValue}>{labValues[fld]}</Text>
-            </View>
-          ))}
-        </View>
+        <ScrollView
+          contentContainerStyle={styles.content}
+          keyboardShouldPersistTaps="handled"
+        >
+          <LabValuesInputs labValues={labValues} setLabValues={setLabValues} />
+        </ScrollView>
 
         <View style={styles.footer}>
           <TouchableOpacity
@@ -234,22 +197,6 @@ const styles = StyleSheet.create({
   content: {
     paddingHorizontal: 16,
     paddingTop: 8,
-  },
-  // If you want to show the dummy values in plain text:
-  row: {
-    flexDirection: "row",
-    marginBottom: 8,
-    alignItems: "center",
-  },
-  fieldLabel: {
-    color: "#fff",
-    fontSize: 14,
-    width: 160,
-  },
-  fieldValue: {
-    color: "#fff",
-    fontSize: 14,
-    fontWeight: "700",
   },
   footer: {
     paddingHorizontal: 16,

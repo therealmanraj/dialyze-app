@@ -10,8 +10,37 @@ import {
 import { MaterialCommunityIcons } from "@expo/vector-icons";
 import { SafeAreaView } from "react-native-safe-area-context";
 
+// 1) Import your RiskSection component:
+import RiskSection from "../components/RiskSection";
+
 export default function PredictionOutcomeScreen({ navigation, route }) {
-  const { akiRisk, dialysisNeed, labValues } = route.params;
+  const { prediction, labValues } = route.params;
+
+  const first =
+    Array.isArray(prediction) && prediction.length > 0
+      ? prediction[0]
+      : { PredictedClass: null, PredictedProba: null };
+
+  const { PredictedClass, PredictedProba } = first;
+
+  const pct =
+    typeof PredictedProba === "number"
+      ? `${(PredictedProba * 100).toFixed(1)}%`
+      : "N/A";
+
+  let riskLevel = "N/A";
+  if (typeof PredictedProba === "number") {
+    if (PredictedProba < 0.1) {
+      riskLevel = "Low";
+    } else if (PredictedProba < 0.2) {
+      riskLevel = "Medium";
+    } else {
+      riskLevel = "High";
+    }
+  }
+
+  const akiRiskArr = [{ label: "Risk Level", value: riskLevel }];
+  const dialysisNeedArr = [{ label: "Probability", value: pct }];
 
   return (
     <SafeAreaView
@@ -28,29 +57,30 @@ export default function PredictionOutcomeScreen({ navigation, route }) {
 
       <ScrollView contentContainerStyle={styles.content}>
         <Text style={styles.title}>Prediction Outcome</Text>
+
         <Text style={styles.subtitle}>
-          Based on the entered lab values, the predicted risk of Acute Kidney
-          Injury is {akiRisk}, and the likelihood of needing dialysis is{" "}
-          {dialysisNeed}.
+          Based on the entered lab values, your AKI risk summary is shown below.
         </Text>
 
-        <View style={styles.cardsRow}>
-          <View style={styles.card}>
-            <Text style={styles.cardLabel}>AKI Risk</Text>
-            <Text style={styles.cardValue}>{akiRisk}</Text>
-          </View>
-          <View style={styles.card}>
-            <Text style={styles.cardLabel}>Dialysis Need</Text>
-            <Text style={styles.cardValue}>{dialysisNeed}</Text>
-          </View>
-        </View>
+        <RiskSection
+          akiRisk={[
+            { label: "Risk Score", value: pct },
+            { label: "Risk Level", value: riskLevel },
+          ]}
+          dialysisNeed={[
+            { label: "Score", value: "—" },
+            { label: "Probability", value: "—" },
+          ]}
+        />
 
         <TouchableOpacity
           style={styles.addButton}
           onPress={() =>
             navigation.navigate("AddPatient", {
-              akiRisk,
-              dialysisNeed,
+              PredictedClass,
+              PredictedProba,
+              riskLevel,
+              pct,
               labValues,
             })
           }
@@ -81,7 +111,6 @@ const styles = StyleSheet.create({
   },
 
   content: {
-    paddingHorizontal: 16,
     paddingTop: 8,
   },
   title: {
@@ -97,29 +126,7 @@ const styles = StyleSheet.create({
     textAlign: "center",
     marginVertical: 12,
   },
-  cardsRow: {
-    flexDirection: "row",
-    marginHorizontal: 16,
-    marginVertical: 8,
-  },
-  card: {
-    flex: 1,
-    minWidth: 158,
-    backgroundColor: "#2b3740",
-    borderRadius: 12,
-    padding: 16,
-    marginRight: 8,
-  },
-  cardLabel: {
-    color: "#fff",
-    fontSize: 14,
-    marginBottom: 4,
-  },
-  cardValue: {
-    color: "#fff",
-    fontSize: 24,
-    fontWeight: "700",
-  },
+
   addButton: {
     backgroundColor: "#cedfed",
     height: 48,

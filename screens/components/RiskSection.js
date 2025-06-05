@@ -20,8 +20,14 @@ export default function RiskSection({ akiRisk, dialysisNeed }) {
 
       <Text style={[styles.title, { marginTop: 24 }]}>Dialysis Need</Text>
       <View style={styles.row}>
-        {dialysisNeed.map((d) => (
-          <View key={d.label} style={styles.card}>
+        {dialysisNeed.map((d, i) => (
+          <View
+            key={d.label}
+            style={[
+              styles.card,
+              i < dialysisNeed.length - 1 && { marginRight: 8 },
+            ]}
+          >
             <Text style={styles.cardLabel}>{d.label}</Text>
             <Text style={styles.cardValue}>{d.value}</Text>
           </View>
