@@ -151,7 +151,8 @@ const styles = StyleSheet.create({
     marginBottom: 16,
   },
   footer: {
-    padding: 16,
+    paddingHorizontal: 16,
+    paddingVertical: 8,
     backgroundColor: "#151a1e",
   },
   addButton: {

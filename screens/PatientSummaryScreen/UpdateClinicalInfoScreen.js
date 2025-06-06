@@ -184,14 +184,16 @@ const styles = StyleSheet.create({
     fontSize: 16,
   },
   footer: {
-    padding: 16,
-    backgroundColor: "#151a1e",
+    paddingHorizontal: 16,
+    paddingVertical: 8,
+    backgroundColor: "#111a22",
   },
   updateButton: {
-    backgroundColor: "#6270ea",
+    backgroundColor: "#0f7fdb",
+    height: 48,
     borderRadius: 24,
-    paddingVertical: 14,
     alignItems: "center",
+    justifyContent: "center",
   },
   updateButtonText: {
     color: "#fff",

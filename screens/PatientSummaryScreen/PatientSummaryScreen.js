@@ -229,14 +229,16 @@ const styles = StyleSheet.create({
   },
 
   footer: {
-    padding: 16,
+    paddingHorizontal: 16,
+    paddingVertical: 8,
     backgroundColor: "#151a1e",
   },
   updateButton: {
     backgroundColor: "#cedfed",
-    paddingVertical: 14,
+    height: 48,
     borderRadius: 24,
     alignItems: "center",
+    justifyContent: "center",
   },
   updateButtonText: {
     color: "#151a1e",

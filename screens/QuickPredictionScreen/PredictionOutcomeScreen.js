@@ -51,6 +51,7 @@ export default function PredictionOutcomeScreen({ navigation, route }) {
         <View style={{ width: 24 }} />
       </View>
 
+      {/* Main content */}
       <ScrollView contentContainerStyle={styles.content}>
         <Text style={styles.title}>Prediction Outcome</Text>
 
@@ -68,9 +69,11 @@ export default function PredictionOutcomeScreen({ navigation, route }) {
             { label: "Probability", value: "—" },
           ]}
         />
+      </ScrollView>
 
+      <View style={styles.footer}>
         <TouchableOpacity
-          style={styles.addButton}
+          style={styles.addFooterButton}
           onPress={() =>
             navigation.navigate("AddPatient", {
               PredictedClass,
@@ -81,9 +84,9 @@ export default function PredictionOutcomeScreen({ navigation, route }) {
             })
           }
         >
-          <Text style={styles.addButtonText}>Add as New Patient</Text>
+          <Text style={styles.addFooterButtonText}>Add as New Patient</Text>
         </TouchableOpacity>
-      </ScrollView>
+      </View>
     </SafeAreaView>
   );
 }
@@ -108,6 +111,7 @@ const styles = StyleSheet.create({
 
   content: {
     paddingTop: 8,
+    paddingBottom: 80,
   },
   title: {
     color: "#fff",
@@ -123,16 +127,19 @@ const styles = StyleSheet.create({
     marginVertical: 12,
   },
 
-  addButton: {
+  footer: {
+    paddingHorizontal: 16,
+    paddingVertical: 8,
+    backgroundColor: "#151a1e",
+  },
+  addFooterButton: {
     backgroundColor: "#cedfed",
     height: 48,
     borderRadius: 24,
     alignItems: "center",
     justifyContent: "center",
-    marginHorizontal: 16,
-    marginTop: 16,
   },
-  addButtonText: {
+  addFooterButtonText: {
     color: "#151a1e",
     fontSize: 16,
     fontWeight: "700",
