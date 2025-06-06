@@ -169,6 +169,20 @@ export function PatientsProvider({ children }) {
             ...p.labValues,
             ...(updates.labValues || {}),
           },
+
+          ...(updates.riskLabel !== undefined && {
+            riskLabel: updates.riskLabel,
+          }),
+          ...(updates.riskPct !== undefined && { riskPct: updates.riskPct }),
+          ...(updates.riskColor !== undefined && {
+            riskColor: updates.riskColor,
+          }),
+          ...(updates.predictedClass !== undefined && {
+            predictedClass: updates.predictedClass,
+          }),
+          ...(updates.predictedProba !== undefined && {
+            predictedProba: updates.predictedProba,
+          }),
         };
       })
     );
