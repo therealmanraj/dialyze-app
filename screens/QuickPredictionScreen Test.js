@@ -12,9 +12,6 @@ import {
   ActivityIndicator,
 } from "react-native";
 
-// We no longer need the LabValuesInputs component here, since we hard-code values.
-// import LabValuesInputs from "./components/LabValuesInputs";
-
 import {
   SageMakerRuntimeClient,
   InvokeEndpointCommand,
@@ -43,7 +40,6 @@ const LAB_FIELDS = [
   "Glasgow",
 ];
 
-// Read from .env
 const ENDPOINT_NAME = SAGEMAKER_ENDPOINT;
 const REGION = AWS_REGION;
 const AWS_CREDENTIALS = {
@@ -53,8 +49,6 @@ const AWS_CREDENTIALS = {
 };
 
 export default function QuickPredictionScreen({ navigation }) {
-  // 1) Initialize labValues with dummy values so that allFields===true:
-  //    You can change these to any numeric‐looking strings you like.
   const DUMMY_VALUES = {
     HCO3: "10.0",
     Creatinine: "1.2",
@@ -73,13 +67,11 @@ export default function QuickPredictionScreen({ navigation }) {
   const [labValues, setLabValues] = useState(DUMMY_VALUES);
   const [loading, setLoading] = useState(false);
 
-  // 2) allFilled will be true immediately, since we've pre‐populated every key:
   const allFilled = LAB_FIELDS.every((key) => {
     const v = labValues[key];
     return typeof v === "string" && v.trim() !== "";
   });
 
-  // 3) Build the SageMakerRuntime client just once
   const client = new SageMakerRuntimeClient({
     region: REGION,
     credentials: AWS_CREDENTIALS,
@@ -88,7 +80,6 @@ export default function QuickPredictionScreen({ navigation }) {
   async function handlePredict() {
     if (!allFilled) return;
 
-    // 4) Convert each value to float (or null if NaN)
     const payloadObject = {};
     LAB_FIELDS.forEach((key) => {
       const num = parseFloat(labValues[key]);
@@ -107,7 +98,6 @@ export default function QuickPredictionScreen({ navigation }) {
     try {
       const response = await client.send(command);
 
-      // 5) Decode the response body (Uint8Array or .text())
       let responseBody = "";
       if (response.Body instanceof Uint8Array) {
         responseBody = new TextDecoder("utf-8").decode(response.Body);
@@ -126,7 +116,6 @@ export default function QuickPredictionScreen({ navigation }) {
         );
       }
 
-      // 6) Navigate to PredictionOutcome, passing along the parsed result
       navigation.navigate("PredictionOutcome", {
         prediction: parsed,
         labValues,
@@ -145,13 +134,6 @@ export default function QuickPredictionScreen({ navigation }) {
     }
   }
 
-  // You could also auto-trigger the API call on mount if you like:
-  // useEffect(() => {
-  //   if (allFilled) {
-  //     handlePredict();
-  //   }
-  // }, [allFilled]);
-
   return (
     <SafeAreaView style={styles.root} edges={["top", "left", "right"]}>
       <View style={styles.header}>
@@ -169,11 +151,6 @@ export default function QuickPredictionScreen({ navigation }) {
         behavior={Platform.OS === "ios" ? "padding" : "height"}
         keyboardVerticalOffset={0}
       >
-        {/* 
-          Instead of showing input fields, we simply show the dummy values on screen.
-          If you still want to see them, you could render them as plain text. 
-          Otherwise you can omit this entire block.
-        */}
         <View style={styles.content}>
           {LAB_FIELDS.map((fld) => (
             <View key={fld} style={styles.row}>
@@ -235,7 +212,6 @@ const styles = StyleSheet.create({
     paddingHorizontal: 16,
     paddingTop: 8,
   },
-  // If you want to show the dummy values in plain text:
   row: {
     flexDirection: "row",
     marginBottom: 8,

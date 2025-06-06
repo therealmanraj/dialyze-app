@@ -43,7 +43,6 @@ const LAB_FIELDS = [
   "Glasgow",
 ];
 
-// Read from .env
 const ENDPOINT_NAME = SAGEMAKER_ENDPOINT;
 const REGION = AWS_REGION;
 const AWS_CREDENTIALS = {
