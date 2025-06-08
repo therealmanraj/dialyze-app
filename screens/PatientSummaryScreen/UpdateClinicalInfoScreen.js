@@ -118,19 +118,9 @@ export default function UpdateClinicalInfoScreen({ route, navigation }) {
             setHeight={setHeight}
             weight={weight}
             setWeight={setWeight}
+            notes={notes}
+            setNotes={setNotes}
           />
-
-          <View style={{ marginTop: 16, marginBottom: 16 }}>
-            <Text style={styles.label}>Notes</Text>
-            <TextInput
-              style={[styles.input, { height: 80, textAlignVertical: "top" }]}
-              placeholder="Enter clinical notes"
-              placeholderTextColor="#91b0ca"
-              multiline
-              value={notes}
-              onChangeText={setNotes}
-            />
-          </View>
         </ScrollView>
 
         <View style={styles.footer}>

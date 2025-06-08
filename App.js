@@ -40,7 +40,12 @@ function MainTabs() {
         headerShown: false,
         tabBarActiveTintColor: "#fff",
         tabBarInactiveTintColor: "#9eafbd",
-        tabBarStyle: { backgroundColor: "#1f272e", borderTopColor: "#2b3740" },
+        tabBarStyle: {
+          backgroundColor: "#1f272e",
+          borderTopColor: "#2b3740",
+          borderTopWidth: 0,
+          elevation: 0,
+        },
         tabBarIcon: ({ color, size }) => {
           let iconName;
           if (route.name === "Home") iconName = "home";

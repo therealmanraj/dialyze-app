@@ -35,15 +35,13 @@ const LAB_FIELDS = [
 export default function LabValuesInputs({ labValues, setLabValues }) {
   const pairs = [];
   for (let i = 0; i < LAB_FIELDS.length; i += 2) {
-    const firstKey = LAB_FIELDS[i];
-    const secondKey = LAB_FIELDS[i + 1];
-    pairs.push([firstKey, secondKey]);
+    pairs.push([LAB_FIELDS[i], LAB_FIELDS[i + 1]]);
   }
 
   return (
     <View style={styles.container}>
       {pairs.map(([leftKey, rightKey], idx) => (
-        <View key={idx} style={styles.row}>
+        <View key={idx} style={styles.twoColRow}>
           <SingleLabInput
             label={leftKey}
             unit={UNIT_MAP[leftKey] || ""}
@@ -51,7 +49,7 @@ export default function LabValuesInputs({ labValues, setLabValues }) {
             onRawChange={(newRaw) =>
               setLabValues({ ...labValues, [leftKey]: newRaw })
             }
-            style={styles.half}
+            style={[styles.col, styles.colRightGutter]}
           />
 
           {rightKey ? (
@@ -62,10 +60,10 @@ export default function LabValuesInputs({ labValues, setLabValues }) {
               onRawChange={(newRaw) =>
                 setLabValues({ ...labValues, [rightKey]: newRaw })
               }
-              style={[styles.half, styles.rightGap]}
+              style={styles.col}
             />
           ) : (
-            <View style={styles.half} />
+            <View style={styles.col} />
           )}
         </View>
       ))}
@@ -90,7 +88,7 @@ function SingleLabInput({ label, unit, rawValue, onRawChange, style }) {
           }}
           returnKeyType="done"
         />
-        {unit ? <Text style={styles.unitText}>{unit}</Text> : null}
+        {unit && <Text style={styles.unitText}>{unit}</Text>}
       </View>
     </View>
   );
@@ -99,19 +97,17 @@ function SingleLabInput({ label, unit, rawValue, onRawChange, style }) {
 const styles = StyleSheet.create({
   container: {
     paddingTop: 16,
-    // paddingBottom: 24,
   },
 
-  row: {
+  twoColRow: {
     flexDirection: "row",
-    // marginBottom: 16,
   },
 
-  half: {
+  col: {
     flex: 1,
   },
-  rightGap: {
-    marginLeft: 8,
+  colRightGutter: {
+    marginRight: 16,
   },
 
   fieldContainer: {

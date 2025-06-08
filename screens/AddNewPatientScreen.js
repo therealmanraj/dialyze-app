@@ -275,6 +275,7 @@ export default function AddNewPatientScreen({ navigation }) {
           contentContainerStyle={styles.content}
           keyboardShouldPersistTaps="handled"
         >
+          <Text style={styles.sectionTitle}>Patient Information</Text>
           <ClinicalInfoInputs
             name={clin.name}
             setName={(v) => setClin({ ...clin, name: v })}
@@ -344,7 +345,6 @@ const styles = StyleSheet.create({
   content: {
     paddingHorizontal: 16,
     paddingTop: 8,
-    paddingBottom: 16,
   },
   sectionTitle: {
     color: "#fff",

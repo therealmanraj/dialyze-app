@@ -13,6 +13,8 @@ import * as ImagePicker from "expo-image-picker";
 import FormField from "./FormField";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
 
+const GENDER_OPTIONS = ["Male", "Female", "Other"];
+
 export default function ClinicalInfoInputs({
   name,
   setName,
@@ -55,8 +57,6 @@ export default function ClinicalInfoInputs({
     }
   }
 
-  const GENDER_OPTIONS = ["Male", "Female", "Other"];
-
   return (
     <View style={styles.container}>
       <FormField
@@ -65,7 +65,6 @@ export default function ClinicalInfoInputs({
         value={name}
         onChangeText={setName}
       />
-
       <TouchableOpacity style={styles.photoRow} onPress={pickImage}>
         {photoUri ? (
           <Image source={{ uri: photoUri }} style={styles.photo} />
@@ -82,8 +81,8 @@ export default function ClinicalInfoInputs({
         </Text>
       </TouchableOpacity>
 
-      <View style={styles.row}>
-        <View style={styles.half}>
+      <View style={styles.twoColRow}>
+        <View style={[styles.col, styles.colRightGutter]}>
           <FormField
             label="Age (years)"
             placeholder="Enter age"
@@ -92,7 +91,7 @@ export default function ClinicalInfoInputs({
             onChangeText={setAge}
           />
         </View>
-        <View style={[styles.half, styles.rightGap]}>
+        <View style={[styles.col, styles.colLeftGutter]}>
           <Text style={styles.label}>Gender</Text>
           <TouchableOpacity
             style={styles.dropdownButton}
@@ -131,8 +130,8 @@ export default function ClinicalInfoInputs({
         </View>
       </View>
 
-      <View style={styles.row}>
-        <View style={styles.half}>
+      <View style={styles.twoColRow}>
+        <View style={[styles.col, styles.colRightGutter]}>
           <FormField
             label="Height (cm)"
             placeholder="Enter height"
@@ -141,7 +140,7 @@ export default function ClinicalInfoInputs({
             onChangeText={setHeight}
           />
         </View>
-        <View style={[styles.half, styles.rightGap]}>
+        <View style={[styles.col, styles.colLeftGutter]}>
           <FormField
             label="Weight (kg)"
             placeholder="Enter weight"
@@ -166,19 +165,22 @@ export default function ClinicalInfoInputs({
 }
 
 const styles = StyleSheet.create({
-  container: {
-    paddingTop: 16,
-  },
-  row: {
+  container: { paddingTop: 16 },
+
+  twoColRow: {
     flexDirection: "row",
     marginBottom: 16,
   },
-  half: {
+  col: {
     flex: 1,
   },
-  rightGap: {
+  colRightGutter: {
+    marginRight: 8,
+  },
+  colLeftGutter: {
     marginLeft: 8,
   },
+
   photoRow: {
     flexDirection: "row",
     alignItems: "center",
@@ -191,29 +193,14 @@ const styles = StyleSheet.create({
   photoIcon: { marginRight: 12 },
   photo: { width: 40, height: 40, borderRadius: 20, marginRight: 12 },
   photoText: { color: "#fff", fontSize: 16 },
+
   label: {
     color: "#fff",
     fontSize: 16,
     marginBottom: 4,
   },
-  sectionTitle: {
-    color: "#fff",
-    fontSize: 18,
-    fontWeight: "700",
-    marginBottom: 8,
-  },
-  input: {
-    backgroundColor: "#233748",
-    borderRadius: 12,
-    paddingHorizontal: 12,
-    color: "#fff",
-    fontSize: 16,
-    marginBottom: 16,
-    textAlignVertical: "top",
-  },
-  placeholderText: {
-    color: "#9eafbd",
-  },
+  placeholderText: { color: "#9eafbd" },
+
   dropdownButton: {
     backgroundColor: "#233748",
     borderRadius: 12,
@@ -223,10 +210,8 @@ const styles = StyleSheet.create({
     paddingHorizontal: 12,
     justifyContent: "space-between",
   },
-  dropdownButtonText: {
-    color: "#fff",
-    fontSize: 16,
-  },
+  dropdownButtonText: { color: "#fff", fontSize: 16 },
+
   dropdownListContainer: {
     position: "absolute",
     top: 56,
@@ -242,8 +227,20 @@ const styles = StyleSheet.create({
     borderBottomWidth: 1,
     borderBottomColor: "#1e2a36",
   },
-  dropdownItemText: {
+  dropdownItemText: { color: "#fff", fontSize: 16 },
+
+  sectionTitle: {
+    color: "#fff",
+    fontSize: 18,
+    fontWeight: "700",
+    marginBottom: 8,
+  },
+  input: {
+    backgroundColor: "#233748",
+    borderRadius: 12,
+    paddingHorizontal: 12,
     color: "#fff",
     fontSize: 16,
+    textAlignVertical: "top",
   },
 });
