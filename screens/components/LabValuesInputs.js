@@ -99,12 +99,12 @@ function SingleLabInput({ label, unit, rawValue, onRawChange, style }) {
 const styles = StyleSheet.create({
   container: {
     paddingTop: 16,
-    paddingBottom: 24,
+    // paddingBottom: 24,
   },
 
   row: {
     flexDirection: "row",
-    marginBottom: 16,
+    // marginBottom: 16,
   },
 
   half: {

@@ -1,10 +1,10 @@
 {
   "expo": {
-    "name": "dialyze-app",
+    "name": "Dialyze",
     "slug": "dialyze-app",
     "version": "1.0.0",
     "orientation": "portrait",
-    "icon": "./assets/dialyzeAppIcon.jpg",
+    "icon": "./assets/dialyzeAppIcon.png",
     "userInterfaceStyle": "light",
     "newArchEnabled": true,
     "splash": {
@@ -13,11 +13,11 @@
       "backgroundColor": "#ffffff"
     },
     "ios": {
-      "icon": "./assets/dialyzeAppIcon.jpg",
+      "icon": "./assets/dialyzeAppIcon.png",
       "supportsTablet": true
     },
     "android": {
-      "icon": "./assets/dialyzeAppIcon.jpg",
+      "icon": "./assets/dialyzeAppIcon.png",
       "adaptiveIcon": {
         "foregroundImage": "./assets/adaptive-icon.png",
         "backgroundColor": "#ffffff"

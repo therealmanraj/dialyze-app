@@ -7,6 +7,7 @@ import {
   Image,
   StyleSheet,
   Platform,
+  TextInput,
 } from "react-native";
 import * as ImagePicker from "expo-image-picker";
 import FormField from "./FormField";
@@ -25,6 +26,8 @@ export default function ClinicalInfoInputs({
   setHeight,
   weight,
   setWeight,
+  notes,
+  setNotes,
 }) {
   const [showGenderOptions, setShowGenderOptions] = useState(false);
 
@@ -47,7 +50,6 @@ export default function ClinicalInfoInputs({
       aspect: [4, 3],
       quality: 1,
     });
-
     if (!result.canceled) {
       setPhotoUri(result.assets[0].uri);
     }
@@ -90,48 +92,42 @@ export default function ClinicalInfoInputs({
             onChangeText={setAge}
           />
         </View>
-
         <View style={[styles.half, styles.rightGap]}>
           <Text style={styles.label}>Gender</Text>
-
-          <View>
-            <TouchableOpacity
-              style={styles.dropdownButton}
-              onPress={() => setShowGenderOptions((prev) => !prev)}
+          <TouchableOpacity
+            style={styles.dropdownButton}
+            onPress={() => setShowGenderOptions((v) => !v)}
+          >
+            <Text
+              style={[
+                styles.dropdownButtonText,
+                !gender && styles.placeholderText,
+              ]}
             >
-              <Text
-                style={[
-                  styles.dropdownButtonText,
-                  !gender && styles.placeholderText,
-                ]}
-              >
-                {gender || "Select gender"}
-              </Text>
-              <MaterialCommunityIcons
-                name={showGenderOptions ? "chevron-up" : "chevron-down"}
-                size={20}
-                color="#fff"
-                style={styles.dropdownIcon}
-              />
-            </TouchableOpacity>
-
-            {showGenderOptions && (
-              <View style={styles.dropdownListContainer}>
-                {GENDER_OPTIONS.map((opt) => (
-                  <TouchableOpacity
-                    key={opt}
-                    style={styles.dropdownItem}
-                    onPress={() => {
-                      setGender(opt);
-                      setShowGenderOptions(false);
-                    }}
-                  >
-                    <Text style={styles.dropdownItemText}>{opt}</Text>
-                  </TouchableOpacity>
-                ))}
-              </View>
-            )}
-          </View>
+              {gender || "Select gender"}
+            </Text>
+            <MaterialCommunityIcons
+              name={showGenderOptions ? "chevron-up" : "chevron-down"}
+              size={20}
+              color="#fff"
+            />
+          </TouchableOpacity>
+          {showGenderOptions && (
+            <View style={styles.dropdownListContainer}>
+              {GENDER_OPTIONS.map((opt) => (
+                <TouchableOpacity
+                  key={opt}
+                  style={styles.dropdownItem}
+                  onPress={() => {
+                    setGender(opt);
+                    setShowGenderOptions(false);
+                  }}
+                >
+                  <Text style={styles.dropdownItemText}>{opt}</Text>
+                </TouchableOpacity>
+              ))}
+            </View>
+          )}
         </View>
       </View>
 
@@ -155,6 +151,16 @@ export default function ClinicalInfoInputs({
           />
         </View>
       </View>
+
+      <Text style={styles.sectionTitle}>Clinical Notes</Text>
+      <TextInput
+        style={[styles.input, { height: 100 }]}
+        placeholder="Enter clinical notes"
+        placeholderTextColor="#91b0ca"
+        multiline
+        value={notes}
+        onChangeText={setNotes}
+      />
     </View>
   );
 }
@@ -190,6 +196,24 @@ const styles = StyleSheet.create({
     fontSize: 16,
     marginBottom: 4,
   },
+  sectionTitle: {
+    color: "#fff",
+    fontSize: 18,
+    fontWeight: "700",
+    marginBottom: 8,
+  },
+  input: {
+    backgroundColor: "#233748",
+    borderRadius: 12,
+    paddingHorizontal: 12,
+    color: "#fff",
+    fontSize: 16,
+    marginBottom: 16,
+    textAlignVertical: "top",
+  },
+  placeholderText: {
+    color: "#9eafbd",
+  },
   dropdownButton: {
     backgroundColor: "#233748",
     borderRadius: 12,
@@ -203,12 +227,6 @@ const styles = StyleSheet.create({
     color: "#fff",
     fontSize: 16,
   },
-  placeholderText: {
-    color: "#9eafbd",
-  },
-  dropdownIcon: {
-    marginLeft: 8,
-  },
   dropdownListContainer: {
     position: "absolute",
     top: 56,
@@ -216,7 +234,6 @@ const styles = StyleSheet.create({
     right: 0,
     backgroundColor: "#233748",
     borderRadius: 8,
-    marginTop: 4,
     zIndex: 10,
   },
   dropdownItem: {

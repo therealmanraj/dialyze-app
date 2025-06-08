@@ -121,6 +121,7 @@ const styles = StyleSheet.create({
     marginTop: 8,
   },
   subtitle: {
+    paddingHorizontal: 16,
     color: "#fff",
     fontSize: 16,
     textAlign: "center",

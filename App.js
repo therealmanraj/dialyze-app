@@ -1,7 +1,7 @@
 // App.js
 import React from "react";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
-import { NavigationContainer } from "@react-navigation/native";
+import { NavigationContainer, DefaultTheme } from "@react-navigation/native";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
@@ -23,6 +23,15 @@ import AddPatientScreen from "./screens/QuickPredictionScreen/AddPatientScreen";
 
 const Stack = createNativeStackNavigator();
 const Tab = createBottomTabNavigator();
+
+const MyTheme = {
+  ...DefaultTheme,
+  dark: true,
+  colors: {
+    ...DefaultTheme.colors,
+    background: "#151a1e", // match your app’s dark background
+  },
+};
 
 function MainTabs() {
   return (
@@ -55,11 +64,15 @@ function MainTabs() {
 export default function App() {
   return (
     <SafeAreaProvider>
-      <GestureHandlerRootView style={{ flex: 1 }}>
+      <GestureHandlerRootView style={{ flex: 1, backgroundColor: "#151a1e" }}>
         <PatientsProvider>
-          <NavigationContainer>
+          <NavigationContainer theme={MyTheme}>
             <Stack.Navigator
-              screenOptions={{ headerShown: false, animation: "none" }}
+              screenOptions={{
+                headerShown: false,
+                animation: "none",
+                contentStyle: { backgroundColor: "#151a1e" },
+              }}
             >
               <Stack.Screen
                 name="MainTabs"
