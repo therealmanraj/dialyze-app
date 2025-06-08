@@ -28,26 +28,32 @@ import Animated, {
 const { width: SCREEN_WIDTH } = Dimensions.get("window");
 const DELETE_WIDTH = 300;
 const SWIPE_THRESHOLD = -DELETE_WIDTH / 2;
+const TAP_CANCEL_THRESHOLD = 5;
 
 function PatientRow({ item, onPress, onDelete }) {
+  const [swiped, setSwiped] = useState(false);
   const translateX = useSharedValue(0);
 
   const gestureHandler = useAnimatedGestureHandler({
     onStart(_, ctx) {
       ctx.startX = translateX.value;
+      runOnJS(setSwiped)(false);
     },
     onActive(event, ctx) {
       const next = ctx.startX + event.translationX;
       translateX.value = Math.max(Math.min(next, 0), -DELETE_WIDTH);
+      if (Math.abs(event.translationX) > TAP_CANCEL_THRESHOLD) {
+        runOnJS(setSwiped)(true);
+      }
     },
     onEnd(event) {
       const shouldDelete =
         translateX.value < SWIPE_THRESHOLD || event.velocityX < -500;
 
       if (shouldDelete) {
-        translateX.value = withTiming(-SCREEN_WIDTH, { duration: 200 }, () => {
-          runOnJS(onDelete)(item.id);
-        });
+        translateX.value = withTiming(-SCREEN_WIDTH, { duration: 200 }, () =>
+          runOnJS(onDelete)(item.id)
+        );
       } else {
         translateX.value = withTiming(0, { duration: 200 });
       }
@@ -64,9 +70,20 @@ function PatientRow({ item, onPress, onDelete }) {
         <MaterialCommunityIcons name="trash-can" size={24} color="#fff" />
       </View>
 
-      <PanGestureHandler onGestureEvent={gestureHandler}>
+      <PanGestureHandler
+        onGestureEvent={gestureHandler}
+        activeOffsetX={[-10, 10]}
+        failOffsetY={[-5, 5]}
+      >
         <Animated.View style={[styles.rowContent, animatedStyle]}>
-          <TouchableOpacity style={styles.patientRowInner} onPress={onPress}>
+          <TouchableOpacity
+            style={styles.patientRowInner}
+            onPress={() => {
+              if (!swiped) onPress();
+            }}
+            disabled={swiped}
+            activeOpacity={swiped ? 1 : 0.7}
+          >
             <View style={styles.patientInfo}>
               <Image source={{ uri: item.avatar }} style={styles.avatar} />
               <View style={{ marginLeft: 12 }}>
