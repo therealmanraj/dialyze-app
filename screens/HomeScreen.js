@@ -1,5 +1,5 @@
 // screens/HomeScreen.js
-import React, { useState, useRef, useContext } from "react";
+import React, { useState, useContext } from "react";
 import { SafeAreaView } from "react-native-safe-area-context";
 import {
   View,
@@ -9,105 +9,92 @@ import {
   TouchableOpacity,
   Image,
   StyleSheet,
-  Animated,
-  LayoutAnimation,
-  Platform,
-  UIManager,
+  Dimensions,
   Keyboard,
   TouchableWithoutFeedback,
 } from "react-native";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
-import Swipeable from "react-native-gesture-handler/Swipeable";
-import { RectButton } from "react-native-gesture-handler";
 import { PatientsContext } from "./contexts/PatientsContext";
 
-if (
-  Platform.OS === "android" &&
-  UIManager.setLayoutAnimationEnabledExperimental
-) {
-  UIManager.setLayoutAnimationEnabledExperimental(true);
-}
+import { PanGestureHandler } from "react-native-gesture-handler";
+import Animated, {
+  useSharedValue,
+  useAnimatedGestureHandler,
+  useAnimatedStyle,
+  withTiming,
+  runOnJS,
+} from "react-native-reanimated";
 
-function PatientRow({ item, onPress, onDelete, onSwipeOpen }) {
-  const opacity = useRef(new Animated.Value(1)).current;
-  const swipeableRef = useRef(null);
+const { width: SCREEN_WIDTH } = Dimensions.get("window");
+const DELETE_WIDTH = 300;
+const SWIPE_THRESHOLD = -DELETE_WIDTH / 2;
 
-  const handleDelete = () => {
-    Animated.timing(opacity, {
-      toValue: 0,
-      duration: 300,
-      useNativeDriver: true,
-    }).start(() => {
-      LayoutAnimation.configureNext(LayoutAnimation.Presets.easeInEaseOut);
-      onDelete(item.id);
-    });
-  };
+function PatientRow({ item, onPress, onDelete }) {
+  const translateX = useSharedValue(0);
+
+  const gestureHandler = useAnimatedGestureHandler({
+    onStart(_, ctx) {
+      ctx.startX = translateX.value;
+    },
+    onActive(event, ctx) {
+      const next = ctx.startX + event.translationX;
+      translateX.value = Math.max(Math.min(next, 0), -DELETE_WIDTH);
+    },
+    onEnd(event) {
+      const shouldDelete =
+        translateX.value < SWIPE_THRESHOLD || event.velocityX < -500;
+
+      if (shouldDelete) {
+        translateX.value = withTiming(-SCREEN_WIDTH, { duration: 200 }, () => {
+          runOnJS(onDelete)(item.id);
+        });
+      } else {
+        translateX.value = withTiming(0, { duration: 200 });
+      }
+    },
+  });
+
+  const animatedStyle = useAnimatedStyle(() => ({
+    transform: [{ translateX: translateX.value }],
+  }));
 
   return (
-    <Animated.View style={{ opacity, marginVertical: 4 }}>
-      <Swipeable
-        ref={swipeableRef}
-        friction={2}
-        overshootRight={false}
-        rightThreshold={40}
-        onSwipeableWillOpen={() => {
-          onSwipeOpen(swipeableRef.current);
-        }}
-        renderRightActions={(progress, dragX) => {
-          const trans = dragX.interpolate({
-            inputRange: [-50, 0],
-            outputRange: [0, 80],
-            extrapolate: "clamp",
-          });
+    <View style={styles.rowContainer}>
+      <View style={styles.deleteBackground}>
+        <MaterialCommunityIcons name="trash-can" size={24} color="#fff" />
+      </View>
 
-          return (
-            <Animated.View
-              style={[
-                styles.deleteContainer,
-                { transform: [{ translateX: trans }] },
-              ]}
-            >
-              <RectButton style={styles.deleteButton} onPress={handleDelete}>
-                <MaterialCommunityIcons
-                  name="trash-can"
-                  size={24}
-                  color="#fff"
-                />
-                <Text style={styles.deleteText}>Delete</Text>
-              </RectButton>
-            </Animated.View>
-          );
-        }}
-      >
-        <TouchableOpacity style={styles.patientRowInner} onPress={onPress}>
-          <View style={styles.patientInfo}>
-            <Image source={{ uri: item.avatar }} style={styles.avatar} />
-            <View style={{ marginLeft: 12 }}>
-              <Text style={styles.patientName}>{item.name}</Text>
-              <Text style={styles.patientDetails}>
-                Age: {item.clinical.age || "N/A"},{" "}
-                {item.clinical.gender || "N/A"}
-              </Text>
+      <PanGestureHandler onGestureEvent={gestureHandler}>
+        <Animated.View style={[styles.rowContent, animatedStyle]}>
+          <TouchableOpacity style={styles.patientRowInner} onPress={onPress}>
+            <View style={styles.patientInfo}>
+              <Image source={{ uri: item.avatar }} style={styles.avatar} />
+              <View style={{ marginLeft: 12 }}>
+                <Text style={styles.patientName}>{item.name}</Text>
+                <Text style={styles.patientDetails}>
+                  Age: {item.clinical.age || "N/A"},{" "}
+                  {item.clinical.gender || "N/A"}
+                </Text>
+              </View>
             </View>
-          </View>
-          <View style={styles.pill}>
-            <Text style={styles.pillText}>
-              {item.riskLabel} – {item.riskPct}
-            </Text>
-            <View
-              style={[styles.pillDot, { backgroundColor: item.riskColor }]}
-            />
-          </View>
-        </TouchableOpacity>
-      </Swipeable>
-    </Animated.View>
+            <View style={styles.pill}>
+              <Text style={styles.pillText}>
+                {item.riskLabel} – {item.riskPct}
+              </Text>
+              <View
+                style={[styles.pillDot, { backgroundColor: item.riskColor }]}
+              />
+            </View>
+          </TouchableOpacity>
+        </Animated.View>
+      </PanGestureHandler>
+    </View>
   );
 }
 
 export default function HomeScreen({ navigation }) {
   const [search, setSearch] = useState("");
   const { patients, removePatient } = useContext(PatientsContext);
-  const openSwipeableRef = useRef(null);
 
   const filtered = patients.filter((p) =>
     p.name.toLowerCase().includes(search.toLowerCase())
@@ -118,15 +105,7 @@ export default function HomeScreen({ navigation }) {
       style={styles.root}
       edges={["top", "left", "right", "bottom"]}
     >
-      <TouchableWithoutFeedback
-        onPress={() => {
-          Keyboard.dismiss();
-          if (openSwipeableRef.current) {
-            openSwipeableRef.current.close();
-            openSwipeableRef.current = null;
-          }
-        }}
-      >
+      <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
         <View style={{ flex: 1 }}>
           <View style={styles.header}>
             <Text style={styles.headerTitle}>Dialyze</Text>
@@ -165,23 +144,14 @@ export default function HomeScreen({ navigation }) {
 
           <FlatList
             data={filtered}
-            keyExtractor={(item) => item.id.toString()}
+            keyExtractor={(item) => item.id}
             renderItem={({ item }) => (
               <PatientRow
                 item={item}
                 onPress={() =>
                   navigation.navigate("Summary", { patientId: item.id })
                 }
-                onDelete={() => removePatient(item.id)}
-                onSwipeOpen={(swipeableInstance) => {
-                  if (
-                    openSwipeableRef.current &&
-                    openSwipeableRef.current !== swipeableInstance
-                  ) {
-                    openSwipeableRef.current.close();
-                  }
-                  openSwipeableRef.current = swipeableInstance;
-                }}
+                onDelete={removePatient}
               />
             )}
             contentContainerStyle={{ paddingBottom: 80 }}
@@ -195,7 +165,6 @@ export default function HomeScreen({ navigation }) {
 
 const styles = StyleSheet.create({
   root: { flex: 1, backgroundColor: "#151a1e" },
-
   header: {
     backgroundColor: "#151a1e",
     paddingVertical: 12,
@@ -207,7 +176,6 @@ const styles = StyleSheet.create({
     fontWeight: "700",
     textAlign: "center",
   },
-
   pageTitle: {
     color: "#fff",
     fontSize: 28,
@@ -222,7 +190,6 @@ const styles = StyleSheet.create({
     marginVertical: 8,
     paddingHorizontal: 16,
   },
-
   searchWrapper: {
     flexDirection: "row",
     backgroundColor: "#2b3740",
@@ -235,7 +202,6 @@ const styles = StyleSheet.create({
   },
   searchIcon: { marginRight: 8 },
   searchInput: { flex: 1, color: "#fff", fontSize: 16 },
-
   patientsHeader: {
     flexDirection: "row",
     alignItems: "center",
@@ -252,11 +218,25 @@ const styles = StyleSheet.create({
   },
   addButtonText: { color: "#151a1e", fontWeight: "700", fontSize: 14 },
 
+  rowContainer: {
+    marginVertical: 4,
+    overflow: "hidden",
+  },
+  deleteBackground: {
+    ...StyleSheet.absoluteFillObject,
+    backgroundColor: "red",
+    justifyContent: "center",
+    alignItems: "flex-end",
+    paddingRight: 20,
+  },
+  rowContent: {
+    backgroundColor: "#151a1e",
+  },
+
   patientRowInner: {
     flexDirection: "row",
     alignItems: "center",
     justifyContent: "space-between",
-    backgroundColor: "#151a1e",
     paddingVertical: 12,
     paddingHorizontal: 16,
   },
@@ -264,7 +244,6 @@ const styles = StyleSheet.create({
   avatar: { width: 56, height: 56, borderRadius: 28, backgroundColor: "#333" },
   patientName: { color: "#fff", fontSize: 16, fontWeight: "500" },
   patientDetails: { color: "#9eafbd", fontSize: 14 },
-
   pill: {
     flexDirection: "row",
     alignItems: "center",
@@ -283,25 +262,4 @@ const styles = StyleSheet.create({
     fontWeight: "500",
   },
   pillDot: { width: 10, height: 10, borderRadius: 5, marginRight: 8 },
-
-  rowContainer: {
-    marginHorizontal: 16,
-    marginVertical: 4,
-  },
-
-  deleteContainer: {
-    width: 80,
-    justifyContent: "center",
-    alignItems: "center",
-    elevation: 6,
-    zIndex: 10,
-  },
-  deleteButton: {
-    backgroundColor: "red",
-    width: 80,
-    height: "100%",
-    justifyContent: "center",
-    alignItems: "center",
-  },
-  deleteText: { color: "#fff", fontSize: 12, marginTop: 4 },
 });
