@@ -4,20 +4,20 @@
     "slug": "dialyze-app",
     "version": "1.0.0",
     "orientation": "portrait",
-    "icon": "./assets/dialyzeAppIcon.png",
+    "icon": "./assets/icon.png",
     "userInterfaceStyle": "light",
     "newArchEnabled": true,
     "splash": {
-      "image": "./assets/splash-icon.png",
+      "image": "./assets/splash.png",
       "resizeMode": "contain",
       "backgroundColor": "#ffffff"
     },
     "ios": {
-      "icon": "./assets/dialyzeAppIcon.png",
+      "icon": "./assets/adaptive-icon.png",
       "supportsTablet": true
     },
     "android": {
-      "icon": "./assets/dialyzeAppIcon.png",
+      "icon": "./assets/icon.png",
       "adaptiveIcon": {
         "foregroundImage": "./assets/adaptive-icon.png",
         "backgroundColor": "#ffffff"

@@ -18,7 +18,7 @@ export default function RiskSection({ akiRisk, dialysisNeed }) {
         ))}
       </View>
 
-      <Text style={[styles.title, { marginTop: 24 }]}>Dialysis Need</Text>
+      {/* <Text style={[styles.title, { marginTop: 24 }]}>Dialysis Need</Text>
       <View style={styles.row}>
         {dialysisNeed.map((d, i) => (
           <View
@@ -32,7 +32,7 @@ export default function RiskSection({ akiRisk, dialysisNeed }) {
             <Text style={styles.cardValue}>{d.value}</Text>
           </View>
         ))}
-      </View>
+      </View> */}
     </View>
   );
 }
